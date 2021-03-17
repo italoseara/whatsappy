@@ -10,12 +10,6 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install whatsap
 pip install whatsappy-py
 ```
 
-Than install the requeriments using:
-
-```bash
-pip install -r requeriments.txt
-```
-
 ## Usage
 
 ```python
