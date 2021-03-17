@@ -27,5 +27,8 @@ setup(
         "dev": [
             "pytest>=3.7",
         ]
-    }
+    },
+    url='https://github.com/italoseara/whatsappy',
+    author='Italo Seara',
+    author_email='italos.seara@gmail.com',
 )
