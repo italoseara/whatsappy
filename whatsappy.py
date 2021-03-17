@@ -42,7 +42,7 @@ class Whatsapp:
         driver.close()
 
 
-    def login(self):
+    def login(self, visible: bool=False):
         '''Logs in whatsapp and shows the QRCode if necessary'''
 
         usr_path = f"C:\\Users\\{getlogin()}\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
@@ -59,7 +59,8 @@ class Whatsapp:
             
         
         options = webdriver.ChromeOptions()
-        #options.add_argument("--headless")
+        if not visible:
+            options.add_argument("--headless")
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
         options.add_argument("--log-level=3")
