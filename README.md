@@ -19,7 +19,7 @@ pip install -r requeriments.txt
 ## Usage
 
 ```python
-from whatsappy.wpp import whatsapp
+from whatsappy import whatsapp
 
 whatsapp.login() # Login on whatsapp
 
