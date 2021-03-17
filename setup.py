@@ -1,18 +1,17 @@
 from setuptools import setup
+import setuptools
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setup(
-    name='whatsappy',
-    version='0.0.1',
+    name='whatsappy-py',
+    version='0.0.8',
     description='Whatsappy is a Python library for creating whatsapp bots.',
-    py_modules=['wpp'],
-    package_dir={'': 'whatsappy'},
+    packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
         "Operating System :: OS Independent",
     ],

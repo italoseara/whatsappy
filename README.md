@@ -7,7 +7,7 @@ Whatsappy is a Python library for creating whatsapp bots.
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install whatsappy.
 
 ```bash
-pip install whatsappy
+pip install whatsappy-py
 ```
 
 Than install the requeriments using:
