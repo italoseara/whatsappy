@@ -59,7 +59,7 @@ class Whatsapp:
             
         
         options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
+        #options.add_argument("--headless")
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
         options.add_argument("--log-level=3")
@@ -127,7 +127,7 @@ class Whatsapp:
 
             return array
         except:
-            print('Erro')
+            print('Error')
 
     
     def get_pinned_chats(self):
@@ -146,7 +146,7 @@ class Whatsapp:
 
             return array
         except:
-            print('Erro')
+            print('Error')
 
 
     def last_message(self):
@@ -171,7 +171,7 @@ class Whatsapp:
 
             return Message(author=author, content=content, time=time, date=date)
         except:
-            print('erro')
+            print('Error')
 
 
     def new_message(self):
@@ -207,7 +207,7 @@ class Whatsapp:
             else:
                 chat.send_keys(message)
         except:
-            print('Erro')
+            print('Error')
 
     
     def reply(self, message_send: str):
@@ -273,6 +273,14 @@ class Whatsapp:
         try:
             self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
+            sleep(1)
+
+            try:
+                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+
+            except:
+                print('You are not a group admin!')
+
             self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div').click()
 
             description_dom = self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text')
@@ -287,24 +295,37 @@ class Whatsapp:
 
             else:
                 description_dom.send_keys(description)
-
+                
         except:
-            print('Erro')
+            print('Error')
 
 
     def change_group_name(self, name: str):
         try:
+
             self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
-            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._3Ihuv > div._3rhi1.e1K_H._1nQew > span._2zDdK > div > span').click()
+            sleep(1)
+
+            try:
+                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+
+            except:
+                print('You are not a group admin!')
+
+            self.driver.find_element_by_class_name('_1JAUF').click()
+
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._3Ihuv > div._3rhi1.e1K_H._1nQew > span._2zDdK > div').click()
 
             group_name_dom = self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._1fB8E._3Ihuv > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text')
 
             group_name_dom.clear()
             group_name_dom.send_keys(name + Keys.ENTER)
 
+
         except:
-            print('Erro')
+            print('Error')
+
 
     def leave_group(self):
         self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
@@ -313,10 +334,38 @@ class Whatsapp:
 
         self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
 
-   #def add_to_group():
-   #    pass
 
-   #def make_group_admin():
-   #    pass
+    def add_to_group(self, contact_name: str):
+        try:
+
+            self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
+
+            try:
+                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+
+            except:
+                print('You are not a group admin!')
+                
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(2) > div.TbtXF').click()
+
+            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(contact_name)
+            
+            sleep(0.5)
+            
+            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(Keys.ENTER)
+                
+            sleep(0.5)
+
+            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > span._3IGMG > div > div > div').click()
+
+            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
+
+        except:
+            print('Error')
+    
+
+    #TODO: def remove_from_group(self, participant_name: str):
+
+    #TODO: def make_group_admin():
 
 whatsapp = Whatsapp()
