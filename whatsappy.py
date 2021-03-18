@@ -7,7 +7,9 @@ from send2trash import send2trash
 from os import getlogin, path, mkdir, system
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
+import os
 
+os.environ['WDM_LOG_LEVEL'] = '0'
 last = ''
 
 class Message:
@@ -27,7 +29,9 @@ class Whatsapp:
         self.mydata = shelve.open('data/data')
 
         options = webdriver.ChromeOptions()
+        options.add_argument("--log-level=OFF")
         options.add_argument(f'--user-data-dir={usr_path}')
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
         driver.get('https://web.whatsapp.com')
@@ -59,27 +63,25 @@ class Whatsapp:
             
         
         options = webdriver.ChromeOptions()
-        if not visible:
-            options.add_argument("--headless")
+        options.add_argument(f'--user-data-dir={usr_path}')
+        options.add_argument(f"--user-agent={self.mydata['user_agent']}")
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
-        options.add_argument("--log-level=3")
-        options.add_argument(f"--user-agent={self.mydata['user_agent']}")
-        options.add_argument(f'--user-data-dir={usr_path}')
+        options.add_argument("--log-level=OFF")
+        if not visible:
+            options.add_argument("--headless")
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
         self.driver.get('https://web.whatsapp.com')
 
-        system('cls')
-        print(f'Logging as: {self.mydata["user_agent"]}')
-
         while True:
             try:
                 try: 
-                    self.driver.find_element_by_css_selector('#app > div > div > div.landing-window > div.landing-main > div > div._3l6Cf> div > canvas')
+                    self.driver.find_element_by_css_selector('#app > div > div > div.landing-window > div.landing-main > div > div.O1rXL > div > canvas')
                     self.driver.close()
                     self.get_qrcode()
-                    self.login()
+                    self.login(visible=visible)
                     break
 
                 except:
@@ -87,7 +89,7 @@ class Whatsapp:
                         self.driver.find_element_by_xpath("//a[@title='Atualize o Google Chrome']")
                         self.driver.close()
                         self.get_qrcode()
-                        self.login()
+                        self.login(visible=visible)
                         break
                     
                     except:
@@ -250,7 +252,9 @@ class Whatsapp:
 
             type = 3
 
-        self.driver.find_element_by_css_selector('#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > div > span').click() # Seleciona clip de anexo
+        self.driver.execute_script('''
+            document.querySelector("#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > div").click()
+        ''') # Seleciona clip de anexo
 
         sleep(0.7)
 
