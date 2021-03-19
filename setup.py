@@ -6,7 +6,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='whatsappy-py',
-    version='0.1.5.1',
+    version='0.1.6',
     description='Whatsappy is a Python library for creating whatsapp bots.',
     packages=setuptools.find_packages(),
     classifiers=[
