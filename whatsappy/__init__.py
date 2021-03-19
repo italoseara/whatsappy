@@ -65,9 +65,11 @@ class Whatsapp:
         options = webdriver.ChromeOptions()
         options.add_argument(f'--user-data-dir={usr_path}')
         options.add_argument(f"--user-agent={self.mydata['user_agent']}")
+        options.add_argument("--start-maximized")
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
         options.add_argument("--log-level=OFF")
+        
         if not visible:
             options.add_argument("--headless")
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -101,6 +103,8 @@ class Whatsapp:
 
 
     def exit(self):
+        '''Exit the whatsapp'''
+
         self.driver.close()
         exit()
 
@@ -130,7 +134,7 @@ class Whatsapp:
 
             return array
         except:
-            print('Error')
+            print('Something gone wrong')
 
     
     def get_pinned_chats(self):
@@ -149,7 +153,7 @@ class Whatsapp:
 
             return array
         except:
-            print('Error')
+            print('Something gone wrong')
 
 
     def last_message(self):
@@ -174,7 +178,7 @@ class Whatsapp:
 
             return Message(author=author, content=content, time=time, date=date)
         except:
-            print('Error')
+            print('Something gone wrong')
 
 
     def new_message(self):
@@ -210,7 +214,7 @@ class Whatsapp:
             else:
                 chat.send_keys(message)
         except:
-            print('Error')
+            print('Something gone wrong')
 
     
     def reply(self, message_send: str):
@@ -231,8 +235,7 @@ class Whatsapp:
     def send_file(self, file_path: str):
         '''Send a file
         
-        :file_path:
-        - Needs to be absolute'''
+        obs: the file path needs to be absolute'''
 
         regex = re.compile(r'(\w+\.(\w+))')
         file_name = file_path.split('\\')[-1]
@@ -275,7 +278,10 @@ class Whatsapp:
 
 
     def change_group_description(self, description: str):
+        '''Changes the group description'''
+
         try:
+
             self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
             sleep(1)
@@ -302,10 +308,12 @@ class Whatsapp:
                 description_dom.send_keys(description)
                 
         except:
-            print('Error')
+            print('Something gone wrong')
 
 
     def change_group_name(self, name: str):
+        '''Changes the group name'''
+
         try:
 
             self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
@@ -329,10 +337,12 @@ class Whatsapp:
 
 
         except:
-            print('Error')
+            print('Something gone wrong')
 
 
     def leave_group(self):
+        '''Leaves the group you are'''
+
         self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
         self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(6) > div').click()
@@ -341,6 +351,8 @@ class Whatsapp:
 
 
     def add_to_group(self, contact_name: str):
+        '''Add a new participant to the group'''
+
         try:
 
             self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
@@ -366,10 +378,12 @@ class Whatsapp:
             self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
 
         except:
-            print('Error')
+            print('Something gone wrong')
     
 
     def remove_from_group(self, participant_name: str):
+        '''Removes a participant from the group'''
+
         try:
 
             self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
@@ -397,10 +411,12 @@ class Whatsapp:
             self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
         
         except:
-            print('Error')
+            print('Something gone wrong')
 
 
     def make_group_admin(self, participant_name: str):
+        '''Makes someone a group admin'''
+
         try:
 
             self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
@@ -428,7 +444,7 @@ class Whatsapp:
             self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
         
         except:
-            print('Error')
+            print('Something gone wrong')
 
 
 whatsapp = Whatsapp()
