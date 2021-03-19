@@ -1,4 +1,4 @@
-from whatsappy.wpp import whatsapp
+from whatsappy import whatsapp
 
 whatsapp.login()
 
