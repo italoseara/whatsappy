@@ -87,28 +87,34 @@ class Whatsapp:
 
         while True:
             try:
-                try: 
-                    self.driver.find_element_by_css_selector(
-                        '#app > div > div > div.landing-window > div.landing-main > div > div.O1rXL > div > canvas')
-                    self.driver.close()
-                    self.get_qrcode()
-                    self.login(visible=visible)
-                    break
-
-                except:
-                    try:
-                        self.driver.find_element_by_xpath(
-                            "//a[@title='Atualize o Google Chrome']")
+                if not visible:
+                    try: 
+                        self.driver.find_element_by_css_selector(
+                            '#app > div > div > div.landing-window > div.landing-main > div > div.O1rXL > div > canvas')
                         self.driver.close()
                         self.get_qrcode()
                         self.login(visible=visible)
                         break
-                    
+
                     except:
-                        self.driver.find_element_by_css_selector(
-                            '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
-                        print('Logged in')
-                        break
+                        try:
+                            self.driver.find_element_by_xpath(
+                                "//a[@title='Atualize o Google Chrome']")
+                            self.driver.close()
+                            self.get_qrcode()
+                            self.login(visible=visible)
+                            break
+                        
+                        except:
+                            self.driver.find_element_by_css_selector(
+                                '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
+                            print('Logged in')
+                            break
+                else:
+                    self.driver.find_element_by_css_selector(
+                        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
+                    print('Logged in')
+                    break
             except:
                 pass
 
@@ -181,7 +187,7 @@ class Whatsapp:
 
     def last_message(self):
         """Gets the last message from the chat
-
+    
         Returns:
             Class: Last message
         """
@@ -190,13 +196,13 @@ class Whatsapp:
 
         try:
             info = self.driver.execute_script('''
-                var a = document.querySelectorAll(".GDTQm .message-in .copyable-text");
-                return a[a.length - 2].dataset.prePlainText;
+                var a = document.querySelectorAll(".GDTQm.message-in");
+                return a[a.length - 1].querySelector('.copyable-text').dataset.prePlainText;
             ''')
             
             content = self.driver.execute_script('''
-                var a = document.querySelectorAll(".GDTQm .message-in .copyable-text");
-                return a[a.length - 1].innerText;
+                var a = document.querySelectorAll(".GDTQm.message-in");
+                return a[a.length - 1].querySelector('.copyable-text').innerText;
             ''')
 
             time = re.compile(r'(\d+:\d+(\s)?(AM|PM)?)').findall(info)[0][0]
@@ -547,7 +553,8 @@ class Whatsapp:
         
         except:
             print('Something gone wrong')
-    
+
+
     # TODO: get group invite link
 
     # TODO: invite by number
@@ -558,6 +565,6 @@ class Whatsapp:
 
     # TODO: Decent error message
 
-
+    # TODO: Create group
 
 whatsapp = Whatsapp()

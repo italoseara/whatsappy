@@ -1,4 +1,4 @@
-# whatsappy 0.1.6
+# whatsappy 0.1.7
 
 Whatsappy is a Python library for creating whatsapp bots.
 
