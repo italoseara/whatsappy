@@ -43,7 +43,8 @@ class Whatsapp:
 
         while True:
             try:
-                driver.find_element_by_css_selector('#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
+                driver.find_element_by_css_selector(
+                    '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
                 break
             except: pass
         driver.close()
@@ -87,7 +88,8 @@ class Whatsapp:
         while True:
             try:
                 try: 
-                    self.driver.find_element_by_css_selector('#app > div > div > div.landing-window > div.landing-main > div > div.O1rXL > div > canvas')
+                    self.driver.find_element_by_css_selector(
+                        '#app > div > div > div.landing-window > div.landing-main > div > div.O1rXL > div > canvas')
                     self.driver.close()
                     self.get_qrcode()
                     self.login(visible=visible)
@@ -95,14 +97,16 @@ class Whatsapp:
 
                 except:
                     try:
-                        self.driver.find_element_by_xpath("//a[@title='Atualize o Google Chrome']")
+                        self.driver.find_element_by_xpath(
+                            "//a[@title='Atualize o Google Chrome']")
                         self.driver.close()
                         self.get_qrcode()
                         self.login(visible=visible)
                         break
                     
                     except:
-                        self.driver.find_element_by_css_selector('#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
+                        self.driver.find_element_by_css_selector(
+                            '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
                         print('Logged in')
                         break
             except:
@@ -195,7 +199,7 @@ class Whatsapp:
                 return a[a.length - 1].innerText;
             ''')
 
-            time = re.compile(r'(\d+:\d+( )?(AM|PM)?)').findall(info)[0][0]
+            time = re.compile(r'(\d+:\d+(\s)?(AM|PM)?)').findall(info)[0][0]
             date = re.compile(r'(\d+/\d+/\d+)').findall(info)[0]
             author = re.compile(r'] (.*):').findall(info)[0]
 
@@ -226,7 +230,6 @@ class Whatsapp:
         except:
             pass
 
-
     def send(self, message: str):
         """Sends a message
 
@@ -235,7 +238,8 @@ class Whatsapp:
         """
 
         try:
-            chat = self.driver.find_element_by_css_selector('#main > footer > div.vR1LG._3wXwX.copyable-area > div._2A8P4 > div > div._2_1wd.copyable-text.selectable-text')
+            chat = self.driver.find_element_by_css_selector(
+                '#main > footer > div.vR1LG._3wXwX.copyable-area > div._2A8P4 > div > div._2_1wd.copyable-text.selectable-text')
 
             if message.find('\n'):
                 for line in message.split('\n'):
@@ -296,13 +300,15 @@ class Whatsapp:
 
         sleep(0.7)
 
-        img_box = self.driver.find_element_by_css_selector(f'#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > span > div > div > ul > li:nth-child({type}) > button > input[type=file]')
+        img_box = self.driver.find_element_by_css_selector(
+            f'#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > span > div > div > ul > li:nth-child({type}) > button > input[type=file]')
         
         img_box.send_keys(file_path)
 
         while True:
             try:
-                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._1sFTb > span > div > span > div > div > div._36Jt6.tEF8N > span > div > div > span').click()
+                self.driver.find_element_by_css_selector(
+                    '#app > div > div > div.Akuo4 > div._1Flk2._1sFTb > span > div > span > div > div > div._36Jt6.tEF8N > span > div > div > span').click()
                 break
             except:
                 pass
@@ -312,6 +318,7 @@ class Whatsapp:
             send2trash(file_name + '.zip')
 
 
+    # FIXME: close group info after finishing
     def change_group_description(self, description: str):
         """Changes the group description
 
@@ -321,19 +328,24 @@ class Whatsapp:
 
         try:
 
-            self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
+            self.driver.find_element_by_css_selector(
+                '#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
             sleep(1)
 
             try:
-                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+                self.driver.find_element_by_css_selector(
+                    '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
 
             except:
                 print('You are not a group admin!')
+                return
 
-            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div').click()
 
-            description_dom = self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text')
+            description_dom = self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text')
 
             description_dom.clear()
 
@@ -350,6 +362,7 @@ class Whatsapp:
             print('Something gone wrong')
 
 
+    # FIXME: close group info after finishing
     def change_group_name(self, name: str):
         """Changes the group name
 
@@ -359,21 +372,26 @@ class Whatsapp:
 
         try:
 
-            self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
+            self.driver.find_element_by_css_selector(
+                '#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
             sleep(1)
 
             try:
-                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+                self.driver.find_element_by_css_selector(
+                    '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
 
             except:
                 print('You are not a group admin!')
+                return
 
             self.driver.find_element_by_class_name('_1JAUF').click()
 
-            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._3Ihuv > div._3rhi1.e1K_H._1nQew > span._2zDdK > div').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._3Ihuv > div._3rhi1.e1K_H._1nQew > span._2zDdK > div').click()
 
-            group_name_dom = self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._1fB8E._3Ihuv > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text')
+            group_name_dom = self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._1fB8E._3Ihuv > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text')
 
             group_name_dom.clear()
             group_name_dom.send_keys(name + Keys.ENTER)
@@ -386,13 +404,17 @@ class Whatsapp:
     def leave_group(self):
         """Leaves the group you are"""
 
-        self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
+        self.driver.find_element_by_css_selector(
+            '#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
-        self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(6) > div').click()
+        self.driver.find_element_by_css_selector(
+            '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(6) > div').click()
 
-        self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
+        self.driver.find_element_by_css_selector(
+            '#app > div > span:nth-child(2) > div > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
 
 
+    # FIXME: close group info after finishing
     def add_to_group(self, contact_name: str):
         """Add a new participant to the group
 
@@ -402,32 +424,40 @@ class Whatsapp:
 
         try:
 
-            self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
+            self.driver.find_element_by_css_selector(
+                '#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
             try:
-                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+                self.driver.find_element_by_css_selector(
+                    '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
 
             except:
                 print('You are not a group admin!')
                 
-            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(2) > div.TbtXF').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(2) > div.TbtXF').click()
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(contact_name)
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(contact_name)
             
             sleep(0.5)
             
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(Keys.ENTER)
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(Keys.ENTER)
                 
             sleep(0.5)
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > span._3IGMG > div > div > div').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > span._3IGMG > div > div > div').click()
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
 
         except:
             print('Something gone wrong')
     
 
+    # FIXME: close group info after finishing
     def remove_from_group(self, participant_name: str):
         """Removes a participant from the group
 
@@ -437,34 +467,43 @@ class Whatsapp:
 
         try:
 
-            self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
+            self.driver.find_element_by_css_selector(
+                '#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
             try:
-                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+                self.driver.find_element_by_css_selector(
+                    '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
 
             except:
                 print('You are not a group admin!')
+                return
 
-            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div.-ZdaK > div > div > div._3TVPy').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div.-ZdaK > div > div > div._3TVPy').click()
 
             sleep(0.5)
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(participant_name)
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(participant_name)
 
             sleep(0.5)
             
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div._1C2Q3._36Jt6 > div:nth-child(1) > div > div > div > div > div').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div._1C2Q3._36Jt6 > div:nth-child(1) > div > div > div > div > div').click()
 
             sleep(0.5)
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(4) > div > ul > li:nth-child(2)').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(4) > div > ul > li:nth-child(2)').click()
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
         
         except:
             print('Something gone wrong')
 
 
+    # FIXME: close group info after finishing
     def make_group_admin(self, participant_name: str):
         """Makes someone a group admin
 
@@ -474,34 +513,42 @@ class Whatsapp:
 
         try:
 
-            self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
+            self.driver.find_element_by_css_selector(
+                '#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
             try:
-                self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+                self.driver.find_element_by_css_selector(
+                    '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
 
             except:
                 print('You are not a group admin!')
+                return
 
-            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div.-ZdaK > div > div > div._3TVPy').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div.-ZdaK > div > div > div._3TVPy').click()
 
             sleep(0.5)
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(participant_name)
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(participant_name)
 
             sleep(0.5)
             
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div._1C2Q3._36Jt6 > div:nth-child(1) > div > div > div > div > div').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div._1C2Q3._36Jt6 > div:nth-child(1) > div > div > div > div > div').click()
 
             sleep(0.5)
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(4) > div > ul > li:nth-child(1)').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(4) > div > ul > li:nth-child(1)').click()
 
-            self.driver.find_element_by_css_selector('#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
+            self.driver.find_element_by_css_selector(
+                '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
         
         except:
             print('Something gone wrong')
     
-    # TODO: get invite link
+    # TODO: get group invite link
 
     # TODO: invite by number
 
@@ -510,6 +557,7 @@ class Whatsapp:
     # TODO: Get group info (maybe turn it into a class)
 
     # TODO: Decent error message
+
 
 
 whatsapp = Whatsapp()
