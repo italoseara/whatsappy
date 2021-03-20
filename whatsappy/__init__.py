@@ -16,14 +16,17 @@ class Message:
 
     def __init__(self, author, content, time, date):
         self.author  = author
-        self.content = content
         self.time    = time
         self.date    = date
+        self.content = content
+    
+    def __str__(self):
+        return f'Author: {self.author}\nTime: {self.time}\nDate: {self.date}\nContent: {self.content}'
 
 class Whatsapp:
 
     def get_qrcode(self):
-        '''Opens a new chrome page with the QRCode'''
+        """Opens a new chrome page with the QRCode"""
 
         usr_path = f"C:\\Users\\{getlogin()}\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
         self.mydata = shelve.open('data/data')
@@ -47,7 +50,11 @@ class Whatsapp:
 
 
     def login(self, visible: bool=False):
-        '''Logs in whatsapp and shows the QRCode if necessary'''
+        """Logs in whatsapp and shows the QRCode if necessary
+
+        Args:
+            visible (bool, optional): Shows the process. Defaults to False.
+        """
 
         usr_path = f"C:\\Users\\{getlogin()}\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
         try:
@@ -69,12 +76,12 @@ class Whatsapp:
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
         options.add_argument("--log-level=OFF")
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         
         if not visible:
             options.add_argument("--headless")
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         self.driver.get('https://web.whatsapp.com')
 
         while True:
@@ -103,14 +110,18 @@ class Whatsapp:
 
 
     def exit(self):
-        '''Exit the whatsapp'''
+        """Exit the whatsapp"""
 
         self.driver.close()
         exit()
 
 
     def select_chat(self, chat_name: str):
-        '''Go to the selected chat'''
+        """Go to the selected chat
+
+        Args:
+            chat_name (str): Contact/Group name
+        """
 
         self.driver.find_element_by_css_selector(
             '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(chat_name)
@@ -119,7 +130,11 @@ class Whatsapp:
     
 
     def get_recent_chats(self):
-        '''Return a list of all recent chats'''
+        """Returns a list of all recent chats
+
+        Returns:
+            List: All the recent chats
+        """
         
         try:
             array = self.driver.execute_script('''
@@ -138,7 +153,11 @@ class Whatsapp:
 
     
     def get_pinned_chats(self):
-        '''Return a list of all pinned chats'''
+        """Returns a list of all pinned chats
+
+        Returns:
+            List: All the pinned chats
+        """
 
         try:
             array = self.driver.execute_script('''
@@ -157,7 +176,11 @@ class Whatsapp:
 
 
     def last_message(self):
-        '''Gets the last message from the chat'''
+        """Gets the last message from the chat
+
+        Returns:
+            Class: Last message
+        """
 
         global Message
 
@@ -182,7 +205,11 @@ class Whatsapp:
 
 
     def new_message(self):
-        '''Returns True for a new message'''
+        """Returns True for a new message
+
+        Returns:
+            Bool: New message
+        """
 
         global last
         
@@ -201,7 +228,11 @@ class Whatsapp:
 
 
     def send(self, message: str):
-        '''Send a message'''
+        """Sends a message
+
+        Args:
+            message (str): The message you want to send
+        """
 
         try:
             chat = self.driver.find_element_by_css_selector('#main > footer > div.vR1LG._3wXwX.copyable-area > div._2A8P4 > div > div._2_1wd.copyable-text.selectable-text')
@@ -217,25 +248,29 @@ class Whatsapp:
             print('Something gone wrong')
 
     
-    def reply(self, message_send: str):
-        '''Replies to the last message'''
+    def reply(self, message: str):
+        """Replies to the last message
+
+        Args:
+            message (str): The message you want to send
+        """
         
-        self.driver.execute_script("""
+        self.driver.execute_script('''
             var a = document.querySelectorAll('.message-in');
             var elem = a[a.length -1]
             var clickEvent = document.createEvent('MouseEvents');
             clickEvent.initEvent('dblclick', true, true);
             elem.dispatchEvent(clickEvent);
-        """)
-        self.send(message_send)
+        ''')
+        self.send(message)
 
-        pass
 
-        
     def send_file(self, file_path: str):
-        '''Send a file
-        
-        obs: the file path needs to be absolute'''
+        """Sends a file
+
+        Args:
+            file_path (str/absolute path): The file of the path you want to send
+        """
 
         regex = re.compile(r'(\w+\.(\w+))')
         file_name = file_path.split('\\')[-1]
@@ -257,7 +292,7 @@ class Whatsapp:
 
         self.driver.execute_script('''
             document.querySelector("#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > div").click()
-        ''') # Seleciona clip de anexo
+        ''')
 
         sleep(0.7)
 
@@ -278,7 +313,11 @@ class Whatsapp:
 
 
     def change_group_description(self, description: str):
-        '''Changes the group description'''
+        """Changes the group description
+
+        Args:
+            description (str): New group description
+        """
 
         try:
 
@@ -312,7 +351,11 @@ class Whatsapp:
 
 
     def change_group_name(self, name: str):
-        '''Changes the group name'''
+        """Changes the group name
+
+        Args:
+            name (str): New group name
+        """
 
         try:
 
@@ -341,7 +384,7 @@ class Whatsapp:
 
 
     def leave_group(self):
-        '''Leaves the group you are'''
+        """Leaves the group you are"""
 
         self.driver.find_element_by_css_selector('#main > header > div._2uaUb > div.z4t2k > div > span').click()
 
@@ -351,7 +394,11 @@ class Whatsapp:
 
 
     def add_to_group(self, contact_name: str):
-        '''Add a new participant to the group'''
+        """Add a new participant to the group
+
+        Args:
+            contact_name (str): The contact name of who you want to add
+        """
 
         try:
 
@@ -382,7 +429,11 @@ class Whatsapp:
     
 
     def remove_from_group(self, participant_name: str):
-        '''Removes a participant from the group'''
+        """Removes a participant from the group
+
+        Args:
+            participant_name (str): The contact name or number of who you want to remove
+        """
 
         try:
 
@@ -415,7 +466,11 @@ class Whatsapp:
 
 
     def make_group_admin(self, participant_name: str):
-        '''Makes someone a group admin'''
+        """Makes someone a group admin
+
+        Args:
+            participant_name (str): [The contact name or number of who you want to make admin
+        """
 
         try:
 
@@ -445,6 +500,16 @@ class Whatsapp:
         
         except:
             print('Something gone wrong')
+    
+    # TODO: get invite link
+
+    # TODO: invite by number
+
+    # TODO: private answer
+
+    # TODO: Get group info (maybe turn it into a class)
+
+    # TODO: Decent error message
 
 
 whatsapp = Whatsapp()

@@ -15,7 +15,7 @@ pip install whatsappy-py
 ```python
 from whatsappy import whatsapp
 
-whatsapp.login() # Login on whatsapp
+whatsapp.login() # Login whatsapp
 
 whatsapp.select_chat('Mom') # Goes to the selected chat
 whatsapp.send('Hello') # Send a message
