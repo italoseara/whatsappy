@@ -5,6 +5,8 @@ from selenium import webdriver
 from os import getlogin, mkdir
 from webdriver_manager.chrome import ChromeDriverManager
 
+os.environ['WDM_LOG_LEVEL'] = '0'
+
 def get_qrcode(self):
     """Opens a new chrome page with the QRCode"""
 

@@ -4,8 +4,6 @@ from .cmds.get import get_pinned_chats, get_recent_chats
 from .cmds.group import change_group_description, change_group_name, leave_group
 from .cmds.login import get_qrcode, login, exit
 
-os.environ['WDM_LOG_LEVEL'] = '0'
-
 class Whatsapp:
 
     login                       = login
