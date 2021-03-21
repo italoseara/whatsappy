@@ -105,4 +105,4 @@ def exit(self):
     """Exit the whatsapp"""
 
     self.driver.close()
-    exit()
+    quit()
