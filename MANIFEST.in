@@ -1,3 +1,4 @@
 include README.md
 global-include *.txt *.py
 exclude examples/*
+exclude whatsappy/cmds/*
