@@ -2,13 +2,13 @@ from .cmds.actions import add_to_group, remove_from_group, make_group_admin
 from .cmds.chat import select_chat, last_message, new_message, send, reply, send_file
 from .cmds.get import get_pinned_chats, get_recent_chats
 from .cmds.group import change_group_description, change_group_name, leave_group
-from .cmds.login import get_qrcode, login, exit
+from .cmds.login import get_qrcode, login, close
 
 class Whatsapp:
 
     login                       = login
     get_qrcode                  = get_qrcode
-    exit                        = exit
+    close                       = close
     add_to_group                = add_to_group
     remove_from_group           = remove_from_group
     make_group_admin            = make_group_admin

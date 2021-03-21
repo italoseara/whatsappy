@@ -8,4 +8,4 @@ while True:
     if whatsapp.new_message(): # <--
         whatsapp.send('Hello')
 
-whatsapp.exit()
+whatsapp.close()

@@ -101,7 +101,7 @@ def login(self, visible: bool=False):
             pass
 
 
-def exit(self):
+def close(self):
     """Exit the whatsapp"""
 
     self.driver.close()

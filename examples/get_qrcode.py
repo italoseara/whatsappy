@@ -5,4 +5,4 @@ whatsapp.login()
 
 whatsapp.select_chat('Family Group')
 whatsapp.send('Good Afternoon!')
-whatsapp.exit()
+whatsapp.close()

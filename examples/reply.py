@@ -9,4 +9,4 @@ while True:
         if whatsapp.last_message() == 'Good Morning!':
             whatsapp.reply('Good Morning!') # <--
 
-whatsapp.exit()
+whatsapp.close()
