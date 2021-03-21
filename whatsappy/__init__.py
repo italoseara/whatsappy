@@ -324,7 +324,6 @@ class Whatsapp:
             send2trash(file_name + '.zip')
 
 
-    # FIXME: close group info after finishing
     def change_group_description(self, description: str):
         """Changes the group description
 
@@ -366,9 +365,13 @@ class Whatsapp:
                 
         except:
             print('Something gone wrong')
+        
+        try:
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
+        except:
+            pass
 
 
-    # FIXME: close group info after finishing
     def change_group_name(self, name: str):
         """Changes the group name
 
@@ -402,9 +405,13 @@ class Whatsapp:
             group_name_dom.clear()
             group_name_dom.send_keys(name + Keys.ENTER)
 
-
         except:
             print('Something gone wrong')
+        
+        try:
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
+        except:
+            pass
 
 
     def leave_group(self):
@@ -418,9 +425,8 @@ class Whatsapp:
 
         self.driver.find_element_by_css_selector(
             '#app > div > span:nth-child(2) > div > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
+    
 
-
-    # FIXME: close group info after finishing
     def add_to_group(self, contact_name: str):
         """Add a new participant to the group
 
@@ -461,9 +467,13 @@ class Whatsapp:
 
         except:
             print('Something gone wrong')
+        
+        try:
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
+        except:
+            pass
     
 
-    # FIXME: close group info after finishing
     def remove_from_group(self, participant_name: str):
         """Removes a participant from the group
 
@@ -507,9 +517,13 @@ class Whatsapp:
         
         except:
             print('Something gone wrong')
+        
+        try:
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
+        except:
+            pass
 
 
-    # FIXME: close group info after finishing
     def make_group_admin(self, participant_name: str):
         """Makes someone a group admin
 
@@ -553,6 +567,11 @@ class Whatsapp:
         
         except:
             print('Something gone wrong')
+        
+        try:
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
+        except:
+            pass
 
 
     # TODO: get group invite link
