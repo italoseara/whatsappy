@@ -1,4 +1,4 @@
-# whatsappy 0.1.7
+# whatsappy
 
 Whatsappy is a Python library for creating whatsapp bots.
 
@@ -23,6 +23,8 @@ whatsapp.send('Hello') # Send a message
 whatsapp.exit() # Exit
 ```
 
+You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/main/examples)
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
@@ -31,4 +33,4 @@ Please make sure to update tests as appropriate.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/italoseara/whatsappy/blob/main/LICENSE)
