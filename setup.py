@@ -1,14 +1,13 @@
 from setuptools import setup
-import setuptools
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setup(
     name='whatsappy-py',
-    version='0.1.8',
+    version='1.8.8',
     description='Whatsappy is a Python library for creating whatsapp bots.',
-    packages=setuptools.find_packages(),
+    packages=['whatsappy'],
     classifiers=[
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -30,4 +29,5 @@ setup(
     url='https://github.com/italoseara/whatsappy',
     author='Italo Seara',
     author_email='italos.seara@gmail.com',
+    license='MIT',
 )   

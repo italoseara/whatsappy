@@ -4,7 +4,8 @@ from os import path
 from time import sleep
 from send2trash import send2trash
 from selenium.webdriver.common.keys import Keys
-
+from .tool import error_log
+import traceback
 
 last = ''
 
@@ -59,7 +60,7 @@ def last_message(self):
 
         return Message(author=author, content=content, time=time, date=date)
     except:
-        print('Something gone wrong')
+        error_log(traceback.format_exc())
 
 
 def new_message(self):
@@ -104,7 +105,7 @@ def send(self, message: str):
         else:
             chat.send_keys(message)
     except:
-        print('Something gone wrong')
+        error_log(traceback.format_exc())
 
     
 def reply(self, message: str):

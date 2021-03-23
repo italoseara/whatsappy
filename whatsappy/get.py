@@ -1,3 +1,6 @@
+from .tool import error_log
+import traceback
+
 def get_recent_chats(self):
     """Returns a list of all recent chats
 
@@ -18,7 +21,7 @@ def get_recent_chats(self):
 
         return array
     except:
-        print('Something gone wrong')
+        error_log(traceback.format_exc())
 
 
 def get_pinned_chats(self):
@@ -41,4 +44,4 @@ def get_pinned_chats(self):
 
         return array
     except:
-        print('Something gone wrong')
+        error_log(traceback.format_exc())

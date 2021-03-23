@@ -1,5 +1,7 @@
 from time import sleep
 from selenium.webdriver.common.keys import Keys
+from .tool import error_log
+import traceback
 
 def add_to_group(self, contact_name: str):
     """Add a new participant to the group
@@ -40,7 +42,7 @@ def add_to_group(self, contact_name: str):
             '#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK').click()
 
     except:
-        print('Something gone wrong')
+        error_log(traceback.format_exc())
     
     try:
         self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
@@ -90,7 +92,7 @@ def remove_from_group(self, participant_name: str):
             '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
     
     except:
-        print('Something gone wrong')
+        error_log(traceback.format_exc())
     
     try:
         self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
@@ -140,7 +142,7 @@ def make_group_admin(self, participant_name: str):
             '#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button').click()
     
     except:
-        print('Something gone wrong')
+        error_log(traceback.format_exc())
     
     try:
         self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
