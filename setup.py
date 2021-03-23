@@ -30,4 +30,3 @@ setup(
     author='Italo Seara',
     author_email='italos.seara@gmail.com',
     license='MIT',
-)   
