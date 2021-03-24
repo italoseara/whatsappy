@@ -21,7 +21,7 @@ class Message:
         return f'Author: {self.author}\nTime: {self.time}\nDate: {self.date}\nContent: {self.content}'
 
 
-def select_chat(self, chat_name: str):
+def select_chat_by_name(self, chat_name: str):
     """Go to the selected chat
 
     Args:
@@ -29,9 +29,12 @@ def select_chat(self, chat_name: str):
     """
 
     self.driver.find_element_by_css_selector(
-        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(chat_name)
+        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text'
+    ).send_keys(chat_name)
+
     self.driver.find_element_by_css_selector(
-        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text').send_keys(Keys.ENTER)
+        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text'
+    ).send_keys(Keys.ENTER)
 
 
 def last_message(self):
@@ -45,12 +48,12 @@ def last_message(self):
 
     try:
         info = self.driver.execute_script('''
-            var a = document.querySelectorAll(".GDTQm.message-in");
+            var a = document.querySelectorAll(".message-in");
             return a[a.length - 1].querySelector('.copyable-text').dataset.prePlainText;
         ''')
             
         content = self.driver.execute_script('''
-            var a = document.querySelectorAll(".GDTQm.message-in");
+            var a = document.querySelectorAll(".message-in");
             return a[a.length - 1].querySelector('.copyable-text').innerText;
         ''')
 
@@ -125,11 +128,91 @@ def reply(self, message: str):
     self.send(message)
 
 
+def reply_privately(self, message: str):
+    """Sends a message message privatly to the last message in chat
+
+    Args:
+        message (str): The message you want to send
+    """
+
+    try:
+        group_name = self.driver.find_element_by_css_selector(
+            '#main > header > div._2uaUb > div.z4t2k > div > span'
+        ).text
+
+        self.driver.execute_script('''
+            var event = new MouseEvent('mouseover', {
+                'view': window,
+                'bubbles': true,
+                'cancelable': true
+            });
+
+            var a = document.querySelectorAll('.message-in > div');
+            var element = a[a.length -1];
+            
+            element.dispatchEvent(event);
+        ''')
+
+        self.driver.find_element_by_css_selector(
+            '.message-in > div > div > span > div > div'
+        ).click()
+        
+        self.driver.find_element_by_css_selector(
+            '#app > div > span:nth-child(4) > div > ul > li:nth-child(2)'
+        ).click()
+
+        self.send(message)
+        self.select_chat(group_name)
+
+    except:
+        error_log(traceback.format_exc())
+
+
+def reply_file_privately(self, file_path: str):
+    """Sends a file privatly to the last message in chat
+
+    Args:
+        file_path (str, absolute path): The file of the path you want to send
+    """
+
+    try:
+        group_name = self.driver.find_element_by_css_selector(
+            '#main > header > div._2uaUb > div.z4t2k > div > span'
+        ).text
+
+        self.driver.execute_script('''
+            var event = new MouseEvent('mouseover', {
+                'view': window,
+                'bubbles': true,
+                'cancelable': true
+            });
+
+            var a = document.querySelectorAll('.message-in > div');
+            var element = a[a.length -1];
+            
+            element.dispatchEvent(event);
+        ''')
+
+        self.driver.find_element_by_css_selector(
+            '.message-in > div > div > span > div > div'
+        ).click()
+        
+        self.driver.find_element_by_css_selector(
+            '#app > div > span:nth-child(4) > div > ul > li:nth-child(2)'
+        ).click()
+
+        self.send_file(file_path)
+        self.select_chat(group_name)
+
+    except:
+        error_log(traceback.format_exc())
+
+
 def send_file(self, file_path: str):
     """Sends a file
 
     Args:
-        file_path (str/absolute path): The file of the path you want to send
+        file_path (str, absolute path): The file of the path you want to send
     """
 
     regex = re.compile(r'(\w+\.(\w+))')
@@ -157,14 +240,17 @@ def send_file(self, file_path: str):
     sleep(0.7)
 
     img_box = self.driver.find_element_by_css_selector(
-        f'#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > span > div > div > ul > li:nth-child({type}) > button > input[type=file]')
+        f'#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > span > div > div > ul > li:nth-child({type}) > button > input[type=file]'
+    )
         
     img_box.send_keys(file_path)
 
     while True:
         try:
             self.driver.find_element_by_css_selector(
-                '#app > div > div > div.Akuo4 > div._1Flk2._1sFTb > span > div > span > div > div > div._36Jt6.tEF8N > span > div > div > span').click()
+                '#app > div > div > div.Akuo4 > div._1Flk2._1sFTb > span > div > span > div > div > div._36Jt6.tEF8N > span > div > div > span'
+            ).click()
+
             break
         except:
             pass
