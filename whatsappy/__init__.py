@@ -8,11 +8,10 @@ from .actions import (
 )
 from .group import change_group_description, change_group_name, leave_group
 from .get import get_pinned_chats, get_recent_chats, get_group_invite_link
-from .login import get_qrcode, login, close
+from .login import login, close
 
 class Whatsapp:
 
-    get_qrcode                  = get_qrcode
     login                       = login
     close                       = close
 

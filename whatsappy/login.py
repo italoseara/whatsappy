@@ -1,5 +1,6 @@
 import os
 import re
+import cv2
 import shelve
 from selenium import webdriver
 from os import getlogin, mkdir
@@ -7,36 +8,34 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 os.environ['WDM_LOG_LEVEL'] = '0'
 
-def get_qrcode(self):
-    """Opens a new chrome page with the QRCode"""
-
-    usr_path = f"C:\\Users\\{getlogin()}\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
-    self.mydata = shelve.open('data/data')
-
-    options = webdriver.ChromeOptions()
-    options.add_argument("--log-level=OFF")
-    options.add_argument(f'--user-data-dir={usr_path}')
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
-    driver.get('https://web.whatsapp.com')
-
-    self.mydata['user_agent'] = driver.execute_script("return navigator.userAgent;")
-
+def get_qrcode(driver):
+    
     while True:
+
+        qr_code = driver.find_element_by_css_selector('.landing-main')
+        qr_code.screenshot('qrcode.png')
+
+        img = cv2.imread('qrcode.png', 1)
+
+        cv2.imshow('Scan the QRCode to login', img)
+        cv2.waitKey(5000)
+        cv2.destroyAllWindows()
+
         try:
             driver.find_element_by_css_selector(
                 '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
+            
+            print('Logged in')
             break
         except: pass
-    driver.close()
 
 
-def login(self, visible: bool=False):
+def login(self, visible: bool=False, timeout: int=60):
     """Logs in whatsapp and shows the QRCode if necessary
 
     Args:
         visible (bool, optional): Shows the process. Defaults to False.
+        timeout (int, optional): Limit time to login in seconds. Defalts to 60
     """
 
     usr_path = f"C:\\Users\\{getlogin()}\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
@@ -48,13 +47,14 @@ def login(self, visible: bool=False):
 
     try:
         print(f'Logging as: {self.mydata["user_agent"]}')
+        get_user_agent = False
     except:
-        self.get_qrcode()
-        
+        get_user_agent = True
     
     options = webdriver.ChromeOptions()
-    options.add_argument(f'--user-data-dir={usr_path}')
-    options.add_argument(f"--user-agent={self.mydata['user_agent']}")
+    if not get_user_agent:
+        options.add_argument(f'--user-data-dir={usr_path}')
+        options.add_argument(f"--user-agent={self.mydata['user_agent']}")
     options.add_argument("--start-maximized")
     options.add_argument("--hide-scrollbars")
     options.add_argument("--disable-gpu")
@@ -67,42 +67,34 @@ def login(self, visible: bool=False):
     self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     self.driver.get('https://web.whatsapp.com')
 
-    while True:
+    if get_user_agent:
+        self.mydata["user_agent"] = self.driver.execute_script('return navigator.userAgent')
+        self.mydata.close()
+    
+    logged = False
+    for x in range(timeout):
         try:
-            if not visible:
-                try: 
-                    self.driver.find_element_by_css_selector(
-                        '#app > div > div > div.landing-window > div.landing-main > div > div.O1rXL > div > canvas')
-                    self.driver.close()
-                    self.get_qrcode()
-                    self.login(visible=visible)
-                    break
+            self.driver.implicity_wait(1)
 
-                except:
-                    try:
-                        self.driver.find_element_by_xpath(
-                            "//a[@title='Atualize o Google Chrome']")
-                        self.driver.close()
-                        self.get_qrcode()
-                        self.login(visible=visible)
-                        break
-                    
-                    except:
-                        self.driver.find_element_by_css_selector(
-                            '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
-                        print('Logged in')
-                        break
-            else:
-                self.driver.find_element_by_css_selector(
-                    '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
-                print('Logged in')
-                break
+            self.driver.find_element_by_css_selector(
+                '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
+
         except:
-            pass
+            if not visible:
+                try:
+                    get_qrcode(self.driver)
+                    logged = True
+                    break
+                except:
+                    pass
+    
+    if logged:
+        print('Logged')
+    else:
+        raise Exception('Error trying to login, try again')
 
 
 def close(self):
     """Exit the whatsapp"""
 
     self.driver.close()
-    quit()
