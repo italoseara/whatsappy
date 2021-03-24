@@ -21,22 +21,6 @@ class Message:
         return f'Author: {self.author}\nTime: {self.time}\nDate: {self.date}\nContent: {self.content}'
 
 
-def select_chat_by_name(self, chat_name: str):
-    """Go to the selected chat
-
-    Args:
-        chat_name (str): Contact/Group name
-    """
-
-    self.driver.find_element_by_css_selector(
-        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text'
-    ).send_keys(chat_name)
-
-    self.driver.find_element_by_css_selector(
-        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text'
-    ).send_keys(Keys.ENTER)
-
-
 def last_message(self):
     """Gets the last message from the chat
     

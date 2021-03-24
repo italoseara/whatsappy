@@ -173,3 +173,30 @@ def make_group_admin(self, participant_name: str):
         ).click()
     except:
         pass
+
+
+def select_chat_by_name(self, chat_name: str):
+    """Go to the selected chat by its number
+
+    Args:
+        chat_name (str): Contact/Group name
+    """
+
+    self.driver.find_element_by_css_selector(
+        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text'
+    ).send_keys(chat_name)
+
+    self.driver.find_element_by_css_selector(
+        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text'
+    ).send_keys(Keys.ENTER)
+
+
+def select_chat_by_number(self, chat_number: int):
+    """Go to the selected chat by its number
+
+    Args:
+        chat_number (int): Contact number. Example: 1NPAXXXXXXX
+    """
+
+    self.driver.get(f'https://web.whatsapp.com/send?phone={chat_number}')
+    sleep(5)

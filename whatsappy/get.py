@@ -45,3 +45,47 @@ def get_pinned_chats(self):
         return array
     except:
         error_log(traceback.format_exc())
+
+
+def get_group_invite_link(self):
+    """Returns group invite link
+
+    Returns:
+        str: Group invite link
+    """
+
+    try:
+
+        self.driver.find_element_by_css_selector(
+            '#main > header > div._2uaUb > div.z4t2k > div > span').click()
+
+        sleep(1)
+
+        try:
+            self.driver.find_element_by_css_selector(
+                '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div')
+
+        except:
+            print('You are not a group admin!')
+            return
+
+        self.driver.find_element_by_css_selector(
+            '#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(3)').click()
+        
+        sleep(1)
+
+        group_link = self.driver.find_element_by_css_selector('#group-invite-link-anchor').text
+
+        self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
+        
+        sleep(1)
+
+        try:
+            self.driver.find_element_by_css_selector('#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button').click()
+        except:
+            pass
+
+        return group_link
+    
+    except:
+        error_log(traceback.format_exc())
