@@ -4,7 +4,7 @@ from .chat import (
 )
 from .actions import (
     add_to_group, remove_from_group, make_group_admin, 
-    select_chat_by_number, select_chat_by_name
+    select_chat_by_number, select_chat_by_name, create_group
 )
 from .group import change_group_description, change_group_name, leave_group
 from .get import get_pinned_chats, get_recent_chats, get_group_invite_link
@@ -36,10 +36,7 @@ class Whatsapp:
     change_group_description    = change_group_description
     change_group_name           = change_group_name
     leave_group                 = leave_group
-
-    # TODO: Get group info (maybe turn it into a class)
-
-    # TODO: Create group
+    create_group                = create_group
 
     # TODO: Change profile picture
 
