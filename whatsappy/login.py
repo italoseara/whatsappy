@@ -2,6 +2,7 @@ import os
 import re
 import cv2
 import shelve
+from time import sleep
 from selenium import webdriver
 from os import getlogin, mkdir
 from webdriver_manager.chrome import ChromeDriverManager
@@ -84,6 +85,10 @@ def login(self, visible: bool=False, timeout: int=60):
                 except:
                     sleep(1)
     
+    self.driver.implicitly_wait(60)
+    self.driver.find_element_by_css_selector(
+        '#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text')
+
     if logged or visible:
         print('Logged')
     else:

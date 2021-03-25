@@ -1,5 +1,5 @@
 from .chat import (
-    last_message, new_message, send, reply, 
+    last_message, new_message, send, reply, last,
     send_file, reply_privately, reply_file_privately
 )
 from .actions import (
@@ -9,6 +9,8 @@ from .actions import (
 from .group import change_group_description, change_group_name, leave_group
 from .get import get_pinned_chats, get_recent_chats, get_group_invite_link
 from .login import login, close
+
+last = last
 
 class Whatsapp:
 
