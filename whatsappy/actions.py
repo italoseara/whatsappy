@@ -51,15 +51,17 @@ def add_to_group(self, contact_name: str):
 
         sleep(2)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
-        ).click()
+        try:
+            self.driver.find_element_by_css_selector(
+                "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div:nth-child(1) > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
+            ).click()
+            sleep(0.5)
 
-        sleep(0.5)
-
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div > span > div"
-        ).click()
+            self.driver.find_element_by_css_selector(
+                "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div.overlay._1814Z._3wXwX.copyable-area > div > div > div > div > div > div > span > div"
+            ).click()
+        except:
+            pass
 
     except:
         error_log(traceback.format_exc())
@@ -226,15 +228,13 @@ def create_group(self, group_name: str, contacts: list):
         contacts (list): List of contacts to add into the group
     """
 
-    self.driver.find_element_by_css_selector(
-        "#side > header > div._2XP8p > div > span > div:nth-child(3) > div"
-    ).click()
-    sleep(0.5)
+    self.driver.execute_script(
+        "document.querySelector('#side > header > div._2XP8p > div > span > div:nth-child(3) > div').click()"
+    )
 
-    self.driver.find_element_by_css_selector(
-        "#side > header > div._2XP8p > div > span > div._2n-zq._3zHcq > span > div > ul > li:nth-child(1)"
-    ).click()
-    sleep(0.5)
+    self.driver.execute_script(
+        "document.querySelector('#side > header > div._2XP8p > div > span > div._2n-zq._3zHcq > span > div > ul > li:nth-child(1)').click()"
+    )
 
     for contact in contacts:
         box = self.driver.find_element_by_css_selector(
@@ -243,35 +243,29 @@ def create_group(self, group_name: str, contacts: list):
 
         box.clear()
         box.send_keys(contact)
-        sleep(0.5)
         box.send_keys(Keys.ENTER)
-        sleep(0.5)
 
-    self.driver.find_element_by_css_selector(
-        "#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > span > div"
-    ).click()
-    sleep(0.5)
+    self.driver.execute_script(
+        "document.querySelector('#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > span > div').click()"
+    )
 
     self.driver.find_element_by_css_selector(
         "#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > div:nth-child(2) > div > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text"
     ).send_keys(group_name)
-    sleep(0.5)
 
-    self.driver.find_element_by_css_selector(
-        "#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > span > div > div"
-    ).click()
-
+    self.driver.execute_script(
+        "document.querySelector('#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > span > div > div').click()"
+    )
     sleep(2)
 
     try:
         self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
+            "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div:nth-child(1) > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
         ).click()
-
         sleep(0.5)
 
         self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div > span > div"
+            "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div.overlay._1814Z._3wXwX.copyable-area > div > div > div > div > div > div > span > div"
         ).click()
     except:
         pass
