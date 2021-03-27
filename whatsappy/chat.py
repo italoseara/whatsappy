@@ -211,6 +211,9 @@ def send_file(self, file_path: str):
         file_path (str, absolute path): The file of the path you want to send
     """
 
+    if not path.isabs(file_path):
+        raise Exception('The file path is not absolute')
+
     regex = re.compile(r"(\w+\.(\w+))")
     file_name = file_path.split("\\")[-1]
     isZip = False
