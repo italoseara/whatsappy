@@ -22,7 +22,7 @@ whatsapp.login() # Login whatsapp
 whatsapp.select_chat('Mom') # Goes to the selected chat
 whatsapp.send('Hello') # Send a message
 
-whatsapp.exit() # Exit
+whatsapp.close() # Exit
 ```
 
 You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/main/examples)
