@@ -10,11 +10,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 os.environ["WDM_LOG_LEVEL"] = "0"
 
 
-def get_qrcode(driver):
+def get_qrcode(driver, timeout):
 
-    while True:
-
+    for _ in range(timeout//5):
         qr_code = driver.find_element_by_css_selector(".landing-main")
+
         qr_code.screenshot("qrcode.png")
 
         img = cv2.imread("qrcode.png", 1)
@@ -78,31 +78,41 @@ def login(self, visible: bool = False, timeout: int = 60):
         self.mydata.close()
 
     logged = False
-    for x in range(timeout):
+    for _ in range(timeout):
         try:
             self.driver.find_element_by_css_selector(
                 "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
             )
+            break
 
         except:
             if not visible:
                 try:
-                    get_qrcode(self.driver)
-                    logged = True
+                    self.driver.find_element_by_css_selector(".landing-main")
+
+                    get_qrcode(self.driver, timeout)
                     break
+
                 except:
                     sleep(1)
+            
+            else:
+                sleep(1)
+
 
     self.driver.implicitly_wait(60)
     self.driver.find_element_by_css_selector(
         "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
     )
 
+    logged = True
+
     if logged or visible:
         print("Logged")
     else:
+        self.close()
         raise Exception("Error trying to login, try again")
-    
+
     sleep(2)
 
 

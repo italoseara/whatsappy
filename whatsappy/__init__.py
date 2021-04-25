@@ -27,7 +27,6 @@ from .login import login, close
 
 last = last
 
-
 class Whatsapp:
 
     login                       = login
@@ -56,10 +55,6 @@ class Whatsapp:
     change_group_pfp            = change_group_pfp
     leave_group                 = leave_group
     create_group                = create_group
-
-    # TODO: Change profile picture
-
-    # TODO: Change group profile picture url
 
 
 whatsapp = Whatsapp()
