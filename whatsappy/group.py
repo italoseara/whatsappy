@@ -14,27 +14,21 @@ def change_group_description(self, description: str):
 
     try:
 
-        self.driver.find_element_by_css_selector(
-            "#main > header > div._2uaUb > div.z4t2k > div > span"
-        ).click()
+        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
         sleep(1)
 
         try:
-            self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
+            self.driver.find_element_by_css_selector("span._2zDdK > div")
 
         except:
             print("You are not a group admin!")
             return
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-        ).click()
+        self.driver.find_element_by_css_selector("span._2zDdK > div").click()
 
         description_dom = self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text"
+            "div._2_1wd.copyable-text.selectable-text"
         )
 
         description_dom.clear()
@@ -52,9 +46,7 @@ def change_group_description(self, description: str):
         error_log(traceback.format_exc())
 
     try:
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button"
-        ).click()
+        self.driver.find_element_by_css_selector("div._215wZ > button").click()
     except:
         pass
 
@@ -68,16 +60,12 @@ def change_group_name(self, name: str):
 
     try:
 
-        self.driver.find_element_by_css_selector(
-            "#main > header > div._2uaUb > div.z4t2k > div > span"
-        ).click()
+        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
         sleep(1)
 
         try:
-            self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
+            self.driver.find_element_by_css_selector("span._2zDdK > div")
 
         except:
             print("You are not a group admin!")
@@ -85,12 +73,10 @@ def change_group_name(self, name: str):
 
         self.driver.find_element_by_class_name("_1JAUF").click()
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._3Ihuv > div._3rhi1.e1K_H._1nQew > span._2zDdK > div"
-        ).click()
+        self.driver.find_element_by_css_selector("span._2zDdK > div").click()
 
         group_name_dom = self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._1fB8E._3Ihuv > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text"
+            "div._2_1wd.copyable-text.selectable-text"
         )
 
         group_name_dom.clear()
@@ -100,9 +86,7 @@ def change_group_name(self, name: str):
         error_log(traceback.format_exc())
 
     try:
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button"
-        ).click()
+        self.driver.find_element_by_css_selector("div._215wZ > button").click()
     except:
         pass
 
@@ -114,38 +98,32 @@ def change_group_pfp(self, file_path: str):
         if not path.isabs(file_path):
             raise Exception("The file path is not absolute")
 
-        self.driver.find_element_by_css_selector(
-            "#main > header > div._2uaUb > div.z4t2k > div > span"
-        ).click()
+        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
         sleep(1)
 
         try:
-            self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
+            self.driver.find_element_by_css_selector("span._2zDdK > div")
 
         except:
             print("You are not a group admin!")
             return
 
         self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div.bnO5E > div > input[type=file]"
+            "div._3ZEdX._3hiFt.bRenh > div.bnO5E > div > input[type=file]"
         ).send_keys(file_path)
 
         sleep(1)
 
         self.driver.execute_script(
-            'document.querySelector("#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > div > div > div > div > div > span > div.OMoBQ._3WNg8._3wXwX.copyable-area > div > div._1y7hs > span > div > div").click()'
+            'document.querySelector("div.OMoBQ._3WNg8._3wXwX.copyable-area > div > div._1y7hs > span > div > div").click()'
         )
 
     except:
         error_log(traceback.format_exc())
 
     try:
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button"
-        ).click()
+        self.driver.find_element_by_css_selector("div._215wZ > button").click()
 
     except:
         pass
@@ -154,14 +132,10 @@ def change_group_pfp(self, file_path: str):
 def leave_group(self):
     """Leaves the group you are"""
 
-    self.driver.find_element_by_css_selector(
-        "#main > header > div._2uaUb > div.z4t2k > div > span"
-    ).click()
+    self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
     self.driver.find_element_by_css_selector(
-        "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(6) > div"
+        "div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(6) > div"
     ).click()
 
-    self.driver.find_element_by_css_selector(
-        "#app > div > span:nth-child(2) > div > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
-    ).click()
+    self.driver.find_element_by_css_selector("div._1dwBj._3xWLK").click()

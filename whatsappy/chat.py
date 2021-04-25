@@ -87,7 +87,7 @@ def send(self, message: str):
 
     try:
         chat = self.driver.find_element_by_css_selector(
-            "#main > footer > div.vR1LG._3wXwX.copyable-area > div._2A8P4 > div > div._2_1wd.copyable-text.selectable-text"
+            "div._2_1wd.copyable-text.selectable-text"
         )
 
         if message.find("\n"):
@@ -171,7 +171,7 @@ def reply_file_privately(self, file_path: str):
 
     try:
         group_name = self.driver.find_element_by_css_selector(
-            "#main > header > div._2uaUb > div.z4t2k > div > span"
+            "div.z4t2k > div > span"
         ).text
 
         self.driver.execute_script(
@@ -212,7 +212,7 @@ def send_file(self, file_path: str):
     """
 
     if not path.isabs(file_path):
-        raise Exception('The file path is not absolute')
+        raise Exception("The file path is not absolute")
 
     regex = re.compile(r"(\w+\.(\w+))")
     file_name = file_path.split("\\")[-1]
@@ -234,14 +234,14 @@ def send_file(self, file_path: str):
 
     self.driver.execute_script(
         """
-        document.querySelector("#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > div").click()
+        document.querySelector("div._2C9f1 > div > div").click()
     """
     )
 
     sleep(0.7)
 
     img_box = self.driver.find_element_by_css_selector(
-        f"#main > footer > div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > span > div > div > ul > li:nth-child({type}) > button > input[type=file]"
+        f"div._2C9f1 > div > span > div > div > ul > li:nth-child({type}) > button > input[type=file]"
     )
 
     img_box.send_keys(file_path)
@@ -249,7 +249,7 @@ def send_file(self, file_path: str):
     while True:
         try:
             self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._1sFTb > span > div > span > div > div > div._36Jt6.tEF8N > span > div > div > span"
+                "div._36Jt6.tEF8N > span > div > div > span"
             ).click()
 
             break

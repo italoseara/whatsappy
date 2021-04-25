@@ -1,3 +1,5 @@
+# pylint: disable=no-member
+
 import os
 import re
 import cv2
@@ -12,7 +14,7 @@ os.environ["WDM_LOG_LEVEL"] = "0"
 
 def get_qrcode(driver, timeout):
 
-    for _ in range(timeout//5):
+    for _ in range(timeout // 5):
         qr_code = driver.find_element_by_css_selector(".landing-main")
 
         qr_code.screenshot("qrcode.png")
@@ -25,7 +27,7 @@ def get_qrcode(driver, timeout):
 
         try:
             driver.find_element_by_css_selector(
-                "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+                "div._2_1wd.copyable-text.selectable-text"
             )
             break
         except:
@@ -81,7 +83,7 @@ def login(self, visible: bool = False, timeout: int = 60):
     for _ in range(timeout):
         try:
             self.driver.find_element_by_css_selector(
-                "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+                "div._2_1wd.copyable-text.selectable-text"
             )
             break
 
@@ -95,15 +97,12 @@ def login(self, visible: bool = False, timeout: int = 60):
 
                 except:
                     sleep(1)
-            
+
             else:
                 sleep(1)
 
-
     self.driver.implicitly_wait(60)
-    self.driver.find_element_by_css_selector(
-        "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
-    )
+    self.driver.find_element_by_css_selector("div._2_1wd.copyable-text.selectable-text")
 
     logged = True
 
