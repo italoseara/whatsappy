@@ -87,7 +87,7 @@ def send(self, message: str):
 
     try:
         chat = self.driver.find_element_by_css_selector(
-            "div._2_1wd.copyable-text.selectable-text"
+            "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
         )
 
         if message.find("\n"):
