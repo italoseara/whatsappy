@@ -2,6 +2,7 @@ from time import sleep
 from selenium.webdriver.common.keys import Keys
 from os import path
 from .tool import error_log
+from .error import BadPathError
 import traceback
 
 
@@ -96,7 +97,7 @@ def change_group_pfp(self, file_path: str):
     try:
 
         if not path.isabs(file_path):
-            raise Exception("The file path is not absolute")
+            raise BadPathError("The file path is not absolute")
 
         self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
