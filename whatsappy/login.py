@@ -8,6 +8,7 @@ from time import sleep
 from selenium import webdriver
 from os import getlogin, mkdir
 from webdriver_manager.chrome import ChromeDriverManager
+from .error import LoginError
 
 os.environ["WDM_LOG_LEVEL"] = "0"
 
@@ -110,7 +111,7 @@ def login(self, visible: bool = False, timeout: int = 60):
         print("Logged")
     else:
         self.close()
-        raise Exception("Error trying to login, try again")
+        raise LoginError("Failed to log in to WhatsApp")
 
     sleep(2)
 
