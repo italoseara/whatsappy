@@ -5,6 +5,7 @@ from .tool import error_log
 from .error import BadPathError
 import traceback
 
+
 def change_group_description(self, description: str):
     """Changes the group description
 

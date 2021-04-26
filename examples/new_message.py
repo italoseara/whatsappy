@@ -2,10 +2,10 @@ from whatsappy import whatsapp
 
 whatsapp.login()
 
-whatsapp.select_chat('Family Group')
+whatsapp.select_chat("Family Group")
 
 while True:
-    if whatsapp.new_message(): # <--
-        whatsapp.send('Hello')
+    if whatsapp.new_message():  # <--
+        whatsapp.send("Hello")
 
 whatsapp.close()
