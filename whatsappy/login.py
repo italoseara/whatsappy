@@ -25,7 +25,7 @@ def get_qrcode(driver, timeout):
 
         try:
             driver.find_element_by_css_selector(
-                "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+                "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
             )
             break
         except:
@@ -81,7 +81,7 @@ def login(self, visible: bool = False, timeout: int = 60):
     for _ in range(timeout):
         try:
             self.driver.find_element_by_css_selector(
-                "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+                "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
             )
             break
 
@@ -102,7 +102,7 @@ def login(self, visible: bool = False, timeout: int = 60):
 
     self.driver.implicitly_wait(60)
     self.driver.find_element_by_css_selector(
-        "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+        "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
     )
 
     logged = True

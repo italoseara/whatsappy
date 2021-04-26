@@ -13,20 +13,18 @@ def add_to_group(self, contact_name: str):
 
     try:
 
-        self.driver.find_element_by_css_selector(
-            "#main > header > div._2uaUb > div.z4t2k > div > span"
-        ).click()
+        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
         try:
             self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
+                "div._3NATg > div > div > span._2zDdK > div"
             )
 
         except:
             print("You are not a group admin!")
 
         self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(2) > div.TbtXF"
+            "div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(2) > div.TbtXF"
         ).click()
 
         self.driver.find_element_by_css_selector(
@@ -68,7 +66,7 @@ def add_to_group(self, contact_name: str):
 
     try:
         self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button"
+            "div._215wZ > button"
         ).click()
     except:
         pass
@@ -83,9 +81,7 @@ def remove_from_group(self, participant_name: str):
 
     try:
 
-        self.driver.find_element_by_css_selector(
-            "#main > header > div._2uaUb > div.z4t2k > div > span"
-        ).click()
+        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
         try:
             self.driver.find_element_by_css_selector(
@@ -127,7 +123,7 @@ def remove_from_group(self, participant_name: str):
 
     try:
         self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button"
+            "div._215wZ > button"
         ).click()
     except:
         pass
@@ -142,9 +138,7 @@ def make_group_admin(self, participant_name: str):
 
     try:
 
-        self.driver.find_element_by_css_selector(
-            "#main > header > div._2uaUb > div.z4t2k > div > span"
-        ).click()
+        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
 
         try:
             self.driver.find_element_by_css_selector(
@@ -186,7 +180,7 @@ def make_group_admin(self, participant_name: str):
 
     try:
         self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > header > div > div._215wZ > button"
+            "div._215wZ > button"
         ).click()
     except:
         pass
@@ -200,11 +194,11 @@ def select_chat_by_name(self, chat_name: str):
     """
 
     self.driver.find_element_by_css_selector(
-        "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+        "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
     ).send_keys(chat_name)
 
     self.driver.find_element_by_css_selector(
-        "#side > div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+        "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
     ).send_keys(Keys.ENTER)
 
 
