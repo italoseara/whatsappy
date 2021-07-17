@@ -4,7 +4,7 @@ from os import path
 from time import sleep
 from send2trash import send2trash
 from selenium.webdriver.common.keys import Keys
-from .tool import error_log
+from .tool import *
 import traceback
 
 last = ""
@@ -86,8 +86,8 @@ def send(self, message: str):
     """
 
     try:
-        chat = self.driver.find_element_by_css_selector(
-            "div.vR1LG._3wXwX.copyable-area > div._2A8P4 > div > div._2_1wd.copyable-text.selectable-text"
+        chat = self.driver.find_element_by_xpath(
+            '//*[@id="main"]/footer/div[1]/div[2]/div/div[1]/div/div[2]'
         )
 
         if message.find("\n"):
@@ -128,8 +128,8 @@ def reply_privately(self, message: str):
     """
 
     try:
-        group_name = self.driver.find_element_by_css_selector(
-            "div.z4t2k > div > span"
+        group_name = self.driver.find_element_by_xpath(
+            '//*[@id="main"]/header/div[2]/div/div/span'
         ).text
 
         self.driver.execute_script(
@@ -170,8 +170,8 @@ def reply_file_privately(self, file_path: str):
     """
 
     try:
-        group_name = self.driver.find_element_by_css_selector(
-            "div.z4t2k > div > span"
+        group_name = self.driver.find_element_by_xpath(
+            '//*[@id="main"]/header/div[2]/div/div/span'
         ).text
 
         self.driver.execute_script(
@@ -232,24 +232,20 @@ def send_file(self, file_path: str):
 
         type = 3
 
-    self.driver.execute_script(
-        """
-        document.querySelector("div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > div").click()
-    """
-    )
+    self.driver.find_element_by_xpath(
+        '//*[@id="main"]/footer/div[1]/div[1]/div[2]/div/div/span'
+    ).click()
 
-    sleep(0.7)
-
-    img_box = self.driver.find_element_by_css_selector(
-        f"div.vR1LG._3wXwX.copyable-area > div.EBaI7._23e-h > div._2C9f1 > div > span > div > div > ul > li:nth-child({type}) > button > input[type=file]"
+    img_box = self.driver.find_element_by_xpath(
+        f'//*[@id="main"]/footer/div[1]/div[1]/div[2]/div/span/div[1]/div/ul/li[{type}]/button/input'
     )
 
     img_box.send_keys(file_path)
 
     while True:
         try:
-            self.driver.find_element_by_css_selector(
-                "div._1Flk2._1sFTb > span > div > span > div > div > div._36Jt6.tEF8N > span > div > div > span"
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/span/div/div'
             ).click()
 
             break

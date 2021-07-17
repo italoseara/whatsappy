@@ -1,6 +1,6 @@
 from time import sleep
 from selenium.webdriver.common.keys import Keys
-from .tool import error_log
+from .tool import *
 import traceback
 
 
@@ -13,61 +13,64 @@ def add_to_group(self, contact_name: str):
 
     try:
 
-        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
+        # Abre as informações do grupo
+        self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-        try:
-            self.driver.find_element_by_css_selector(
-                "div._3NATg > div > div > span._2zDdK > div"
-            )
-
-        except:
+        # Verifica se você é admin
+        if not is_admin(self):
             print("You are not a group admin!")
+            return
 
-        self.driver.find_element_by_css_selector(
-            "div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(2) > div.TbtXF"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[2]/div[2]'
+        ).click() # Clica para adicionar participante
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text"
-        ).send_keys(contact_name)
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div/div[1]/div/label/div/div[2]'
+        ).send_keys(contact_name) # Pesquisa o nome do contato
+
+        sleep(0.5) # Espera carregar o contato
+
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div/div[1]/div/label/div/div[2]'
+        ).send_keys(Keys.ENTER) # Seleciona o contato
 
         sleep(0.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text"
-        ).send_keys(Keys.ENTER)
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div/span[2]/div/div/div'
+        ).click() # Clica para adicionar
 
-        sleep(0.5)
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div[2]/div[2]'
+        ).click() # Confirma
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div > span._3IGMG > div > div > div"
-        ).click()
+        sleep(1.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > span > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
-        ).click()
+        # Caso a pessoa só possa ser convidada via link de convite
+        if element_exists(self,
+            '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div[2]/div[2]'
+        ):
 
-        sleep(2)
-
-        try:
-            self.driver.find_element_by_css_selector(
-                "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div:nth-child(1) > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div[2]/div[2]'
             ).click()
+
             sleep(0.5)
 
-            self.driver.find_element_by_css_selector(
-                "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div.overlay._1814Z._3wXwX.copyable-area > div > div > div > div > div > div > span > div"
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div/div/span/div'
             ).click()
-        except:
-            pass
 
     except:
         error_log(traceback.format_exc())
 
+    sleep(0.5)
+
     try:
-        self.driver.find_element_by_css_selector(
-            "div._215wZ > button"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+        ).click() # Fecha as informações do grupo
     except:
         pass
 
@@ -81,50 +84,59 @@ def remove_from_group(self, participant_name: str):
 
     try:
 
-        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
+        # Abre as informações do grupo
+        self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-        try:
-            self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
-
-        except:
+        # Verifica se você é admin
+        if not is_admin(self):
             print("You are not a group admin!")
             return
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div.-ZdaK > div > div > div._3TVPy"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[1]/div/div/div[2]'
+        ).click() # Clica na lupa de pesquisa
 
         sleep(0.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text"
-        ).send_keys(participant_name)
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/div[1]/div/label/div/div[2]'
+        ).send_keys(participant_name) # Busca pelo participante
 
         sleep(0.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div._1C2Q3._36Jt6 > div:nth-child(1) > div > div > div > div > div"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div[1]/div/div/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]'
+        ).click() # Clica no participante
 
         sleep(0.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
-        ).click()
+        # Verifica se o participante é administrador
+        if element_exists(self,
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/div[1]/div[2]'
+        ):
+            
+            # Caso sim, clica no primeiro botão
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div[1]/span[4]/div/ul/div/li[1]/div[1]'
+            ).click()
+        
+        else:
+            # Caso não, clica no segundo botão
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div[1]/span[4]/div/ul/div/li[2]/div[1]'
+            ).click()
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button"
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/header/div/div[1]/button'
         ).click()
 
     except:
         error_log(traceback.format_exc())
 
     try:
-        self.driver.find_element_by_css_selector(
-            "div._215wZ > button"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+        ).click() # Fecha as informações do grupo
     except:
         pass
 
@@ -133,55 +145,62 @@ def make_group_admin(self, participant_name: str):
     """Makes someone a group admin
 
     Args:
-        participant_name (str): [The contact name or number of who you want to make admin
+        participant_name (str): The contact name or number of who you want to make admin
     """
 
     try:
 
-        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
+        # Abre as informações do grupo
+        self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-        try:
-            self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
-
-        except:
+        # Verifica se você é admin
+        if not is_admin(self):
             print("You are not a group admin!")
             return
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div.-ZdaK > div > div > div._3TVPy"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[1]/div/div/div[2]'
+        ).click() # Clica na lupa de pesquisa
 
         sleep(0.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div:nth-child(2) > div > label > div > div._2_1wd.copyable-text.selectable-text"
-        ).send_keys(participant_name)
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/div[1]/div/label/div/div[2]'
+        ).send_keys(participant_name) # Busca pelo participante
 
         sleep(0.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > div > div > div > div > div > div > div._1C2Q3._36Jt6 > div:nth-child(1) > div > div > div > div > div"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div[1]/div/div/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]'
+        ).click() # Clica no participante
 
         sleep(0.5)
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(4) > div > ul > li:nth-child(1)"
-        ).click()
+        # Verifica se o participante é administrador
+        if element_exists(self,
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/div[1]/div[2]'
+        ):
+            
+            # Caso sim, gera uma mensagem de erro
+            print(f'{participant_name} is already an admin')
+        
+        else:
+            # Caso não, clica no botão de promover para admin
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div[1]/span[4]/div/ul/div/li[1]/div[1]'
+            ).click()
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(2) > div > div > div > div > div > div > div > header > div > div._215wZ > button"
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/header/div/div[1]/button'
         ).click()
 
     except:
         error_log(traceback.format_exc())
 
     try:
-        self.driver.find_element_by_css_selector(
-            "div._215wZ > button"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+        ).click() # Fecha as informações do grupo
     except:
         pass
 
@@ -193,12 +212,12 @@ def select_chat_by_name(self, chat_name: str):
         chat_name (str): Contact/Group name
     """
 
-    self.driver.find_element_by_css_selector(
-        "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+    self.driver.find_element_by_xpath(
+       '//*[@id="side"]/div[1]/div/label/div/div[2]'
     ).send_keys(chat_name)
 
-    self.driver.find_element_by_css_selector(
-        "div.SgIJV > div > label > div > div._2_1wd.copyable-text.selectable-text"
+    self.driver.find_element_by_xpath(
+        '//*[@id="side"]/div[1]/div/label/div/div[2]'
     ).send_keys(Keys.ENTER)
 
 
@@ -222,44 +241,45 @@ def create_group(self, group_name: str, contacts: list):
         contacts (list): List of contacts to add into the group
     """
 
-    self.driver.execute_script(
-        "document.querySelector('#side > header > div._2XP8p > div > span > div:nth-child(3) > div').click()"
-    )
+    self.driver.find_element_by_xpath(
+        '//*[@id="side"]/header/div[2]/div/span/div[3]/div/span'
+    ).click()
 
-    self.driver.execute_script(
-        "document.querySelector('#side > header > div._2XP8p > div > span > div._2n-zq._3zHcq > span > div > ul > li:nth-child(1)').click()"
+    self.driver.find_element_by_xpath(
+        '//*[@id="side"]/header/div[2]/div/span/div[3]/span/div[1]/ul/li[1]/div[1]'
+    ).click()
+
+    box = self.driver.find_element_by_xpath(
+        '//*[@id="app"]/div[1]/div[1]/div[2]/div[1]/span/div[1]/span/div[1]/div/div[1]/div/div/input'
     )
 
     for contact in contacts:
-        box = self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > div._3tEPr > div > div > input"
-        )
-
         box.clear()
         box.send_keys(contact)
         box.send_keys(Keys.ENTER)
 
-    self.driver.execute_script(
-        "document.querySelector('#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > span > div').click()"
-    )
+    self.driver.find_element_by_xpath(
+        '//*[@id="app"]/div[1]/div[1]/div[2]/div[1]/span/div[1]/span/div[1]/div/span/div'
+    ).click()
 
-    self.driver.find_element_by_css_selector(
-        "#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > div:nth-child(2) > div > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text"
+    self.driver.find_element_by_xpath(
+        '//*[@id="app"]/div[1]/div[1]/div[2]/div[1]/span/div[1]/span/div[1]/div/div[2]/div/div[2]/div/div[2]'
     ).send_keys(group_name)
 
-    self.driver.execute_script(
-        "document.querySelector('#app > div > div > div.Akuo4 > div._1Flk2._2DPZK > span > div > span > div > div > span > div > div').click()"
-    )
+    self.driver.find_element_by_xpath(
+        '//*[@id="app"]/div[1]/div[1]/div[2]/div[1]/span/div[1]/span/div[1]/div/span/div/div'
+    ).click()
+    
     sleep(2)
 
-    try:
-        self.driver.find_element_by_css_selector(
-            "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div:nth-child(1) > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
-        ).click()
-        sleep(0.5)
+    if element_exists(self, 
+        '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div[2]/div[2]'
+    ):
 
-        self.driver.find_element_by_css_selector(
-            "#app > div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > span > div.overlay._1814Z._3wXwX.copyable-area > div > div > div > div > div > div > span > div"
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div[2]/div[2]'
         ).click()
-    except:
-        pass
+        
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div/div/span/div'
+        ).click()

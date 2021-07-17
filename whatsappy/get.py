@@ -1,4 +1,4 @@
-from .tool import error_log
+from .tool import *
 from time import sleep
 import traceback
 
@@ -13,12 +13,26 @@ def get_recent_chats(self):
     try:
         array = self.driver.execute_script(
             """
-        let asd = document.querySelectorAll('._2Z4DV');
+        function getElementByXpath(path) {
+            return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        } // Cria uma função que retorna os elementos pelo XPATH
+
+        // Armazena a classe do elemento das conversas
+        let elemClass = getElementByXpath('//*[@id="pane-side"]/div[1]/div/div/div[1]').className
+
+        // Procura pelos elementos
+        let contacts = document.querySelectorAll(`.${elemClass}`);
         let newArray = new Array();
-        for (var i = 0; i < asd.length; i++){
-            newArray.push(asd[i].querySelector('.N2dUK').textContent);
+
+        // Armazena a classe do nome dos contatos
+        let nameClass = getElementByXpath('//*[@id="pane-side"]/div[1]/div/div/div[1]/div/div/div[2]/div[1]/div[1]/span/span').className.split(' ')[0]
+
+        // Separa o nome dos elementos e coloca em um Array
+        for (var i = 0; i < contacts.length; i++){
+            newArray.push(contacts[i].querySelector(`.${nameClass}`).title);
         };
 
+        // Retorna o Array com os contatos recentes
         return newArray;
         """
         )
@@ -38,12 +52,26 @@ def get_pinned_chats(self):
     try:
         array = self.driver.execute_script(
             """
-        let pin = document.querySelectorAll('._3EhXO');
+        function getElementByXpath(path) {
+            return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        } // Cria uma função que retorna os elementos pelo XPATH
+
+        // Armazena a classe do elemento das conversas fixadas
+        let elemClass = getElementByXpath('//*[@id="pane-side"]/div[1]/div/div/div[1]/div/div/div[2]/div[2]/div[2]/span[1]/div').className.split(' ')[1]
+        
+        // Busca pelos elementos
+        let pin = document.querySelectorAll(`.${elemClass}`);
+
+        // Armazena a classe do nome dos contatos
+        let nameClass = getElementByXpath('//*[@id="pane-side"]/div[1]/div/div/div[1]/div/div/div[2]/div[1]/div[1]/span/span').className.split(' ')[0]
         let newArray = new Array();
+
+        // Separa o nome dos elementos em um Array
         for (var i = 0; i < pin.length; i++) {
-            newArray.push(pin[i].parentNode.parentNode.parentNode.parentNode.querySelector('._3Dr46').textContent)
+            newArray.push(pin[i].parentNode.parentNode.parentNode.parentNode.querySelector(`.${nameClass}`).title)
         }
 
+        // Retorna o array com os contatos fixados
         return newArray
         """
         )
@@ -62,45 +90,37 @@ def get_group_invite_link(self):
 
     try:
 
-        self.driver.find_element_by_css_selector(
-            "div.z4t2k > div > span"
-        ).click()
+        # Abre as informações do grupo
+        self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-        sleep(1)
-
-        try:
-            self.driver.find_element_by_css_selector(
-                "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
-
-        except:
+        if not is_admin(self):
             print("You are not a group admin!")
             return
 
-        self.driver.find_element_by_css_selector(
-            "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(5) > div:nth-child(3)"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[3]'
+        ).click() # Clica em convidar para grupo via link
 
         sleep(1)
 
-        group_link = self.driver.find_element_by_css_selector(
-            "#group-invite-link-anchor"
-        ).text
+        group_link = self.driver.find_element_by_xpath(
+            '//*[@id="group-invite-link-anchor"]'
+        ).text # Armazena o link de convite
 
-        self.driver.find_element_by_css_selector(
-            "div._215wZ > button"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+        ).click() # Sai das informações do link
 
-        sleep(1)
+        sleep(0.5)
 
         try:
-            self.driver.find_element_by_css_selector(
-                "div._215wZ > button"
-            ).click()
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+            ).click() # Sai das informações do grupo
         except:
             pass
 
-        return group_link
+        return group_link # Retorna o link de convite
 
     except:
         error_log(traceback.format_exc())

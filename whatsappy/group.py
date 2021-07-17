@@ -1,7 +1,7 @@
 from time import sleep
 from selenium.webdriver.common.keys import Keys
 from os import path
-from .tool import error_log
+from .tool import *
 import traceback
 
 
@@ -14,30 +14,24 @@ def change_group_description(self, description: str):
 
     try:
 
-        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
+        # Abre as informações do grupo
+        self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-        sleep(1)
-
-        try:
-            self.driver.find_element_by_css_selector(
-                "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
-
-        except:
+        if not is_admin(self):
             print("You are not a group admin!")
             return
 
-        self.driver.find_element_by_css_selector(
-            "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-        ).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[2]/div[2]/div/div/span[2]/div'
+        ).click() # Tenta clicar na caneta de edição da descrição
 
-        description_dom = self.driver.find_element_by_css_selector(
-            "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text"
-        )
+        description_dom = self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[2]/div[2]/div/div[1]/div/div[2]'
+        ) # Seleciona a descrição para editar
 
-        description_dom.clear()
+        description_dom.clear() # Limpa
 
-        if description.find("\n"):
+        if description.find("\n"): # Escreve
             for line in description.split("\n"):
                 description_dom.send_keys(line)
                 description_dom.send_keys(Keys.SHIFT + Keys.ENTER)
@@ -49,8 +43,10 @@ def change_group_description(self, description: str):
     except:
         error_log(traceback.format_exc())
 
-    try:
-        self.driver.find_element_by_css_selector("div._215wZ > button").click()
+    try: # Fecha as informações do grupo
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+        ).click()
     except:
         pass
 
@@ -64,37 +60,32 @@ def change_group_name(self, name: str):
 
     try:
 
-        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
+        # Abre as informações do grupo
+        self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-        sleep(1)
-
-        try:
-            self.driver.find_element_by_css_selector(
-                "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
-
-        except:
+        if not is_admin(self):
             print("You are not a group admin!")
             return
 
-        self.driver.find_element_by_class_name("_1JAUF").click()
-
-        self.driver.find_element_by_css_selector(
-            "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._3Ihuv > div._3rhi1.e1K_H._1nQew > span._2zDdK > div"
+        # Clica para editar o nome do grupo
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[1]/div[2]/div[1]/span[2]/div'
         ).click()
 
-        group_name_dom = self.driver.find_element_by_css_selector(
-            "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div._2O6GW._3Ss_B._1lemF._1fB8E._3Ihuv > div._3rhi1 > div > div._2_1wd.copyable-text.selectable-text"
-        )
+        group_name_dom = self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[1]/div[2]/div[1]/div/div[2]'
+        ) # Seleciona o texto do nome do grupo
 
-        group_name_dom.clear()
-        group_name_dom.send_keys(name + Keys.ENTER)
+        group_name_dom.clear() # Limpa
+        group_name_dom.send_keys(name + Keys.ENTER) # Escreve
 
     except:
         error_log(traceback.format_exc())
 
     try:
-        self.driver.find_element_by_css_selector("div._215wZ > button").click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+        ).click() # Fecha as informações do grupo
     except:
         pass
 
@@ -106,35 +97,30 @@ def change_group_pfp(self, file_path: str):
         if not path.isabs(file_path):
             raise Exception("The file path is not absolute")
 
-        self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
+        # Abre as informações do grupo
+        self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-        sleep(1)
-
-        try:
-            self.driver.find_element_by_css_selector(
-                "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt._82zXh > div._3NATg > div > div > span._2zDdK > div"
-            )
-
-        except:
+        if not is_admin(self):
             print("You are not a group admin!")
             return
 
-        self.driver.find_element_by_css_selector(
-            "#app > div > div > div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div._3ZEdX._3hiFt.bRenh > div.bnO5E > div > input[type=file]"
-        ).send_keys(file_path)
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[1]/div[1]/div/input'
+        ).send_keys(file_path) # Envia a foto
 
         sleep(1)
 
-        self.driver.execute_script(
-            'document.querySelector("div._3h3LX._34ybp.app-wrapper-web.font-fix.os-win > span:nth-child(2) > div._1XTIr > div > div > div > div > div > span > div.OMoBQ._3WNg8._3wXwX.copyable-area > div > div._1y7hs > span > div > div").click()'
-        )
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/span/div[1]/div/div[2]/span/div'
+        ).click() # Confima
 
     except:
         error_log(traceback.format_exc())
 
     try:
-        self.driver.find_element_by_css_selector("div._215wZ > button").click()
-
+        self.driver.find_element_by_xpath(
+            '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
+        ).click() # Fecha as informações do grupo
     except:
         pass
 
@@ -142,12 +128,13 @@ def change_group_pfp(self, file_path: str):
 def leave_group(self):
     """Leaves the group you are"""
 
-    self.driver.find_element_by_css_selector("div.z4t2k > div > span").click()
+    # Abre as informações do grupo
+    self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
-    self.driver.find_element_by_css_selector(
-        "div.Akuo4 > div._1Flk2._3xysY > span > div > span > div > div > section > div:nth-child(6) > div"
+    self.driver.find_element_by_xpath(
+        '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[6]/div'
     ).click()
 
-    self.driver.find_element_by_css_selector(
-        "#app > div > span:nth-child(2) > div > div > div > div > div > div > div._1uJw_ > div._1dwBj._3xWLK"
+    self.driver.find_element_by_xpath(
+        '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div[2]/div[2]'
     ).click()
