@@ -35,7 +35,7 @@ def get_qrcode(driver, timeout):
             pass
 
 
-def login(self, visible: bool = False, timeout: int = 60):
+def login(self, visible: bool = True, timeout: int = 60):
     """Logs in whatsapp and shows the QRCode if necessary
 
     Args:
