@@ -1,12 +1,11 @@
-# pylint: disable=no-member
-
 import os
 import re
 import cv2
 import shelve
 from time import sleep
-from selenium import webdriver
 from os import getlogin, mkdir
+from selenium import webdriver
+from send2trash import send2trash
 from webdriver_manager.chrome import ChromeDriverManager
 from .error import LoginError
 
@@ -15,7 +14,7 @@ os.environ["WDM_LOG_LEVEL"] = "0"
 
 def get_qrcode(driver, timeout):
 
-    for _ in range(timeout // 5):
+    for _ in range(timeout//5):
         qr_code = driver.find_element_by_css_selector(".landing-main")
 
         qr_code.screenshot("qrcode.png")
@@ -27,9 +26,11 @@ def get_qrcode(driver, timeout):
         cv2.destroyAllWindows()
 
         try:
-            driver.find_element_by_css_selector(
-                "div._2_1wd.copyable-text.selectable-text"
+            driver.find_element_by_xpath(
+                '//*[@id="side"]/div[1]/div/label/div/div[2]'
             )
+
+            send2trash("qrcode.png")
             break
         except:
             pass
@@ -49,19 +50,29 @@ def login(self, visible: bool = False, timeout: int = 60):
     try:
         self.mydata = shelve.open("data/data")
     except:
+
         mkdir("data")
         self.mydata = shelve.open("data/data")
+        
+        options = webdriver.ChromeOptions()
+        options.add_argument("--hide-scrollbars")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--log-level=OFF")
+        options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
-    try:
-        print(f'Logging as: {self.mydata["user_agent"]}')
-        get_user_agent = False
-    except:
-        get_user_agent = True
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
+        self.mydata["user_agent"] = driver.execute_script(
+            "return navigator.userAgent"
+        )
+        driver.close()
+
+
+    print(f'Logging as: {self.mydata["user_agent"]}')
 
     options = webdriver.ChromeOptions()
-    if not get_user_agent:
-        options.add_argument(f"--user-data-dir={usr_path}")
-        options.add_argument(f"--user-agent={self.mydata['user_agent']}")
+    options.add_argument(f"--user-data-dir={usr_path}")
+    options.add_argument(f"--user-agent={self.mydata['user_agent']}")
     options.add_argument("--start-maximized")
     options.add_argument("--hide-scrollbars")
     options.add_argument("--disable-gpu")
@@ -74,17 +85,11 @@ def login(self, visible: bool = False, timeout: int = 60):
     self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     self.driver.get("https://web.whatsapp.com")
 
-    if get_user_agent:
-        self.mydata["user_agent"] = self.driver.execute_script(
-            "return navigator.userAgent"
-        )
-        self.mydata.close()
-
     logged = False
     for _ in range(timeout):
         try:
-            self.driver.find_element_by_css_selector(
-                "div._2_1wd.copyable-text.selectable-text"
+            self.driver.find_element_by_xpath(
+                '//*[@id="side"]/div[1]/div/label/div/div[2]'
             )
             break
 
@@ -98,17 +103,20 @@ def login(self, visible: bool = False, timeout: int = 60):
 
                 except:
                     sleep(1)
-
+            
             else:
                 sleep(1)
 
+
     self.driver.implicitly_wait(60)
-    self.driver.find_element_by_css_selector("div._2_1wd.copyable-text.selectable-text")
+    self.driver.find_element_by_xpath(
+        '//*[@id="side"]/div[1]/div/label/div/div[2]'
+    )
 
     logged = True
 
     if logged or visible:
-        print("Logged")
+        print("Done")
     else:
         self.close()
         raise LoginError("Failed to log in to WhatsApp")
