@@ -19,7 +19,7 @@ from whatsappy import whatsapp
 
 whatsapp.login() # Login whatsapp
 
-whatsapp.select_chat('Mom') # Goes to the selected chat
+whatsapp.select_chat_by_name('Mom') # Goes to the selected chat
 whatsapp.send('Hello') # Send a message
 
 whatsapp.close() # Exit
