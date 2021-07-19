@@ -5,6 +5,7 @@ from time import sleep
 from send2trash import send2trash
 from selenium.webdriver.common.keys import Keys
 from .tool import *
+from .error import BadPathError
 import traceback
 
 last = ""
@@ -212,7 +213,7 @@ def send_file(self, file_path: str):
     """
 
     if not path.isabs(file_path):
-        raise Exception("The file path is not absolute")
+        raise BadPathError("The file path is not absolute")
 
     regex = re.compile(r"(\w+\.(\w+))")
     file_name = file_path.split("\\")[-1]
