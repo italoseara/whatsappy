@@ -1,7 +1,3 @@
-from .error import (
-    WhatsappyError,
-    LoginError,
-)
 from .chat import (
     last_message,
     new_message,

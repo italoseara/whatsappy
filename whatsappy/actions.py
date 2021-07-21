@@ -1,6 +1,7 @@
 from time import sleep
 from selenium.webdriver.common.keys import Keys
 from .tool import *
+from .error import PermissionError
 import traceback
 
 
@@ -18,8 +19,7 @@ def add_to_group(self, contact_name: str):
 
         # Verifica se você é admin
         if not is_admin(self):
-            print("You are not a group admin!")
-            return
+            raise PermissionError("You are not a group admin!")
 
         self.driver.find_element_by_xpath(
             '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[2]/div[2]'
@@ -89,8 +89,7 @@ def remove_from_group(self, participant_name: str):
 
         # Verifica se você é admin
         if not is_admin(self):
-            print("You are not a group admin!")
-            return
+            raise PermissionError("You are not a group admin!")
 
         self.driver.find_element_by_xpath(
             '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[1]/div/div/div[2]'
@@ -155,8 +154,7 @@ def make_group_admin(self, participant_name: str):
 
         # Verifica se você é admin
         if not is_admin(self):
-            print("You are not a group admin!")
-            return
+            raise PermissionError("You are not a group admin!")
 
         self.driver.find_element_by_xpath(
             '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[1]/div/div/div[2]'

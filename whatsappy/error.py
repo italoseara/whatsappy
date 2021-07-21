@@ -8,3 +8,7 @@ class LoginError(WhatsappyError):
 
 class BadPathError(WhatsappyError):
     """Describes an invalid path."""
+
+
+class PermissionError(WhatsappyError):
+    """Descrives an error when the user does not have permission"""

@@ -157,7 +157,7 @@ def reply_privately(self, message: str):
         ).click()
 
         self.send(message)
-        self.select_chat(group_name)
+        self.select_chat_by_name(group_name)
 
     except:
         error_log(traceback.format_exc())
@@ -199,7 +199,7 @@ def reply_file_privately(self, file_path: str):
         ).click()
 
         self.send_file(file_path)
-        self.select_chat(group_name)
+        self.select_chat_by_name(group_name)
 
     except:
         error_log(traceback.format_exc())

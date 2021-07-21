@@ -2,7 +2,7 @@ from time import sleep
 from selenium.webdriver.common.keys import Keys
 from os import path
 from .tool import *
-from .error import BadPathError
+from .error import BadPathError, PermissionError
 import traceback
 
 
@@ -19,8 +19,7 @@ def change_group_description(self, description: str):
         self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
         if not is_admin(self):
-            print("You are not a group admin!")
-            return
+            raise PermissionError("You are not a group admin!")
 
         self.driver.find_element_by_xpath(
             '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[2]/div[2]/div/div/span[2]/div'
@@ -65,8 +64,7 @@ def change_group_name(self, name: str):
         self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
         if not is_admin(self):
-            print("You are not a group admin!")
-            return
+            raise PermissionError("You are not a group admin!")
 
         # Clica para editar o nome do grupo
         self.driver.find_element_by_xpath(
@@ -102,8 +100,7 @@ def change_group_pfp(self, file_path: str):
         self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()
 
         if not is_admin(self):
-            print("You are not a group admin!")
-            return
+            raise PermissionError("You are not a group admin!")
 
         self.driver.find_element_by_xpath(
             '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[1]/div[1]/div/input'
