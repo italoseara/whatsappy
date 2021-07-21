@@ -2,13 +2,14 @@ import os
 import re
 import cv2
 import shelve
+import logging
 import platform
+from os import mkdir
 from time import sleep
-from os import getlogin, mkdir
+from .error import LoginError
 from selenium import webdriver
 from send2trash import send2trash
 from webdriver_manager.chrome import ChromeDriverManager
-from .error import LoginError
 
 os.environ["WDM_LOG_LEVEL"] = "0"
 
@@ -32,6 +33,7 @@ def get_qrcode(driver, timeout):
             )
 
             send2trash("qrcode.png")
+            logging.info("QRCode successfully scanned")
             break
         except:
             pass
@@ -47,22 +49,19 @@ def login(self, visible: bool = True, timeout: int = 60):
 
     os_path = {
         "Windows": rf"{os.path.expanduser('~')}/AppData/Local/Google/Chrome/User Data/Default",   # Windows
-        "Linux": rf"{os.path.expanduser('~')}/.config/google-chrome/default",                            # Linux
+        "Linux": rf"{os.path.expanduser('~')}/.config/google-chrome/default",                     # Linux
         "Darwin": rf"{os.path.expanduser('~')}/Library/Application Support/Google/Chrome/Default" # Mac OS
     }
 
     usr_path = os_path[platform.system()] 
 
-    try:
-        self.mydata = shelve.open("data/data")
-    except:
-        try:
-            mkdir("data")
-        except:
-            pass
+    if not os.path.isdir("data"):
+        mkdir("data")
 
-        self.mydata = shelve.open("data/data")
-        
+    self.mydata = shelve.open("data/data")
+    
+    if "user_agent" not in self.mydata.keys():
+
         options = webdriver.ChromeOptions()
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
@@ -74,9 +73,10 @@ def login(self, visible: bool = True, timeout: int = 60):
         self.mydata["user_agent"] = driver.execute_script(
             "return navigator.userAgent"
         )
+
         driver.close()
 
-    print(f'Logging as: {self.mydata["user_agent"]}')
+    logging.info(f'Logging as: {self.mydata["user_agent"]}')
 
     options = webdriver.ChromeOptions()
     options.add_argument(f"--user-data-dir={usr_path}")
@@ -86,6 +86,7 @@ def login(self, visible: bool = True, timeout: int = 60):
     options.add_argument("--disable-gpu")
     options.add_argument("--log-level=OFF")
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    
     self.mydata.close()
 
     if not visible:
@@ -125,13 +126,15 @@ def login(self, visible: bool = True, timeout: int = 60):
     logged = True
 
     if logged or visible:
-        print("Done")
+        logging.info("Successfully logged in")
     else:
         self.close()
+        logging.CRITICAL("Couldn't login")
         raise LoginError("Failed to login to WhatsApp")
 
 
 def close(self):
     """Exit the whatsapp"""
 
+    logging.info("Closing webbrowser")
     self.driver.close()

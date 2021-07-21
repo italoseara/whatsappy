@@ -1,12 +1,11 @@
 import re
 import shutil
+import logging
+from .tool import *
 from os import path
-from time import sleep
+from .error import BadPathError
 from send2trash import send2trash
 from selenium.webdriver.common.keys import Keys
-from .tool import *
-from .error import BadPathError
-import traceback
 
 last = ""
 
@@ -31,28 +30,25 @@ def last_message(self):
 
     global Message
 
-    try:
-        info = self.driver.execute_script(
-            """
-            var a = document.querySelectorAll(".message-in");
-            return a[a.length - 1].querySelector('.copyable-text').dataset.prePlainText;
+    info = self.driver.execute_script(
         """
-        )
+        var a = document.querySelectorAll(".message-in");
+        return a[a.length - 1].querySelector('.copyable-text').dataset.prePlainText;
+    """
+    )
 
-        content = self.driver.execute_script(
-            """
-            var a = document.querySelectorAll(".message-in ._3ExzF");
-            return a[a.length - 1].querySelector('.copyable-text').innerText;
+    content = self.driver.execute_script(
         """
-        )
+        var a = document.querySelectorAll(".message-in");
+        return a[a.length - 1].querySelector('.copyable-text').innerText;
+    """
+    )
 
-        time = re.compile(r"(\d+:\d+(\s)?(AM|PM)?)").findall(info)[0][0]
-        date = re.compile(r"(\d+/\d+/\d+)").findall(info)[0]
-        author = re.compile(r"] (.*):").findall(info)[0]
+    time = re.compile(r"(\d+:\d+(\s)?(AM|PM)?)").findall(info)[0][0]
+    date = re.compile(r"(\d+/\d+/\d+)").findall(info)[0]
+    author = re.compile(r"] (.*):").findall(info)[0]
 
-        return Message(author=author, content=content, time=time, date=date)
-    except:
-        pass
+    return Message(author=author, content=content, time=time, date=date)
 
 
 def new_message(self):
@@ -71,6 +67,8 @@ def new_message(self):
 
         if message.content != last:
             last = message.content
+            
+            logging.info(f"{message.author}: {message.content} (at {message.date} {message.time})")
             return True
 
         else:
@@ -86,123 +84,19 @@ def send(self, message: str):
         message (str): The message you want to send
     """
 
-    try:
-        chat = self.driver.find_element_by_xpath(
-            '//*[@id="main"]/footer/div[1]/div[2]/div/div[1]/div/div[2]'
-        )
-
-        if message.find("\n"):
-            for line in message.split("\n"):
-                chat.send_keys(line)
-                chat.send_keys(Keys.SHIFT + Keys.ENTER)
-            chat.send_keys(Keys.ENTER)
-        else:
-            chat.send_keys(message)
-    except:
-        error_log(traceback.format_exc())
-
-
-def reply(self, message: str):
-    """Replies to the last message
-
-    Args:
-        message (str): The message you want to send
-    """
-
-    self.driver.execute_script(
-        """
-        var a = document.querySelectorAll('.message-in');
-        var elem = a[a.length -1]
-        var clickEvent = document.createEvent('MouseEvents');
-        clickEvent.initEvent('dblclick', true, true);
-        elem.dispatchEvent(clickEvent);
-    """
+    chat = self.driver.find_element_by_xpath(
+        '//*[@id="main"]/footer/div[1]/div[2]/div/div[1]/div/div[2]'
     )
-    self.send(message)
 
+    if message.find("\n"):
+        for line in message.split("\n"):
+            chat.send_keys(line)
+            chat.send_keys(Keys.SHIFT + Keys.ENTER)
+        chat.send_keys(Keys.ENTER)
+    else:
+        chat.send_keys(message)
 
-def reply_privately(self, message: str):
-    """Sends a message message privatly to the last message in chat
-
-    Args:
-        message (str): The message you want to send
-    """
-
-    try:
-        group_name = self.driver.find_element_by_xpath(
-            '//*[@id="main"]/header/div[2]/div/div/span'
-        ).text
-
-        self.driver.execute_script(
-            """
-            var event = new MouseEvent('mouseover', {
-                'view': window,
-                'bubbles': true,
-                'cancelable': true
-            });
-
-            var a = document.querySelectorAll('.message-in > div');
-            var element = a[a.length -1];
-            
-            element.dispatchEvent(event);
-        """
-        )
-
-        self.driver.find_element_by_css_selector(
-            ".message-in > div > div > span > div > div"
-        ).click()
-
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
-        ).click()
-
-        self.send(message)
-        self.select_chat_by_name(group_name)
-
-    except:
-        error_log(traceback.format_exc())
-
-
-def reply_file_privately(self, file_path: str):
-    """Sends a file privatly to the last message in chat
-
-    Args:
-        file_path (str, absolute path): The file of the path you want to send
-    """
-
-    try:
-        group_name = self.driver.find_element_by_xpath(
-            '//*[@id="main"]/header/div[2]/div/div/span'
-        ).text
-
-        self.driver.execute_script(
-            """
-            var event = new MouseEvent('mouseover', {
-                'view': window,
-                'bubbles': true,
-                'cancelable': true
-            });
-
-            var a = document.querySelectorAll('.message-in > div');
-            var element = a[a.length -1];
-            
-            element.dispatchEvent(event);
-        """
-        )
-
-        self.driver.find_element_by_css_selector(
-            ".message-in > div > div > span > div > div"
-        ).click()
-
-        self.driver.find_element_by_css_selector(
-            "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
-        ).click()
-
-        self.send_file(file_path)
-        self.select_chat_by_name(group_name)
-
-    except:
-        error_log(traceback.format_exc())
+    logging.info(f"You sent: {message}")
 
 
 def send_file(self, file_path: str):
@@ -255,3 +149,104 @@ def send_file(self, file_path: str):
 
     if isZip:
         send2trash(file_name + ".zip")
+    
+    logging.info(f"You sent the file: {file_path}")
+
+
+def reply(self, message: str):
+    """Replies to the last message
+
+    Args:
+        message (str): The message you want to send
+    """
+
+    self.driver.execute_script(
+        """
+        var a = document.querySelectorAll('.message-in');
+        var elem = a[a.length -1]
+        var clickEvent = document.createEvent('MouseEvents');
+        clickEvent.initEvent('dblclick', true, true);
+        elem.dispatchEvent(clickEvent);
+    """
+    )
+    self.send(message)
+
+    logging.info(f"You replied with: {message}")
+
+
+def reply_privately(self, message: str):
+    """Sends a message message privatly to the last message in chat
+
+    Args:
+        message (str): The message you want to send
+    """
+
+    group_name = self.driver.find_element_by_xpath(
+        '//*[@id="main"]/header/div[2]/div/div/span'
+    ).text
+
+    self.driver.execute_script(
+        """
+        var event = new MouseEvent('mouseover', {
+            'view': window,
+            'bubbles': true,
+            'cancelable': true
+        });
+
+        var a = document.querySelectorAll('.message-in > div');
+        var element = a[a.length -1];
+        
+        element.dispatchEvent(event);
+    """
+    )
+
+    self.driver.find_element_by_css_selector(
+        ".message-in > div > div > span > div > div"
+    ).click()
+
+    self.driver.find_element_by_css_selector(
+        "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
+    ).click()
+
+    logging.info(f"You changed chat reply privately")
+    self.send(message)
+    self.select_chat_by_name(group_name)
+
+
+def reply_file_privately(self, file_path: str):
+    """Sends a file privatly to the last message in chat
+
+    Args:
+        file_path (str, absolute path): The file of the path you want to send
+    """
+
+    group_name = self.driver.find_element_by_xpath(
+        '//*[@id="main"]/header/div[2]/div/div/span'
+    ).text
+
+    self.driver.execute_script(
+        """
+        var event = new MouseEvent('mouseover', {
+            'view': window,
+            'bubbles': true,
+            'cancelable': true
+        });
+
+        var a = document.querySelectorAll('.message-in > div');
+        var element = a[a.length -1];
+        
+        element.dispatchEvent(event);
+    """
+    )
+
+    self.driver.find_element_by_css_selector(
+        ".message-in > div > div > span > div > div"
+    ).click()
+
+    self.driver.find_element_by_css_selector(
+        "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
+    ).click()
+
+    logging.info(f"You changed chat reply privately")
+    self.send_file(file_path)
+    self.select_chat_by_name(group_name)

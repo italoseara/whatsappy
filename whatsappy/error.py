@@ -11,4 +11,4 @@ class BadPathError(WhatsappyError):
 
 
 class PermissionError(WhatsappyError):
-    """Descrives an error when the user does not have permission"""
+    """Describes an error when the user does not have permission"""
