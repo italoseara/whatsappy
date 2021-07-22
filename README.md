@@ -27,6 +27,34 @@ whatsapp.close() # Exit
 
 You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/main/examples)
 
+## Supported features
+
+| Feature  | Status |
+| ------------- | ------------- |
+| Send messages  | ✅  |
+| Receive messages  | ✅  |
+| Send media (images/audio/documents)  | ✅  |
+| Send media (video)  | ✅ |
+| Send stickers | _pending_ |
+| Receive media (images/audio/video/documents)  | _pending_  |
+| Send contact cards | _pending_ |
+| Send location | _pending_ |
+| Receive location | _pending_ | 
+| Message replies | ✅ |
+| Join groups by invite  | _pending_ |
+| Get invite for group  | ✅ |
+| Modify group info (subject, description)  | ✅  |
+| Modify group settings (send messages, edit info)  | ✅  |
+| Add group participants  | ✅  |
+| Kick group participants  | ✅  |
+| Promote/demote group participants | ✅ |
+| Mention users | _pending_ |
+| Mute/unmute chats | _pending_ |
+| Block/unblock contacts | _pending_ |
+| Get contact info | _pending_ |
+| Get profile pictures | _pending_ |
+| Set user status message | _pending_ |
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
