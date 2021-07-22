@@ -47,7 +47,8 @@ You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/m
 | Modify group settings (send messages, edit info)  | ✅  |
 | Add group participants  | ✅  |
 | Kick group participants  | ✅  |
-| Promote/demote group participants | ✅ |
+| Promote group participants | ✅ |
+| Demote group participants | _pending_ |
 | Mention users | _pending_ |
 | Mute/unmute chats | _pending_ |
 | Block/unblock contacts | _pending_ |
