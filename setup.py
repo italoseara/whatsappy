@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="whatsappy-py",
-    version="2.1.2",
+    version="2.2",
     description="Whatsappy is a Python library for creating whatsapp bots.",
     packages=["whatsappy"],
     classifiers=[
@@ -20,7 +20,8 @@ setup(
         "selenium ~= 3.141.0",
         "Send2Trash ~= 1.5.0",
         "webdriver-manager ~= 3.2.2",
-        "opencv-python ~= 4.5.1.48",
+        "rich ~= 10.9.0",
+        "qrcode ~= 7.3",
     ],
     extra_requires={
         "dev": [

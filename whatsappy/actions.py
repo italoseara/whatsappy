@@ -1,4 +1,3 @@
-import logging
 from .tool import *
 from time import sleep
 from .error import PermissionError
@@ -17,7 +16,6 @@ def add_to_group(self, contact_name: str):
 
     # Verifica se você é admin
     if not is_admin(self):
-        logging.error("The user is not a group admin")
         raise PermissionError("You are not a group admin!")
 
     self.driver.find_element_by_xpath(
@@ -63,8 +61,7 @@ def add_to_group(self, contact_name: str):
 
     sleep(0.5)
 
-    logging.info(f"You added {contact_name} to the group")
-    close_info()
+    close_info(self)
 
 
 def remove_from_group(self, participant_name: str):
@@ -79,7 +76,6 @@ def remove_from_group(self, participant_name: str):
 
     # Verifica se você é admin
     if not is_admin(self):
-        logging.error("The user is not a group admin")
         raise PermissionError("You are not a group admin!")
 
     self.driver.find_element_by_xpath(
@@ -120,8 +116,7 @@ def remove_from_group(self, participant_name: str):
         '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/header/div/div[1]/button'
     ).click()
 
-    logging.info(f"You removed {participant_name} from the group")
-    close_info()
+    close_info(self)
 
 
 def make_group_admin(self, participant_name: str):
@@ -136,7 +131,6 @@ def make_group_admin(self, participant_name: str):
 
     # Verifica se você é admin
     if not is_admin(self):
-        logging.error("The user is not a group admin")
         raise PermissionError("You are not a group admin!")
 
     self.driver.find_element_by_xpath(
@@ -175,8 +169,7 @@ def make_group_admin(self, participant_name: str):
         '//*[@id="app"]/div[1]/span[2]/div[1]/div/div/div/div/div/div/header/div/div[1]/button'
     ).click()
 
-    logging.info(f"You made {participant_name} a admin group")
-    close_info()
+    close_info(self)
 
 
 def select_chat_by_name(self, chat_name: str):
@@ -193,7 +186,6 @@ def select_chat_by_name(self, chat_name: str):
     self.driver.find_element_by_xpath(
         '//*[@id="side"]/div[1]/div/label/div/div[2]'
     ).send_keys(Keys.ENTER)
-    logging.info(f"You selected the {chat_name} chat")
 
 
 def select_chat_by_number(self, chat_number: int):
@@ -205,8 +197,6 @@ def select_chat_by_number(self, chat_number: int):
 
     self.driver.get(f"https://web.whatsapp.com/send?phone={chat_number}")
     sleep(5)
-
-    logging.info(f"You selected the {chat_number} chat")
 
 
 def create_group(self, group_name: str, contacts: list):
@@ -260,5 +250,3 @@ def create_group(self, group_name: str, contacts: list):
         self.driver.find_element_by_xpath(
             '//*[@id="app"]/div[1]/span[2]/div[1]/span/div[1]/div/div/div/div/div/div/span/div'
         ).click()
-
-    logging.info(f"You created the group \"{group_name}\" with {contacts}")

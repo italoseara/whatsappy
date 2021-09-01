@@ -1,4 +1,3 @@
-import logging
 from .tool import *
 from time import sleep
 
@@ -34,7 +33,6 @@ def get_recent_chats(self):
         return newArray;
     """)
 
-    logging.info(f"Got all recent chats: {array}")
     return array
 
 
@@ -69,7 +67,6 @@ def get_pinned_chats(self):
         return newArray
     """)
 
-    logging.info(f"Got all pinned chats: {array}")
     return array
 
 
@@ -103,7 +100,6 @@ def get_group_invite_link(self):
 
     sleep(0.5)
 
-    close_info()
+    close_info(self)
 
-    logging.info(f"Got group invite link: {group_link}")
     return group_link # Retorna o link de convite

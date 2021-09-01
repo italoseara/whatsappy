@@ -1,42 +1,51 @@
 import os
-import re
-import cv2
+from re import S
 import shelve
-import logging
 import platform
 from os import mkdir
 from time import sleep
+from . import ascii_qrcode
+from .tool import console
 from .error import LoginError
 from selenium import webdriver
-from send2trash import send2trash
 from webdriver_manager.chrome import ChromeDriverManager
 
 os.environ["WDM_LOG_LEVEL"] = "0"
 
 
-def get_qrcode(driver, timeout):
+def get_qrcode(driver, timeout: int):
 
-    for _ in range(timeout//5):
-        qr_code = driver.find_element_by_css_selector(".landing-main")
+    qr_str_old = ''
 
-        qr_code.screenshot("qrcode.png")
+    min_rows, min_columns = 55, 110
+    rows, columns = os.get_terminal_size()
 
-        img = cv2.imread("qrcode.png", 1)
+    if rows < min_rows or columns < min_columns:
+        os.system(f'mode con: cols={min_columns} lines={min_rows}')
 
-        cv2.imshow("Scan the QRCode to login", img)
-        cv2.waitKey(5000)
-        cv2.destroyAllWindows()
+    for _ in range(timeout):
+        
+        qr_code = driver.find_element_by_css_selector('.landing-main > div > div:nth-child(2) > div')
+
+        qr_str = qr_code.get_attribute("data-ref")
+
+        if qr_str != qr_str_old:
+            qr_str_old = qr_str
+
+            console.clear()
+            print(ascii_qrcode.draw(qr_str))
+            console.print("[bold]Scan the QRCode with your phone")
 
         try:
             driver.find_element_by_xpath(
-                '//*[@id="side"]/div[1]/div/label/div/div[2]'
-            )
-
-            send2trash("qrcode.png")
-            logging.info("QRCode successfully scanned")
+                '//*[@id="side"]/div[1]/div/label/div/div[2]')
+            
+            os.system(f'mode con: cols={columns} lines={rows}')
             break
-        except:
+        except Exception:
             pass
+
+        sleep(1)
 
 
 def login(self, visible: bool = True, timeout: int = 60):
@@ -76,8 +85,6 @@ def login(self, visible: bool = True, timeout: int = 60):
 
         driver.close()
 
-    logging.info(f'Logging as: {self.mydata["user_agent"]}')
-
     options = webdriver.ChromeOptions()
     options.add_argument(f"--user-data-dir={usr_path}")
     options.add_argument(f"--user-agent={self.mydata['user_agent']}")
@@ -106,12 +113,11 @@ def login(self, visible: bool = True, timeout: int = 60):
         except:
             if not visible:
                 try:
-                    self.driver.find_element_by_css_selector(".landing-main")
-
+                    self.driver.find_element_by_css_selector(".landing-main")          
                     get_qrcode(self.driver, timeout)
                     break
 
-                except:
+                except Exception:
                     sleep(1)
             
             else:
@@ -126,15 +132,13 @@ def login(self, visible: bool = True, timeout: int = 60):
     logged = True
 
     if logged or visible:
-        logging.info("Successfully logged in")
+        console.log("Successfully logged in")
     else:
         self.close()
-        logging.CRITICAL("Couldn't login")
-        raise LoginError("Failed to login to WhatsApp")
+        raise LoginError("Failed when trying to log into whatsapp")
 
 
 def close(self):
     """Exit the whatsapp"""
 
-    logging.info("Closing webbrowser")
     self.driver.close()

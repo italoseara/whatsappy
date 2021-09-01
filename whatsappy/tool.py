@@ -1,3 +1,7 @@
+from rich.console import Console
+
+console = Console()
+
 def element_exists(self, xpath: str):
     """Verify if the element exists"""
 

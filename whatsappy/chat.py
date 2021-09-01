@@ -1,6 +1,5 @@
 import re
 import shutil
-import logging
 from .tool import *
 from os import path
 from .error import BadPathError
@@ -68,7 +67,6 @@ def new_message(self):
         if message.content != last:
             last = message.content
             
-            logging.info(f"{message.author}: {message.content} (at {message.date} {message.time})")
             return True
 
         else:
@@ -95,8 +93,6 @@ def send(self, message: str):
         chat.send_keys(Keys.ENTER)
     else:
         chat.send_keys(message)
-
-    logging.info(f"You sent: {message}")
 
 
 def send_file(self, file_path: str):
@@ -140,7 +136,7 @@ def send_file(self, file_path: str):
     while True:
         try:
             self.driver.find_element_by_xpath(
-                '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/span/div/div'
+                '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/div/div[2]/div[2]/div/div'
             ).click()
 
             break
@@ -150,8 +146,6 @@ def send_file(self, file_path: str):
     if isZip:
         send2trash(file_name + ".zip")
     
-    logging.info(f"You sent the file: {file_path}")
-
 
 def reply(self, message: str):
     """Replies to the last message
@@ -170,8 +164,6 @@ def reply(self, message: str):
     """
     )
     self.send(message)
-
-    logging.info(f"You replied with: {message}")
 
 
 def reply_privately(self, message: str):
@@ -208,7 +200,6 @@ def reply_privately(self, message: str):
         "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
     ).click()
 
-    logging.info(f"You changed chat reply privately")
     self.send(message)
     self.select_chat_by_name(group_name)
 
@@ -247,6 +238,5 @@ def reply_file_privately(self, file_path: str):
         "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
     ).click()
 
-    logging.info(f"You changed chat reply privately")
     self.send_file(file_path)
     self.select_chat_by_name(group_name)
