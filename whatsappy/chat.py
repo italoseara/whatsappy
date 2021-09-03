@@ -75,7 +75,7 @@ def new_message(self):
         pass
 
 
-def send(self, message: str):
+def send(self, message: str) -> None:
     """Sends a message
 
     Args:
@@ -95,7 +95,7 @@ def send(self, message: str):
         chat.send_keys(message)
 
 
-def send_file(self, file_path: str):
+def send_file(self, file_path: str) -> None:
     """Sends a file
 
     Args:
@@ -147,7 +147,7 @@ def send_file(self, file_path: str):
         send2trash(file_name + ".zip")
     
 
-def reply(self, message: str):
+def reply(self, message: str) -> None:
     """Replies to the last message
 
     Args:
@@ -166,7 +166,7 @@ def reply(self, message: str):
     self.send(message)
 
 
-def reply_privately(self, message: str):
+def reply_privately(self, message: str) -> None:
     """Sends a message message privatly to the last message in chat
 
     Args:
@@ -204,7 +204,7 @@ def reply_privately(self, message: str):
     self.select_chat_by_name(group_name)
 
 
-def reply_file_privately(self, file_path: str):
+def reply_file_privately(self, file_path: str) -> None:
     """Sends a file privatly to the last message in chat
 
     Args:

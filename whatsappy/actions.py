@@ -4,7 +4,7 @@ from .error import PermissionError
 from selenium.webdriver.common.keys import Keys
 
 
-def add_to_group(self, contact_name: str):
+def add_to_group(self, contact_name: str) -> None:
     """Add a new participant to the group
 
     Args:
@@ -64,7 +64,7 @@ def add_to_group(self, contact_name: str):
     close_info(self)
 
 
-def remove_from_group(self, participant_name: str):
+def remove_from_group(self, participant_name: str) -> None:
     """Removes a participant from the group
 
     Args:
@@ -119,7 +119,7 @@ def remove_from_group(self, participant_name: str):
     close_info(self)
 
 
-def make_group_admin(self, participant_name: str):
+def make_group_admin(self, participant_name: str) -> None:
     """Makes someone a group admin
 
     Args:
@@ -172,7 +172,7 @@ def make_group_admin(self, participant_name: str):
     close_info(self)
 
 
-def select_chat_by_name(self, chat_name: str):
+def select_chat_by_name(self, chat_name: str) -> None:
     """Go to the selected chat by its number
 
     Args:
@@ -188,7 +188,7 @@ def select_chat_by_name(self, chat_name: str):
     ).send_keys(Keys.ENTER)
 
 
-def select_chat_by_number(self, chat_number: int):
+def select_chat_by_number(self, chat_number: int) -> None:
     """Go to the selected chat by its number
 
     Args:
@@ -199,7 +199,7 @@ def select_chat_by_number(self, chat_number: int):
     sleep(5)
 
 
-def create_group(self, group_name: str, contacts: list):
+def create_group(self, group_name: str, contacts: list) -> None:
 
     """Create a new whatsapp group
 

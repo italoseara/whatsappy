@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from .error import BadPathError, PermissionError
 
 
-def change_group_description(self, description: str):
+def change_group_description(self, description: str) -> None:
     """Changes the group description
 
     Args:
@@ -40,7 +40,7 @@ def change_group_description(self, description: str):
     close_info(self)
     
 
-def change_group_name(self, name: str):
+def change_group_name(self, name: str) -> None:
     """Changes the group name
 
     Args:
@@ -68,7 +68,7 @@ def change_group_name(self, name: str):
     close_info(self)
 
 
-def change_group_pfp(self, file_path: str):
+def change_group_pfp(self, file_path: str) -> None:
 
     if not path.isabs(file_path) or path.exists(file_path):
         raise BadPathError(f"{file_path} is not a valid path")
@@ -92,7 +92,7 @@ def change_group_pfp(self, file_path: str):
     close_info(self)
 
 
-def leave_group(self):
+def leave_group(self) -> None:
     """Leaves the group you are"""
 
     group_name = self.driver.find_element_by_xpath(

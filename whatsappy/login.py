@@ -1,29 +1,31 @@
 import os
-from re import S
+import time
 import shelve
 import platform
 from os import mkdir
-from time import sleep
 from . import ascii_qrcode
-from .tool import console
 from .error import LoginError
 from selenium import webdriver
+from .tool import console, terminal_size
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 
 os.environ["WDM_LOG_LEVEL"] = "0"
 
 
-def get_qrcode(driver, timeout: int):
+def get_qrcode(driver, timeout: int, before: int) -> None:
+
+    global rows, columns
 
     qr_str_old = ''
 
-    min_rows, min_columns = 55, 110
-    rows, columns = os.get_terminal_size()
+    min_columns, min_rows = 110, 55
+    columns, rows = os.get_terminal_size()
 
-    if rows < min_rows or columns < min_columns:
-        os.system(f'mode con: cols={min_columns} lines={min_rows}')
+    if rows <= min_rows or columns <= min_columns:
+        terminal_size(min_columns, min_rows)
 
-    for _ in range(timeout):
+    while (time.time() - before) < timeout:
         
         qr_code = driver.find_element_by_css_selector('.landing-main > div > div:nth-child(2) > div')
 
@@ -34,21 +36,12 @@ def get_qrcode(driver, timeout: int):
 
             console.clear()
             print(ascii_qrcode.draw(qr_str))
-            console.print("[bold]Scan the QRCode with your phone")
+            console.print("Scan the QRCode with your phone")
 
-        try:
-            driver.find_element_by_xpath(
-                '//*[@id="side"]/div[1]/div/label/div/div[2]')
-            
-            os.system(f'mode con: cols={columns} lines={rows}')
-            break
-        except Exception:
-            pass
-
-        sleep(1)
+        time.sleep(1)
 
 
-def login(self, visible: bool = True, timeout: int = 60):
+def login(self, visible: bool = True, timeout: int = 60) -> None:
     """Logs in whatsapp and shows the QRCode if necessary
 
     Args:
@@ -62,6 +55,7 @@ def login(self, visible: bool = True, timeout: int = 60):
         "Darwin": rf"{os.path.expanduser('~')}/Library/Application Support/Google/Chrome/Default" # Mac OS
     }
 
+    qr_needed = False
     usr_path = os_path[platform.system()] 
 
     if not os.path.isdir("data"):
@@ -102,43 +96,36 @@ def login(self, visible: bool = True, timeout: int = 60):
     self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     self.driver.get("https://web.whatsapp.com")
 
-    logged = False
-    for _ in range(timeout):
+    before = time.time()
+    while (time.time() - before) < timeout:
+        
         try:
             self.driver.find_element_by_xpath(
-                '//*[@id="side"]/div[1]/div/label/div/div[2]'
-            )
+                '//*[@id="side"]/div[1]/div/label/div/div[2]')
             break
 
-        except:
+        except NoSuchElementException:
+
             if not visible:
-                try:
-                    self.driver.find_element_by_css_selector(".landing-main")          
-                    get_qrcode(self.driver, timeout)
-                    break
-
-                except Exception:
-                    sleep(1)
             
-            else:
-                sleep(1)
+                try:
+                    self.driver.find_element_by_css_selector(".landing-main")
+                    qr_needed = True
+                    get_qrcode(self.driver, timeout, before)
 
+                except (NoSuchElementException, StaleElementReferenceException):
+                    pass
 
-    self.driver.implicitly_wait(60)
-    self.driver.find_element_by_xpath(
-        '//*[@id="side"]/div[1]/div/label/div/div[2]'
-    )
-
-    logged = True
-
-    if logged or visible:
-        console.log("Successfully logged in")
     else:
         self.close()
-        raise LoginError("Failed when trying to log into whatsapp")
+        raise LoginError("Failed when trying to log into whatsapp (Took too long to respond)")
 
+    if qr_needed:
+        terminal_size(columns, rows)
 
-def close(self):
+    console.log("Successfully logged in")
+
+def close(self) -> None:
     """Exit the whatsapp"""
 
     self.driver.close()
