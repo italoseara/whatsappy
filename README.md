@@ -33,13 +33,15 @@ You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/m
 | ------------- | ------------- |
 | Send messages  | ✅ |
 | Receive messages  | ✅ |
+| Verify new messages | ✅ | 
 | Send media (images/audio/documents)  | ✅ |
 | Send media (video)  | ✅ |
 | Send stickers | _pending_ |
 | Receive media (images/audio/video/documents)  | ✅ |
 | Send contact cards | _pending_ |
 | Send location | _pending_ |
-| Receive location | ✅ | 
+| Receive contact cards | ✅ | 
+| Receive location | ✅ |
 | Message replies | ✅ |
 | Join groups by invite  | _pending_ |
 | Get invite for group  | ✅ |
