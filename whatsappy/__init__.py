@@ -2,18 +2,12 @@ from .chat import (
     last_message,
     new_message,
     send,
-    reply,
-    last,
-    send_file,
-    reply_privately,
-    reply_file_privately,
 )
 from .actions import (
     add_to_group,
     remove_from_group,
     make_group_admin,
-    select_chat_by_number,
-    select_chat_by_name,
+    select_chat,
     create_group,
 )
 from .group import (
@@ -24,8 +18,6 @@ from .group import (
 )
 from .get import get_pinned_chats, get_recent_chats, get_group_invite_link
 from .login import login, close
-
-last = last
 
 
 class Whatsapp:
@@ -40,12 +32,7 @@ class Whatsapp:
     last_message = last_message
     new_message = new_message
     send = send
-    send_file = send_file
-    reply = reply
-    reply_privately = reply_privately
-    reply_file_privately = reply_file_privately
-    select_chat_by_name = select_chat_by_name
-    select_chat_by_number = select_chat_by_number
+    select_chat = select_chat
 
     get_pinned_chats = get_pinned_chats
     get_recent_chats = get_recent_chats

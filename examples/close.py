@@ -2,6 +2,6 @@ from whatsappy import whatsapp
 
 whatsapp.login()
 
-whatsapp.select_chat_by_name('Family Group')
+whatsapp.select_chat('Family Group')
 whatsapp.send('Good Morning!')
 whatsapp.close() # <--

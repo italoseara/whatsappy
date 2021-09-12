@@ -1,7 +1,8 @@
-from .tool import *
 from time import sleep
-from .error import PermissionError
 from selenium.webdriver.common.keys import Keys
+
+from .tool import is_admin, element_exists, close_info
+from .error import PermissionError
 
 
 def add_to_group(self, contact_name: str) -> None:
@@ -172,31 +173,27 @@ def make_group_admin(self, participant_name: str) -> None:
     close_info(self)
 
 
-def select_chat_by_name(self, chat_name: str) -> None:
-    """Go to the selected chat by its number
+def select_chat(self, chat: str) -> None:
+    """Open the selected chat
 
     Args:
-        chat_name (str): Contact/Group name
+        chat (str): Contact name/Group name/Phone number
+
+        Phone number
+            Example: 1NPAXXXXXXX
     """
+
+    if chat.isnumeric():
+        self.driver.get(f"https://web.whatsapp.com/send?phone={chat}")
+        sleep(5)
 
     self.driver.find_element_by_xpath(
        '//*[@id="side"]/div[1]/div/label/div/div[2]'
-    ).send_keys(chat_name)
+    ).send_keys(chat)
 
     self.driver.find_element_by_xpath(
         '//*[@id="side"]/div[1]/div/label/div/div[2]'
     ).send_keys(Keys.ENTER)
-
-
-def select_chat_by_number(self, chat_number: int) -> None:
-    """Go to the selected chat by its number
-
-    Args:
-        chat_number (int): Contact number. Example: 1NPAXXXXXXX
-    """
-
-    self.driver.get(f"https://web.whatsapp.com/send?phone={chat_number}")
-    sleep(5)
 
 
 def create_group(self, group_name: str, contacts: list) -> None:

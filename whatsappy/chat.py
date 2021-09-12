@@ -1,23 +1,12 @@
 import re
 import shutil
-from .tool import *
 from os import path
-from .error import BadPathError
 from send2trash import send2trash
 from selenium.webdriver.common.keys import Keys
 
-last = ""
+from .message import *
 
-
-class Message:
-    def __init__(self, author, content, time, date):
-        self.author = author
-        self.time = time
-        self.date = date
-        self.content = content
-
-    def __str__(self):
-        return f"Author: {self.author}\nTime: {self.time}\nDate: {self.date}\nContent: {self.content}"
+_last = ""
 
 
 def last_message(self):
@@ -27,27 +16,80 @@ def last_message(self):
         Class: Last message
     """
 
-    global Message
+    type = self.driver.execute_script("""
+        var lastMsg = [...document.querySelectorAll(".message-in")].slice(-1)[0];
 
-    info = self.driver.execute_script(
-        """
-        var a = document.querySelectorAll(".message-in");
-        return a[a.length - 1].querySelector('.copyable-text').dataset.prePlainText;
-    """
-    )
+        if (
+            lastMsg.querySelector("button > div:nth-child(2) > div > div:nth-child(3)")
+        ) return "Document";
 
-    content = self.driver.execute_script(
-        """
-        var a = document.querySelectorAll(".message-in");
-        return a[a.length - 1].querySelector('.copyable-text').innerText;
-    """
-    )
+        else if (
+            lastMsg.querySelector("div > div > div:nth-child(3)") &&
+            lastMsg.querySelector("div > div > div:nth-child(3)").style.backgroundImage
+        ) return "Video";
 
-    time = re.compile(r"(\d+:\d+(\s)?(AM|PM)?)").findall(info)[0][0]
-    date = re.compile(r"(\d+/\d+/\d+)").findall(info)[0]
-    author = re.compile(r"] (.*):").findall(info)[0]
+        else if (
+            lastMsg.querySelector("div > button > span") &&
+            lastMsg.querySelector("div > button > span").dataset.testid == "audio-play"
+        )
+            if (
+                lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
+                lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span")
+                .dataset.testid == "forward-chat"
+            ) return "AudioFile";
+            else return "Audio";
 
-    return Message(author=author, content=content, time=time, date=date)
+            else if (
+                lastMsg.querySelector(
+                    `div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div[role="button"]`
+                ) &&
+                !lastMsg.querySelector('span[data-testid="logo-youtube"]')
+            ) return "ContactCard";
+
+        else if (
+            lastMsg.querySelector("div > span > span > svg")
+        ) return "LiveLocation";
+
+        else if (
+            lastMsg.querySelector("a > img")
+        ) return "Location";
+
+        else if (
+            lastMsg.querySelector("img")
+        )
+            if (lastMsg.querySelector("img").classList.contains('copyable-text') ||
+                lastMsg.querySelector('span[data-testid="logo-youtube"]'))
+                return "Text"
+            else if (
+                lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
+                lastMsg.querySelector("div").querySelector("span").dataset.testid ==
+                "tail-in"
+            ) return "Image";
+            else return "Sticker";
+
+        else return "Text";
+    """)
+
+    last_msg = self.driver.execute_script(
+        'return [...document.querySelectorAll(".message-in")].slice(-1)[0];')
+
+    classes = {
+        "Text": Text,
+        "Audio": Audio,
+        "Video": Video,
+        "Image": Image,
+        "Sticker": Sticker,
+        "AudioFile": Audio,
+        "Document": Document,
+        "Location" : Location,
+        "ContactCard": ContactCard,
+        "LiveLocation": LiveLocation,
+    }
+    
+    if type == "AudioFile":
+        return classes[type](_element=last_msg, isrecorded=True, _whatsapp=self)
+
+    return classes[type](_element=last_msg, _whatsapp=self)
 
 
 def new_message(self):
@@ -57,30 +99,30 @@ def new_message(self):
         Bool: New message
     """
 
-    global last
+    global _last
 
-    try:
-        message = self.last_message()
-        if last == "":
-            last = message.content
+    message = self.last_message()
+    if _last == "":
+        _last = message
 
-        if message.content != last:
-            last = message.content
-            
-            return True
+    if message != _last:
+        _last = message
+        return True
 
-        else:
-            return False
-    except:
-        pass
+    else:
+        return False
 
 
 def send(self, message: str) -> None:
     """Sends a message
 
     Args:
-        message (str): The message you want to send
+        message (str): The message you want to send or a file path
     """
+
+    if not path.isabs(message):
+        _send_file(self, file_path=message)
+        return None
 
     chat = self.driver.find_element_by_xpath(
         '//*[@id="main"]/footer/div[1]/div[2]/div/div[1]/div/div[2]'
@@ -95,15 +137,12 @@ def send(self, message: str) -> None:
         chat.send_keys(message)
 
 
-def send_file(self, file_path: str) -> None:
+def _send_file(self, file_path: str) -> None:
     """Sends a file
 
     Args:
         file_path (str, absolute path): The file of the path you want to send
     """
-
-    if not path.isabs(file_path):
-        raise BadPathError("The file path is not absolute")
 
     regex = re.compile(r"(\w+\.(\w+))")
     file_name = file_path.split("\\")[-1]
@@ -138,105 +177,9 @@ def send_file(self, file_path: str) -> None:
             self.driver.find_element_by_xpath(
                 '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/div/div[2]/div[2]/div/div'
             ).click()
-
             break
-        except:
+        except: 
             pass
 
     if isZip:
         send2trash(file_name + ".zip")
-    
-
-def reply(self, message: str) -> None:
-    """Replies to the last message
-
-    Args:
-        message (str): The message you want to send
-    """
-
-    self.driver.execute_script(
-        """
-        var a = document.querySelectorAll('.message-in');
-        var elem = a[a.length -1]
-        var clickEvent = document.createEvent('MouseEvents');
-        clickEvent.initEvent('dblclick', true, true);
-        elem.dispatchEvent(clickEvent);
-    """
-    )
-    self.send(message)
-
-
-def reply_privately(self, message: str) -> None:
-    """Sends a message message privatly to the last message in chat
-
-    Args:
-        message (str): The message you want to send
-    """
-
-    group_name = self.driver.find_element_by_xpath(
-        '//*[@id="main"]/header/div[2]/div/div/span'
-    ).text
-
-    self.driver.execute_script(
-        """
-        var event = new MouseEvent('mouseover', {
-            'view': window,
-            'bubbles': true,
-            'cancelable': true
-        });
-
-        var a = document.querySelectorAll('.message-in > div');
-        var element = a[a.length -1];
-        
-        element.dispatchEvent(event);
-    """
-    )
-
-    self.driver.find_element_by_css_selector(
-        ".message-in > div > div > span > div > div"
-    ).click()
-
-    self.driver.find_element_by_css_selector(
-        "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
-    ).click()
-
-    self.send(message)
-    self.select_chat_by_name(group_name)
-
-
-def reply_file_privately(self, file_path: str) -> None:
-    """Sends a file privatly to the last message in chat
-
-    Args:
-        file_path (str, absolute path): The file of the path you want to send
-    """
-
-    group_name = self.driver.find_element_by_xpath(
-        '//*[@id="main"]/header/div[2]/div/div/span'
-    ).text
-
-    self.driver.execute_script(
-        """
-        var event = new MouseEvent('mouseover', {
-            'view': window,
-            'bubbles': true,
-            'cancelable': true
-        });
-
-        var a = document.querySelectorAll('.message-in > div');
-        var element = a[a.length -1];
-        
-        element.dispatchEvent(event);
-    """
-    )
-
-    self.driver.find_element_by_css_selector(
-        ".message-in > div > div > span > div > div"
-    ).click()
-
-    self.driver.find_element_by_css_selector(
-        "#app > div > span:nth-child(4) > div > ul > li:nth-child(2)"
-    ).click()
-
-    self.send_file(file_path)
-    self.select_chat_by_name(group_name)

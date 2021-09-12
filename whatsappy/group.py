@@ -1,7 +1,8 @@
-from .tool import *
 from os import path
 from time import sleep
 from selenium.webdriver.common.keys import Keys
+
+from .tool import close_info, is_admin
 from .error import BadPathError, PermissionError
 
 
@@ -94,10 +95,6 @@ def change_group_pfp(self, file_path: str) -> None:
 
 def leave_group(self) -> None:
     """Leaves the group you are"""
-
-    group_name = self.driver.find_element_by_xpath(
-        '//*[@id="main"]/header/div[2]/div/div/span'
-    ).text
 
     # Abre as informações do grupo
     self.driver.find_element_by_xpath('//*[@id="main"]/header/div[2]').click()

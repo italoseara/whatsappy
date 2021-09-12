@@ -1,5 +1,6 @@
-from .tool import *
 from time import sleep
+
+from .tool import close_info, is_admin
 
 
 def get_recent_chats(self):

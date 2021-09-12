@@ -5,14 +5,16 @@ with open("README.md", "r") as fh:
 
 setup(
     name="whatsappy-py",
-    version="2.2",
+    version="2.3",
     description="Whatsappy is a Python library for creating whatsapp bots.",
     packages=["whatsappy"],
     classifiers=[
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+        "Topic :: Home Automation",
+        "Topic :: Internet",
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",

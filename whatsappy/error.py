@@ -3,12 +3,16 @@ class WhatsappyError(Exception):
 
 
 class LoginError(WhatsappyError):
-    """Describes an error on the login process."""
+    """Raised when there is an error when trying to login."""
 
 
 class BadPathError(WhatsappyError):
-    """Describes an invalid path."""
+    """Raised when there is an invalid path."""
 
 
 class PermissionError(WhatsappyError):
-    """Describes an error when the user does not have permission"""
+    """Raised when the user does not have permission."""
+
+
+class InvalidActionError(WhatsappyError):
+    """Raised when the user tries to do an invalid action."""

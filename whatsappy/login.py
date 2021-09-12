@@ -3,17 +3,18 @@ import time
 import shelve
 import platform
 from os import mkdir
-from . import ascii_qrcode
-from .error import LoginError
 from selenium import webdriver
-from .tool import console, terminal_size
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+
+from . import ascii_qrcode
+from .error import LoginError
+from .tool import console, terminal_size
 
 os.environ["WDM_LOG_LEVEL"] = "0"
 
 
-def get_qrcode(driver, timeout: int, before: int) -> None:
+def _get_qrcode(driver, timeout: int, before: int) -> None:
 
     global rows, columns
 
@@ -111,7 +112,7 @@ def login(self, visible: bool = True, timeout: int = 60) -> None:
                 try:
                     self.driver.find_element_by_css_selector(".landing-main")
                     qr_needed = True
-                    get_qrcode(self.driver, timeout, before)
+                    _get_qrcode(self.driver, timeout, before)
 
                 except (NoSuchElementException, StaleElementReferenceException):
                     pass
