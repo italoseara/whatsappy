@@ -31,25 +31,25 @@ You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/m
 
 | Feature  | Status |
 | ------------- | ------------- |
-| Send messages  | ✅  |
-| Receive messages  | ✅  |
-| Send media (images/audio/documents)  | ✅  |
+| Send messages  | ✅ |
+| Receive messages  | ✅ |
+| Send media (images/audio/documents)  | ✅ |
 | Send media (video)  | ✅ |
 | Send stickers | _pending_ |
-| Receive media (images/audio/video/documents)  | _pending_  |
+| Receive media (images/audio/video/documents)  | ✅ |
 | Send contact cards | _pending_ |
 | Send location | _pending_ |
-| Receive location | _pending_ | 
+| Receive location | ✅ | 
 | Message replies | ✅ |
 | Join groups by invite  | _pending_ |
 | Get invite for group  | ✅ |
-| Modify group info (subject, description)  | ✅  |
-| Modify group settings (send messages, edit info)  | ✅  |
-| Add group participants  | ✅  |
-| Kick group participants  | ✅  |
+| Modify group info (subject, description)  | ✅ |
+| Modify group settings (send messages, edit info)  | ✅ |
+| Add group participants  | ✅ |
+| Kick group participants  | ✅ |
 | Promote group participants | ✅ |
 | Demote group participants | _pending_ |
-| Mention users | _pending_ |
+| Mention users | ✅ |
 | Mute/unmute chats | _pending_ |
 | Block/unblock contacts | _pending_ |
 | Get contact info | _pending_ |
