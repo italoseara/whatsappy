@@ -120,7 +120,7 @@ def send(self, message: str) -> None:
         message (str): The message you want to send or a file path
     """
 
-    if not path.isabs(message):
+    if path.isabs(message):
         _send_file(self, file_path=message)
         return None
 
