@@ -125,7 +125,7 @@ def send(self, message: str) -> None:
         return None
 
     chat = self.driver.find_element_by_xpath(
-        '//*[@id="main"]/footer/div[1]/div[2]/div/div[1]/div/div[2]'
+        '//*[@id="main"]/footer/div[1]/div/div/div[2]/div[1]/div/div[2]'
     )
 
     if message.find("\n"):
@@ -149,7 +149,7 @@ def _send_file(self, file_path: str) -> None:
     isZip = False
 
     if regex.findall(file_name):
-        if regex.findall(file_name)[0] in ["png", "jpg", "mp4", "3gpp"]:
+        if regex.findall(file_name)[0] in ["png", "jpg", "jpeg", "mp4", "3gpp"]:
             type = 1
         else:
             type = 3
@@ -163,11 +163,11 @@ def _send_file(self, file_path: str) -> None:
         type = 3
 
     self.driver.find_element_by_xpath(
-        '//*[@id="main"]/footer/div[1]/div[1]/div[2]/div/div/span'
+        '//*[@id="main"]/footer/div[1]/div/div/div[1]/div[2]/div/div/span'
     ).click()
 
     img_box = self.driver.find_element_by_xpath(
-        f'//*[@id="main"]/footer/div[1]/div[1]/div[2]/div/span/div[1]/div/ul/li[{type}]/button/input'
+        f'//*[@id="main"]/footer/div[1]/div/div/div[1]/div[2]/div/span/div[1]/div/ul/li[{type}]/button/input'
     )
 
     img_box.send_keys(file_path)
