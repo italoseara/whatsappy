@@ -77,7 +77,6 @@ def blob_to_bytes(driver, url: str) -> bytes:
 
 def get_options(self, driver):
 
-
     driver.execute_script("""
         var event = new MouseEvent('mouseover', {
             'view': window,

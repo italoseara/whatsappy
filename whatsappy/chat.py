@@ -79,11 +79,11 @@ def last_message(self):
         "Video": Video,
         "Image": Image,
         "Sticker": Sticker,
-        "AudioFile": Audio,
         "Document": Document,
         "Location" : Location,
         "ContactCard": ContactCard,
         "LiveLocation": LiveLocation,
+        "AudioFile": lambda _element, _whatsapp: Audio(_element=_element, isrecorded=True, _whatsapp=_whatsapp),
     }
     
     if type == "AudioFile":
@@ -149,10 +149,11 @@ def _send_file(self, file_path: str) -> None:
     isZip = False
 
     if regex.findall(file_name):
-        if regex.findall(file_name)[0] in ["png", "jpg", "jpeg", "mp4", "3gpp"]:
-            type = 1
-        else:
-            type = 3
+        match regex.findall(file_name)[0]:
+            case "png" | "jpg" | "jpeg" | "mp4" | "3gpp":
+                type = 1
+            case _:
+                type = 3
 
     else:
         shutil.make_archive(file_name, "zip", file_name)

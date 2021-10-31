@@ -24,7 +24,7 @@ def change_group_description(self, description: str) -> None:
     ).click() # Tenta clicar na caneta de edição da descrição
 
     description_dom = self.driver.find_element_by_xpath(
-        '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[2]/div[2]/div/div[1]/div/div[2]'
+        '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[2]/div[2]/div/div[1]/div/div/div[2]'
     ) # Seleciona a descrição para editar
 
     description_dom.clear() # Limpa
