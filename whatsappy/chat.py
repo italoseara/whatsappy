@@ -85,9 +85,6 @@ def last_message(self):
         "LiveLocation": LiveLocation,
         "AudioFile": lambda _element, _whatsapp: Audio(_element=_element, isrecorded=True, _whatsapp=_whatsapp),
     }
-    
-    if type == "AudioFile":
-        return classes[type](_element=last_msg, isrecorded=True, _whatsapp=self)
 
     return classes[type](_element=last_msg, _whatsapp=self)
 

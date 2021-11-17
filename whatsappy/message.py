@@ -4,9 +4,9 @@ from selenium.webdriver.common.keys import Keys
 from dataclasses import dataclass, field
 from PIL import Image as PILImage
 from datetime import datetime
+from typing import Any, List
 from pathlib import Path
 from io import BytesIO
-from typing import Any
 from time import sleep
 import mimetypes
 import re
@@ -61,14 +61,14 @@ class _BaseMessage:
         if soup.find("span", attrs={"data-testid": "forwarded"}):
             self.forwarded = True
 
-    def forward(self, contacts: list[str]):
+    def forward(self, contacts: List[str]):
         """Forwards the selected message to all listed contacts
 
         Keep in mind that the message won't be avaliable anymore,
         because it will leave the current chat
 
         Args:
-            contacts (list[str]): A list with contacts name
+            contacts (List[str]): A list with contacts name
         """
 
         driver = self._element.parent
@@ -297,12 +297,12 @@ class ContactCard(_BaseMessage):
     @dataclass
     class Contact:
         name: str
-        numbers: list[str]
+        numbers: List[str]
 
         def send_message(message: str) -> None:
             pass
 
-    contacts: list[Contact] = field(default_factory=list)
+    contacts: List[Contact] = field(default_factory=list)
 
     def __post_init__(self):
         _BaseMessage.__post_init__(self)
