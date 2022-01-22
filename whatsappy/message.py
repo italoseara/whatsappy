@@ -16,7 +16,7 @@ from .error import InvalidActionError
 
 
 @dataclass
-class _BaseMessage:
+class Message:
 
     @dataclass
     class Quote:
@@ -172,40 +172,12 @@ class _BaseMessage:
 
 
 @dataclass
-class _BaseImage(_BaseMessage):
-
-    @dataclass
-    class File:
-        size: int
-        resolution: tuple
-        content: bytes = field(repr=False)
-
-    file: File = None
-
-    def __post_init__(self):
-        _BaseMessage.__post_init__(self)
-        soup = to_soup(self._element)
-
-        for img in soup.findAll("img"):
-            if "web.whatsapp.com" in img["src"]:
-                content = blob_to_bytes(driver=self._element.parent, url=img["src"])
-                break
-
-        size = len(content)
-        
-        image = PILImage.open(BytesIO(content))
-        resolution = image.size
-
-        self.file = self.File(size=size, resolution=resolution, content=content)
-
-
-@dataclass
-class Text(_BaseMessage):
+class Text(Message):
     ...
 
 
 @dataclass
-class Document(_BaseMessage):
+class Document(Message):
 
     @dataclass
     class File:
@@ -217,7 +189,7 @@ class Document(_BaseMessage):
     file: File = None
 
     def __post_init__(self):
-        _BaseMessage.__post_init__(self)
+        Message.__post_init__(self)
         mimetypes.init()
 
         soup = to_soup(self._element)
@@ -245,12 +217,12 @@ class Document(_BaseMessage):
 
 
 @dataclass
-class Video(_BaseMessage):
+class Video(Message):
 
     length: int = None
 
     def __post_init__(self):
-        _BaseMessage.__post_init__(self)
+        Message.__post_init__(self)
         soup = to_soup(self._element)
 
         length_str = (
@@ -265,7 +237,7 @@ class Video(_BaseMessage):
 
 
 @dataclass
-class Audio(_BaseMessage):
+class Audio(Message):
 
     @dataclass
     class File:
@@ -277,7 +249,7 @@ class Audio(_BaseMessage):
     isrecorded: bool = False
 
     def __post_init__(self):
-        _BaseMessage.__post_init__(self)
+        Message.__post_init__(self)
         soup = to_soup(self._element)
 
         length_str = soup.find("div", attrs={"aria-hidden": "true"}).text.split(":")
@@ -292,7 +264,7 @@ class Audio(_BaseMessage):
 
 
 @dataclass
-class ContactCard(_BaseMessage):
+class ContactCard(Message):
 
     @dataclass
     class Contact:
@@ -305,7 +277,7 @@ class ContactCard(_BaseMessage):
     contacts: List[Contact] = field(default_factory=list)
 
     def __post_init__(self):
-        _BaseMessage.__post_init__(self)
+        Message.__post_init__(self)
         self._element.find_element_by_css_selector('div[role="button"]').click()
 
         driver_find = self._element.parent.find_element_by_css_selector
@@ -331,7 +303,7 @@ class ContactCard(_BaseMessage):
 
 
 @dataclass
-class Location(_BaseMessage):
+class Location(Message):
 
     coords: tuple = None
     link: str = None
@@ -400,10 +372,33 @@ class LiveLocation(Location):
 
 
 @dataclass
-class Image(_BaseImage):
-    ...
+class Image(Message):
+
+    @dataclass
+    class File:
+        size: int
+        resolution: tuple
+        content: bytes = field(repr=False)
+
+    file: File = None
+
+    def __post_init__(self):
+        Message.__post_init__(self)
+        soup = to_soup(self._element)
+
+        for img in soup.findAll("img"):
+            if "web.whatsapp.com" in img["src"]:
+                content = blob_to_bytes(driver=self._element.parent, url=img["src"])
+                break
+
+        size = len(content)
+        
+        image = PILImage.open(BytesIO(content))
+        resolution = image.size
+
+        self.file = self.File(size=size, resolution=resolution, content=content)
 
 
 @dataclass
-class Sticker(_BaseImage):
+class Sticker(Image):
     ...

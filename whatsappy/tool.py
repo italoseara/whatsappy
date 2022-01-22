@@ -31,17 +31,6 @@ def close_info(self) -> None:
     ).click()
 
 
-def terminal_size(columns: int , rows: int) -> None:
-
-    comamnd = {
-        "Windows": f"mode con: cols={columns} lines={rows}",    # Windows
-        "Linux": f"stty cols {columns} rows {rows}",            # Linux
-        "Darwin": f"resize -s {rows} {columns}"                 # Mac OS
-    }
-    
-    os.system( comamnd[platform.system()] )
-
-
 def to_soup(element: WebElement):
     return BeautifulSoup(element.get_attribute("innerHTML"), "html.parser")
 
