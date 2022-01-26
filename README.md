@@ -43,9 +43,9 @@ You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/m
 | Receive location | ✅ |
 | Message replies | ✅ |
 | Join groups by invite  | _pending_ |
-| Get invite for group  | ✅ |
+| Get invite for group  | _pending_ |
 | Modify group info (subject, description)  | ✅ |
-| Modify group settings (send messages, edit info)  | ✅ |
+| Modify group settings (send messages, edit info)  | _pending_ |
 | Add group participants  | ✅ |
 | Kick group participants  | ✅ |
 | Promote group participants | ✅ |
