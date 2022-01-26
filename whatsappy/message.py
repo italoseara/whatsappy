@@ -16,7 +16,7 @@ from .error import InvalidActionError
 
 
 @dataclass
-class Message:
+class Text:
 
     @dataclass
     class Quote:
@@ -172,12 +172,7 @@ class Message:
 
 
 @dataclass
-class Text(Message):
-    ...
-
-
-@dataclass
-class Document(Message):
+class Document(Text):
 
     @dataclass
     class File:
@@ -189,7 +184,7 @@ class Document(Message):
     file: File = None
 
     def __post_init__(self):
-        Message.__post_init__(self)
+        Text.__post_init__(self)
         mimetypes.init()
 
         soup = to_soup(self._element)
@@ -217,12 +212,12 @@ class Document(Message):
 
 
 @dataclass
-class Video(Message):
+class Video(Text):
 
     length: int = None
 
     def __post_init__(self):
-        Message.__post_init__(self)
+        Text.__post_init__(self)
         soup = to_soup(self._element)
 
         length_str = (
@@ -237,7 +232,7 @@ class Video(Message):
 
 
 @dataclass
-class Audio(Message):
+class Audio(Text):
 
     @dataclass
     class File:
@@ -249,7 +244,7 @@ class Audio(Message):
     isrecorded: bool = False
 
     def __post_init__(self):
-        Message.__post_init__(self)
+        Text.__post_init__(self)
         soup = to_soup(self._element)
 
         length_str = soup.find("div", attrs={"aria-hidden": "true"}).text.split(":")
@@ -264,7 +259,7 @@ class Audio(Message):
 
 
 @dataclass
-class ContactCard(Message):
+class ContactCard(Text):
 
     @dataclass
     class Contact:
@@ -277,7 +272,7 @@ class ContactCard(Message):
     contacts: List[Contact] = field(default_factory=list)
 
     def __post_init__(self):
-        Message.__post_init__(self)
+        Text.__post_init__(self)
         self._element.find_element_by_css_selector('div[role="button"]').click()
 
         driver_find = self._element.parent.find_element_by_css_selector
@@ -303,7 +298,7 @@ class ContactCard(Message):
 
 
 @dataclass
-class Location(Message):
+class Location(Text):
 
     coords: tuple = None
     link: str = None
@@ -372,7 +367,7 @@ class LiveLocation(Location):
 
 
 @dataclass
-class Image(Message):
+class Image(Text):
 
     @dataclass
     class File:
@@ -383,7 +378,7 @@ class Image(Message):
     file: File = None
 
     def __post_init__(self):
-        Message.__post_init__(self)
+        Text.__post_init__(self)
         soup = to_soup(self._element)
 
         for img in soup.findAll("img"):

@@ -19,8 +19,8 @@ from whatsappy import whatsapp
 
 whatsapp.login(visible=False) # Login whatsapp (Headless mode)
 
-whatsapp.select_chat('Mom') # Goes to the selected chat
-whatsapp.send('Hello') # Send a message
+chat = whatsapp.chat('Mom') # Goes to the selected chat
+chat.send('Hello') # Send a message
 
 whatsapp.close() # Exit
 ```
@@ -33,7 +33,6 @@ You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/m
 | ------------- | ------------- |
 | Send messages  | ✅ |
 | Receive messages  | ✅ |
-| Verify new messages | ✅ | 
 | Send media (images/audio/documents)  | ✅ |
 | Send media (video)  | ✅ |
 | Send stickers | _pending_ |
@@ -50,13 +49,13 @@ You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/m
 | Add group participants  | ✅ |
 | Kick group participants  | ✅ |
 | Promote group participants | ✅ |
-| Demote group participants | _pending_ |
+| Demote group participants | ✅ |
 | Mention users | ✅ |
 | Mute/unmute chats | _pending_ |
 | Block/unblock contacts | _pending_ |
-| Get contact info | _pending_ |
-| Get profile pictures | _pending_ |
-| Set user status message | _pending_ |
+| Get contact info | ✅ |
+| Get profile pictures | ✅ |
+| Set user status message | ✅ |
 
 ## Contributing
 

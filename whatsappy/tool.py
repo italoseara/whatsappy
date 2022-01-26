@@ -1,35 +1,9 @@
-import os
 import base64
-import platform
 from bs4 import BeautifulSoup
 from rich.console import Console
 from selenium.webdriver.remote.webelement import WebElement
 
 console = Console()
-
-def element_exists(self, xpath: str) -> bool:
-    """Verify if the element exists"""
-
-    return self.driver.execute_script(
-        f'return !!document.evaluate(\'{xpath}\', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;'
-    )
-
-
-def is_admin(self) -> bool:
-    """Verify if the user is an admin"""
-
-    return element_exists(self,
-        '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/div/section/div[5]/div[2]/div[2]'
-    )
-
-
-def close_info(self) -> None:
-    """Closes group info"""
-
-    self.driver.find_element_by_xpath(
-        '//*[@id="app"]/div[1]/div[1]/div[2]/div[3]/span/div[1]/span/div[1]/header/div/div[1]/button'
-    ).click()
-
 
 def to_soup(element: WebElement):
     return BeautifulSoup(element.get_attribute("innerHTML"), "html.parser")
@@ -59,7 +33,7 @@ def blob_to_bytes(driver, url: str) -> bytes:
         xhr.onerror = function(){ callback(xhr.status) };
         xhr.open('GET', uri);
         xhr.send();
-        """, url)
+    """, url)
 
     return base64.b64decode(result)
 
