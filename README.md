@@ -15,7 +15,9 @@ pip install whatsappy-py
 ## Usage
 
 ```python
-from whatsappy import whatsapp
+from whatsappy import Whatsapp
+
+whatsapp = Whatsapp()
 
 whatsapp.login(visible=False) # Login whatsapp (Headless mode)
 

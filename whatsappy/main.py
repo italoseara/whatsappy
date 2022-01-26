@@ -20,8 +20,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException, JavascriptException
 
 from .message import *
-from .error import LoginError
 from .tool import console
+from .error import LoginError
 
 
 os.environ["WDM_LOG_LEVEL"] = "0"
@@ -251,6 +251,9 @@ class Whatsapp:
                 
             send_message(message, text_box)
             text_box.send_keys(Keys.ENTER)
+
+        def reply(self, message: str = "", file: str = None) -> None:
+            raise NotImplementedError("Not implemented yet")
 
         @property
         def last_message(self) -> Any:
