@@ -51,12 +51,10 @@ class Text:
         
         if quoted := soup.find(class_="quoted-mention"):
 
-            quoted_text = parse_message(quoted)
-            quoted_author = (
-                quoted.parent.parent.span.text
+            self.quote = self.Quote(
+                text=parse_message(quoted), 
+                author=quoted.parent.parent.span.text
             )
-
-            self.quote = self.Quote(text=quoted_text, author=quoted_author)
         
         if soup.find("span", attrs={"data-testid": "forwarded"}):
             self.forwarded = True

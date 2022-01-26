@@ -56,6 +56,7 @@ You can find more examples [HERE](https://github.com/italoseara/whatsappy/tree/m
 | Mute/unmute chats | _pending_ |
 | Block/unblock contacts | _pending_ |
 | Get contact info | ✅ |
+| Get group info | ✅ |
 | Get profile pictures | ✅ |
 | Set user status message | ✅ |
 

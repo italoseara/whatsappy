@@ -144,8 +144,70 @@ class Whatsapp:
             if info.find_elements(By.CSS_SELECTOR, "span[dir=auto].copyable-text button") 
             else self.Contact(self, name))
 
-    def create_group(self) -> None:
-        raise NotImplementedError("Not implemented yet")
+    def create_group(self, name: str, contacts: list) -> None:
+        number_regex = re.compile(r"^\+?[0-9]{10,15}$")
+        
+        self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=chat]").click()
+        self._driver.find_element(By.CSS_SELECTOR, "div[data-testid=cell-frame-container]").click() 
+        sleep(.5)
+        
+        # Search for the contact
+        text_box = self._driver.find_element(By.CSS_SELECTOR, "input")
+        
+        not_saved = []
+        for contact in contacts:
+            if number_regex.match(contact.replace(" ", "").replace("-", "")):
+                not_saved.append(contact.replace(" ", "").replace("-", ""))
+                continue
+            
+            text_box.clear()
+            text_box.send_keys(contact)
+            sleep(.5)
+            
+            # Verify if the contact exists
+            search_box = self._driver.find_element(By.XPATH, "//header/..")
+            found = search_box.find_elements(By.CSS_SELECTOR, "[data-testid=cell-frame-container]")
+            
+            if not len(found):
+                raise ValueError(f'Contact not found: "{contact}"')
+            
+            # Select the contact
+            text_box.send_keys(Keys.ENTER) 
+            sleep(.5)
+
+        if len(not_saved) == len(contacts):
+            raise ValueError("You need to provide at least one added contact")
+
+        self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=arrow-forward]").click()
+        self._driver.find_element(By.CSS_SELECTOR, "[role=textbox]").send_keys(name)
+        self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=checkmark-medium]").click()
+        sleep(1.5)
+
+        # If the person can only be added by invite link
+        if self._driver.find_elements(By.CSS_SELECTOR, "div[data-animate-modal-popup=true]"):
+            self._driver.find_elements(By.CSS_SELECTOR, "div[role=button]")[1].click()
+            sleep(.5)
+            self._driver.find_element(By.CSS_SELECTOR, "div[role=button]").click()
+
+        sleep(.5)
+
+        group = self.Group(self, name)
+
+        for contact in not_saved:
+            self._driver.get(f"https://web.whatsapp.com/send?phone={contact}&text={group.invite_link}")
+            while True:
+                try:
+                    self._driver.find_element(By.ID, "side")
+                    sleep(1)
+                    break
+                except NoSuchElementException:
+                    pass
+
+            text_box = self._driver.find_elements(By.CSS_SELECTOR, "div[role=textbox]")[1]
+            text_box.send_keys(Keys.ENTER)
+            group._open_chat(group.name)
+
+        return group
 
     @property
     def pinned_chats(self) -> None:
@@ -252,9 +314,6 @@ class Whatsapp:
             send_message(message, text_box)
             text_box.send_keys(Keys.ENTER)
 
-        def reply(self, message: str = "", file: str = None) -> None:
-            raise NotImplementedError("Not implemented yet")
-
         @property
         def last_message(self) -> Any:
             """Gets the last message from the chat
@@ -267,58 +326,58 @@ class Whatsapp:
             
             try:
                 type = self._driver.execute_script("""
-                var lastMsg = [...document.querySelectorAll(".message-in")].slice(-1)[0];
+                    var lastMsg = [...document.querySelectorAll(".message-in")].slice(-1)[0];
 
-                if (
-                    lastMsg.querySelector("button > div:nth-child(2) > div > div:nth-child(3)")
-                ) return "Document";
-
-                else if (
-                    lastMsg.querySelector("div > div > div:nth-child(3)") &&
-                    lastMsg.querySelector("div > div > div:nth-child(3)").style.backgroundImage
-                ) return "Video";
-
-                else if (
-                    lastMsg.querySelector("div > button > span") &&
-                    lastMsg.querySelector("div > button > span").dataset.testid == "audio-play"
-                )
                     if (
-                        lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
-                        lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span")
-                        .dataset.testid == "forward-chat"
-                    ) return "AudioFile";
-                    else return "Audio";
+                        lastMsg.querySelector("button > div:nth-child(2) > div > div:nth-child(3)")
+                    ) return "Document";
 
                     else if (
-                        lastMsg.querySelector(
-                            `div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div[role="button"]`
-                        ) &&
-                        !lastMsg.querySelector('span[data-testid="logo-youtube"]')
-                    ) return "ContactCard";
+                        lastMsg.querySelector("div > div > div:nth-child(3)") &&
+                        lastMsg.querySelector("div > div > div:nth-child(3)").style.backgroundImage
+                    ) return "Video";
 
-                else if (
-                    lastMsg.querySelector("div > span > span > svg")
-                ) return "LiveLocation";
-
-                else if (
-                    lastMsg.querySelector("a > img")
-                ) return "Location";
-
-                else if (
-                    lastMsg.querySelector("img")
-                )
-                    if (lastMsg.querySelector("img").classList.contains('copyable-text') ||
-                        lastMsg.querySelector('span[data-testid="logo-youtube"]'))
-                        return "Text"
                     else if (
-                        lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
-                        lastMsg.querySelector("div").querySelector("span").dataset.testid ==
-                        "tail-in"
-                    ) return "Image";
-                    else return "Sticker";
+                        lastMsg.querySelector("div > button > span") &&
+                        lastMsg.querySelector("div > button > span").dataset.testid == "audio-play"
+                    )
+                        if (
+                            lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
+                            lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span")
+                            .dataset.testid == "forward-chat"
+                        ) return "AudioFile";
+                        else return "Audio";
 
-                else return "Text";
-            """)
+                        else if (
+                            lastMsg.querySelector(
+                                `div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div[role="button"]`
+                            ) &&
+                            !lastMsg.querySelector('span[data-testid="logo-youtube"]')
+                        ) return "ContactCard";
+
+                    else if (
+                        lastMsg.querySelector("div > span > span > svg")
+                    ) return "LiveLocation";
+
+                    else if (
+                        lastMsg.querySelector("a > img")
+                    ) return "Location";
+
+                    else if (
+                        lastMsg.querySelector("img")
+                    )
+                        if (lastMsg.querySelector("img").classList.contains('copyable-text') ||
+                            lastMsg.querySelector('span[data-testid="logo-youtube"]'))
+                            return "Text"
+                        else if (
+                            lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
+                            lastMsg.querySelector("div").querySelector("span").dataset.testid ==
+                            "tail-in"
+                        ) return "Image";
+                        else return "Sticker";
+
+                    else return "Text";
+                """)
             except JavascriptException:
                 return None
             
@@ -361,7 +420,8 @@ class Whatsapp:
             self.number = contact_info[1].text
             self.about = contact_info[2].get_property("title")
 
-            if img_element := info.find_elements(By.CSS_SELECTOR, "img"):
+            img_section = self._driver.find_element(By.CSS_SELECTOR, "section > div")
+            if img_element := img_section.find_elements(By.CSS_SELECTOR, "img"):
                 self.profile_picture = img_element[0].get_attribute("src")
 
             number_regex = re.compile(r"^\+?[0-9]{10,15}$")
@@ -391,8 +451,9 @@ class Whatsapp:
 
             self.name = info.find_element(By.CSS_SELECTOR, "div[role=textbox]").text
             self.description = info.find_elements(By.CSS_SELECTOR, "span[dir=auto].copyable-text")[1].text
-            
-            if img_element := info.find_elements(By.CSS_SELECTOR, "img"):
+
+            img_section = self._driver.find_element(By.CSS_SELECTOR, "section > div")
+            if img_element := img_section.find_elements(By.CSS_SELECTOR, "img"):
                 self.profile_picture = img_element[0].get_attribute("src")
 
             name = info.find_elements(By.CSS_SELECTOR, "div[role=gridcell]")[-2]
@@ -400,7 +461,7 @@ class Whatsapp:
 
             if self.admin:
                 self._driver.find_elements(By.CSS_SELECTOR, "div[data-testid=cell-frame-container]")[1].click()
-                sleep(.3)
+                sleep(.5)
                 self.invite_link = self._driver.find_element(By.CSS_SELECTOR, "#group-invite-link-anchor").text
                 
                 self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=back]").click()
@@ -501,6 +562,7 @@ class Whatsapp:
             Args:
                 contacts (list): A list of contacts that you want to add to the group
             """
+            number_regex = re.compile(r"^\+?[0-9]{10,15}$")
 
             self._open_chat(self.name)
 
@@ -511,18 +573,18 @@ class Whatsapp:
             if not self.admin:
                 raise PermissionError("You are not a group admin!")
 
+            # Click to add a participant
+            self._driver.find_element(By.CSS_SELECTOR, "[data-testid=cell-frame-container]").click() 
+            
+            # Search for the contact
+            text_box = self._driver.find_element(By.CSS_SELECTOR, "[role=textbox]")
+            
             not_saved = []
             for contact in contacts:
-                number_regex = re.compile(r"^\+?[0-9]{10,15}$")
                 if number_regex.match(contact.replace(" ", "").replace("-", "")):
                     not_saved.append(contact.replace(" ", "").replace("-", ""))
                     continue
                 
-                # Click to add a participant
-                self._driver.find_element(By.CSS_SELECTOR, "[data-testid=cell-frame-container]").click() 
-                
-                # Search for the contact
-                text_box = self._driver.find_element(By.CSS_SELECTOR, "[role=textbox]")
                 text_box.clear()
                 text_box.send_keys(contact)
                 sleep(.5)
@@ -614,6 +676,10 @@ class Whatsapp:
             self._participant_options(contacts, _demote)
 
         def leave(self) -> None:
+
+            if self._left:
+                raise PermissionError("You have already left the group")
+            
             info = self._driver.find_element(By.CSS_SELECTOR, "section")
             info.find_elements(By.CSS_SELECTOR, "div[role=button]")[-2].click()
             popup = self._driver.find_element(By.CSS_SELECTOR, "div[data-animate-modal-popup='true']")
