@@ -4,7 +4,7 @@ import shutil
 import shelve
 import colorama
 import platform
-from typing import Any
+from typing import Any, List
 from inspect import stack
 from qrcode import QRCode
 from time import sleep, time
@@ -118,7 +118,7 @@ class Whatsapp:
                 if not visible:
                     try:
                         self._driver.find_element(By.CLASS_NAME, "landing-main")
-                        self._get_qrcode(self._driver, timeout, before)
+                        self._get_qrcode(timeout, before)
                         
                     except NoSuchElementException:
                         pass
@@ -144,7 +144,7 @@ class Whatsapp:
             if info.find_elements(By.CSS_SELECTOR, "span[dir=auto].copyable-text button") 
             else self.Contact(self, name))
 
-    def create_group(self, name: str, contacts: list) -> None:
+    def new_group(self, name: str, contacts: list) -> None:
         number_regex = re.compile(r"^\+?[0-9]{10,15}$")
         
         self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=chat]").click()
@@ -222,12 +222,14 @@ class Whatsapp:
 
         _driver: Any = field(repr=False, default=None)
 
-        def _open_chat(self, name: str) -> None:
+        def _open_chat(self, name: str = None) -> None:
             """Open a chat
 
             Args:
                 name (str): The name of the chat you want to open
             """
+
+            name = name or self.name
 
             if len(self._driver.find_elements(By.CSS_SELECTOR, "header")) == 3 and\
                 self._driver.find_elements(By.CSS_SELECTOR, f"span[title={name}]"):
@@ -253,8 +255,8 @@ class Whatsapp:
                 section.find_elements(By.CSS_SELECTOR, "button[type=button]")[1].click()
             sleep(1.5)
 
-        def send(self, message: str = "", file: str = None) -> None:
-            """Send a message
+        def send(self, message: str = "", file: str = "") -> None:
+            """Sends a message
 
             Args:
                 message (str): The message you want to send
@@ -269,7 +271,7 @@ class Whatsapp:
                 else:
                     text_box.send_keys(message)
 
-            self._open_chat(self.name)
+            self._open_chat()
 
             text_box = self._driver.find_elements(By.CSS_SELECTOR, "div[role=textbox]")[-1]
             
@@ -322,7 +324,7 @@ class Whatsapp:
                 Class: Last message
             """
 
-            self._open_chat(self.name)
+            self._open_chat()
             
             try:
                 type = self._driver.execute_script("""
@@ -397,7 +399,7 @@ class Whatsapp:
                 "AudioFile": lambda **kwargs: Audio(**kwargs, isrecorded=True),
             }
 
-            return classes[type](_element=last_msg, _whatsapp=self)
+            return classes[type](chat=self, _element=last_msg, _whatsapp=self)
 
     @dataclass
     class Contact(_Chat):
@@ -437,8 +439,8 @@ class Whatsapp:
         name: str = None
         description: str = None
         profile_picture: str = None
-        admin: bool = False
         invite_link: str = None
+        admin: bool = False
         _left: bool = field(repr=False, default=False)
 
         def __init__(self, parent, name) -> None:
@@ -472,7 +474,7 @@ class Whatsapp:
             if stack()[1][3] == "__init__":
                 return super().__setattr__(__name, __value)
             
-            self._open_chat(self.name)
+            self._open_chat()
 
             info = self._driver.find_element(By.CSS_SELECTOR, "section")
             edit_btns = info.find_elements(By.XPATH, "//span[@data-testid='pencil']/..")
@@ -518,7 +520,7 @@ class Whatsapp:
         def _participant_options(self, contacts, function) -> None:
             """Local function to go to the participants options and execute a function"""
             
-            self._open_chat(self.name)
+            self._open_chat()
 
             if self._left:
                 raise PermissionError("You have left the group")
@@ -556,15 +558,15 @@ class Whatsapp:
 
             self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=x]").click()
 
-        def add(self, contacts: list) -> None:
-            """Add new participants to the group
+        def add(self, contacts: List[str]) -> None:
+            """Adds new participants to the group
 
             Args:
                 contacts (list): A list of contacts that you want to add to the group
             """
             number_regex = re.compile(r"^\+?[0-9]{10,15}$")
 
-            self._open_chat(self.name)
+            self._open_chat()
 
             if self._left:
                 raise PermissionError("You have left the group")
@@ -612,7 +614,7 @@ class Whatsapp:
 
                 text_box = self._driver.find_elements(By.CSS_SELECTOR, "div[role=textbox]")[1]
                 text_box.send_keys(Keys.ENTER)
-                self._open_chat(self.name)
+                self._open_chat()
 
             # Click to add them
             self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=checkmark-medium]").click()
@@ -629,8 +631,8 @@ class Whatsapp:
 
             sleep(.5)
 
-        def remove(self, contacts: list) -> None:
-            """Remove participants from the group
+        def remove(self, contacts: List[str]) -> None:
+            """Removes participants from the group
 
             Args:
                 contacts (list): A list of contacts that you want to remove from the group
@@ -645,8 +647,8 @@ class Whatsapp:
 
             self._participant_options(contacts, _remove)
 
-        def promote(self, contacts: list) -> None:
-            """Promote participants to admin
+        def promote(self, contacts: List[str]) -> None:
+            """Promotes participants to admin
 
             Args:
                 contacts (list): A list of contacts that you want to promote to admin
@@ -660,8 +662,8 @@ class Whatsapp:
 
             self._participant_options(contacts, _promote)
 
-        def demote(self, contacts: list) -> None:
-            """Demote a participant to member
+        def demote(self, contacts: List[str]) -> None:
+            """Demotes participants to member
 
             Args:
                 contact (str): The contact that you want to demote to member
@@ -676,6 +678,7 @@ class Whatsapp:
             self._participant_options(contacts, _demote)
 
         def leave(self) -> None:
+            """Leaves the group"""
 
             if self._left:
                 raise PermissionError("You have already left the group")

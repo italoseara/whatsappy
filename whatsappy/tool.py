@@ -1,6 +1,8 @@
 import base64
 from bs4 import BeautifulSoup
 from rich.console import Console
+
+from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 console = Console()
@@ -36,23 +38,3 @@ def blob_to_bytes(driver, url: str) -> bytes:
     """, url)
 
     return base64.b64decode(result)
-
-
-def get_options(self, driver):
-
-    driver.execute_script("""
-        var event = new MouseEvent('mouseover', {
-            'view': window,
-            'bubbles': true,
-            'cancelable': true
-        });
-
-        var element = arguments[0].querySelector("div");
-
-        element.dispatchEvent(event);
-    """, self._element)
-
-    self._element.find_element_by_css_selector(
-        'span[data-testid="down-context"]').click()
-
-    return driver.find_elements_by_css_selector("ul > div > li")

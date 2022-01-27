@@ -1,7 +1,5 @@
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.common.keys import Keys
 from dataclasses import dataclass, field
+from email.policy import default
 from PIL import Image as PILImage
 from datetime import datetime
 from typing import Any, List
@@ -11,8 +9,12 @@ from time import sleep
 import mimetypes
 import re
 
-from .tool import to_soup, parse_message, blob_to_bytes, get_options
-from .error import InvalidActionError
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
+from .tool import to_soup, parse_message, blob_to_bytes
 
 
 @dataclass
@@ -23,15 +25,18 @@ class Text:
         text: str
         author: str
 
-    text: str = None
+    text: str = ""
+    chat: Any = None
     author: str = None
     quote: Quote = None
     time: datetime = None
     forwarded: bool = False
-    _whatsapp: Any = field(repr=False, default=None)
     _element: WebElement = field(repr=False, default=None)
 
     def __post_init__(self):
+
+        self._driver = self._element.parent
+        
         soup = to_soup(self._element)
 
         if copyable_text := soup.find(class_="copyable-text"):
@@ -59,7 +64,25 @@ class Text:
         if soup.find("span", attrs={"data-testid": "forwarded"}):
             self.forwarded = True
 
-    def forward(self, contacts: List[str]):
+    def _get_options(self):
+
+        self._driver.execute_script("""
+            var event = new MouseEvent('mouseover', {
+                'view': window,
+                'bubbles': true,
+                'cancelable': true
+            });
+
+            var element = arguments[0].querySelector("div");
+
+            element.dispatchEvent(event);
+        """, self._element)
+
+        self._element.find_elements(By.CSS_SELECTOR, 'span[data-testid="down-context"]').click()
+
+        return self._driver.find_elements(By.CSS_SELECTOR, "ul > div > li")
+
+    def forward(self, contacts: List[str]) -> None:
         """Forwards the selected message to all listed contacts
 
         Keep in mind that the message won't be avaliable anymore,
@@ -69,35 +92,22 @@ class Text:
             contacts (List[str]): A list with contacts name
         """
 
-        driver = self._element.parent
-
-        group_name = driver.find_element_by_xpath(
-            '//*[@id="main"]/header/div[2]/div'
-        ).text
-
-        options = get_options(self, driver)
+        options = self._get_options()
+        options[-3 if (self.chat.__class__.__name__ == "Contact") else -4].click()
         
-        options[1].click()\
-            if len(options) <= 5\
-                else options[2].click()
-        
-        driver.find_elements_by_css_selector(
-            "button")[-1].click()
+        self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=forward]").click()
 
-        search_box = driver.find_element_by_css_selector('label > div > div[role="textbox"]')
+        search_box = self._driver.find_element(By.CSS_SELECTOR, 'div[role="textbox"]')
 
         for contact in contacts:
             search_box.send_keys(contact)
-            sleep(0.1)
             search_box.send_keys(Keys.ENTER)
-            sleep(0.1)
         
-        driver.find_element_by_css_selector(
-            'div[role="button"]').click()
+        self._driver.find_element(By.CSS_SELECTOR, 'div[role="button"]').click()
 
-        self._whatsapp.select_chat_by_name(group_name)
+        self.chat._open_chat()
 
-    def reply(self, message: str):
+    def reply(self, message: str = "", file: str = "") -> None:
         """Replies to the selected message
 
         Args:
@@ -107,66 +117,38 @@ class Text:
         _actionChains = ActionChains(self._element.parent)
 
         _actionChains.double_click(self._element).perform()
-        self._whatsapp.send(message)
+        self.chat.send(message, file)
 
-    def reply_privately(self, message: str):
+    def reply_privately(self, message: str = "", file: str = "") -> None:
         """Sends a message message privatly to the selected message
 
         Args:
             message (str): The message you want to send
         """
 
-        driver = self._element.parent
+        if self.chat.__class__.__name__ == "Contact":
+            raise PermissionError("You cannot reply privately in a private chat")
 
-        group_name = driver.find_element_by_xpath(
-            '//*[@id="main"]/header/div[2]/div'
-        ).text
-
-        options = get_options(self, driver)
-
-        if len(options) <= 5:
-            raise InvalidActionError("You cannot reply privately in a private chat")
-
+        options = self._get_options()
         options[1].click()
-        sleep(0.1)
+        sleep(.1)
         
-        self._whatsapp.send(message)
-        self._whatsapp.select_chat_by_name(group_name)
+        self.chat.send(message, file)
+        self.chat._open_chat()
 
-    def delete(self):
+    def delete(self) -> None:
         """Deletes the selected message"""
 
-        driver = self._element.parent
-        soup = to_soup(self._element)
-
-        options = get_options(self, driver)
-
-        if soup.find("span", attrs={"data-testid": "media-play"}):
-            options[-2].click()
+        options = self._get_options()
+        options[-1 if (self.chat.__class__.__name__ == "Contact") else -2].click()
         
-        else:
-            options[-1].click()\
-                if len(options) <= 5\
-                    else options[-2].click()
-        
-        driver.find_element_by_css_selector(
-            'div:nth-child(2)[role="button"]').click()
+        self._driver.find_element(By.CSS_SELECTOR, 'div:nth-child(2)[role="button"]').click()
 
-    def star(self):
+    def star(self) -> None:
         """Stars the selected message"""
 
-        driver = self._element.parent
-        soup = to_soup(self._element)
-
-        options = get_options(self, driver)
-
-        if soup.find("span", attrs={"data-testid": "media-play"}):
-            options[-3].click()
-        
-        else:
-            options[-2].click()\
-                if len(options) <= 5\
-                    else options[-3].click()
+        options = self._get_options()
+        options[-2 if (self.chat.__class__.__name__ == "Contact") else -3].click()
 
 
 @dataclass
@@ -174,15 +156,15 @@ class Document(Text):
 
     @dataclass
     class File:
-        name: str
-        type: str
-        size: int
-        content: bytes = field(repr=False)
+        size: int = 0
+        name: str = ""
+        mimetype: str = ""
+        content: bytes = field(repr=False, default=b"")
 
     file: File = None
 
     def __post_init__(self):
-        Text.__post_init__(self)
+        super().__post_init__(self)
         mimetypes.init()
 
         soup = to_soup(self._element)
@@ -193,7 +175,7 @@ class Document(Text):
                 break
 
         # Download file
-        self._element.find_element_by_css_selector('button').click()
+        self._element.find_element(By.CSS_SELECTOR, 'button').click()
 
         file_path = str(Path.home()/"Downloads"/file_name)
 
@@ -206,16 +188,21 @@ class Document(Text):
             file_size = len(file_content)
 
         Path(file_path).unlink()
-        self.file = self.File(name=file_name, type=file_type, size=file_size, content=file_content)
+        self.file = self.File(
+            name=file_name, 
+            mimetype=file_type, 
+            size=file_size, 
+            content=file_content
+        )
 
 
 @dataclass
 class Video(Text):
 
-    length: int = None
+    length: int = 0
 
     def __post_init__(self):
-        Text.__post_init__(self)
+        super().__post_init__(self)
         soup = to_soup(self._element)
 
         length_str = (
@@ -226,7 +213,10 @@ class Video(Text):
         self.length = (int(length_str[0]) * 60) + int(length_str[1])
     
     def forward(self):
-        raise InvalidActionError("You cannot forward a Video")
+        if self.forwarded:
+            raise PermissionError("You cannot forward a forwarded Video")
+
+        super().forward()
 
 
 @dataclass
@@ -234,15 +224,15 @@ class Audio(Text):
 
     @dataclass
     class File:
-        size: int
-        length: int
-        content: bytes = field(repr=False)
+        size: int = 0
+        length: int = 0
+        content: bytes = field(repr=False, default=b"")
 
     file: File = None
     isrecorded: bool = False
 
     def __post_init__(self):
-        Text.__post_init__(self)
+        super().__post_init__(self)
         soup = to_soup(self._element)
 
         length_str = soup.find("div", attrs={"aria-hidden": "true"}).text.split(":")
@@ -261,21 +251,16 @@ class ContactCard(Text):
 
     @dataclass
     class Contact:
-        name: str
-        numbers: List[str]
-
-        def send_message(message: str) -> None:
-            pass
+        name: str = ""
+        numbers: List[str] = field(default_factory=list)
 
     contacts: List[Contact] = field(default_factory=list)
 
     def __post_init__(self):
-        Text.__post_init__(self)
-        self._element.find_element_by_css_selector('div[role="button"]').click()
+        super().__post_init__(self)
+        self._element.find_element(By.CSS_SELECTOR, 'div[role="button"]').click()
 
-        driver_find = self._element.parent.find_element_by_css_selector
-
-        soup = to_soup(driver_find("body"))
+        soup = to_soup(self._driver.find_element(By.CSS_SELECTOR, "body"))
         contact_elements = [
             contact.parent for contact in soup
             .select(".copyable-area:not(.overlay)")[0]
@@ -292,14 +277,14 @@ class ContactCard(Text):
             )
 
         sleep(0.1)
-        driver_find('button[aria-label="Close"]').click()
+        self._driver.find_element(By.CSS_SELECTOR, 'button[aria-label="Close"]').click()
 
 
 @dataclass
 class Location(Text):
 
-    coords: tuple = None
-    link: str = None
+    coords: tuple = ()
+    link: str = ""
 
     def __post_init__(self):
         soup = to_soup(self._element)
@@ -316,19 +301,14 @@ class LiveLocation(Location):
 
     until: datetime = None
 
-    def forward(self):
-        raise InvalidActionError("You cannot forward a LiveLocation")
-
     def __post_init__(self):
         soup = to_soup(self._element)
         driver_find = self._element.parent.find_element_by_css_selector
         
         if active := soup.find("span", attrs={"data-testid": "live-location-active-android"}):
 
-            until_str = active.parent.parent.text
-
             regex = re.compile("(\d{1,2}\:\d{2}\s?(?:AM|PM|am|pm))")
-
+            until_str = active.parent.parent.text
             time_msg = regex.findall(until_str)[0]
 
             self.until = (
@@ -363,20 +343,23 @@ class LiveLocation(Location):
         
         driver_find('button[aria-label="Close"]').click()
 
+    def forward(self):
+        raise PermissionError("You cannot forward a LiveLocation")
+
 
 @dataclass
 class Image(Text):
 
     @dataclass
     class File:
-        size: int
-        resolution: tuple
-        content: bytes = field(repr=False)
+        size: int = 0
+        resolution: tuple = ()
+        content: bytes = field(repr=False, default=b"")
 
     file: File = None
 
     def __post_init__(self):
-        Text.__post_init__(self)
+        super().__post_init__(self)
         soup = to_soup(self._element)
 
         for img in soup.findAll("img"):
