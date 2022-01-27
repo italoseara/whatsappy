@@ -55,7 +55,7 @@ P.S: `timeout` should be in seconds
 ### Output
 ![QRCode](https://i.imgur.com/aQjoNdZ.png?1)
 
-### When you scan it, you should wait for a message like this:
+### After you scan it, you should wait for a message like this:
 ```
 Successfully logged in
 ```
@@ -78,7 +78,6 @@ whatsapp.chat(name="Mom") # Opens the conversation
 | name      | str  | -       |
 
 ### Output
-
 
 ### *Group*
 
@@ -357,6 +356,20 @@ Whatsapp.Group(
     invite_link="https://chat.whatsapp.com/J6SwpsK5jzq5h0e5Tx3gBu",
     admin=True
 )
+```
+
+## Get all your contacts
+
+### Input
+
+```python
+contacts = whatsapp.contact_list 
+print(contacts)
+```
+
+### Output
+```
+["Mom", "Dad", "Cousin", "Friend"]
 ```
 
 ## Contributing

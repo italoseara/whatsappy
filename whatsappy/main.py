@@ -4,9 +4,10 @@ import shutil
 import shelve
 import colorama
 import platform
-from typing import Any, List
+from math import ceil
 from inspect import stack
 from qrcode import QRCode
+from typing import Any, List
 from time import sleep, time
 from mimetypes import guess_type
 from send2trash import send2trash
@@ -210,12 +211,38 @@ class Whatsapp:
         return group
 
     @property
-    def pinned_chats(self) -> None:
+    def pinned_chats(self) -> List[str]:
         raise NotImplementedError("Not implemented yet")
 
     @property
-    def recent_chats(self) -> None:
-        raise NotImplementedError("Not implemented yet")
+    def contact_list(self) -> List[str]:
+        """Return a list of your contacts"""
+
+        self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=chat]").click()
+        
+        scroll = self._driver.find_element(By.XPATH, "//div[@data-testid='contact-list-key']/..")
+        contact_list_key = scroll.find_element(By.CSS_SELECTOR, "div[data-testid=contact-list-key] > div > div")
+        contact_list_element = contact_list_key.find_elements(By.CSS_SELECTOR, "span[dir=auto]:not(.selectable-text)")
+
+        max_height = int(contact_list_key.get_attribute("scrollHeight"))
+        list_size = len(contact_list_element)*int(contact_list_element[0].get_attribute("offsetHeight"))
+
+        contact_list = []
+        for _ in range(ceil(max_height/list_size)):
+
+            contact_list_element = contact_list_key.find_elements(By.CSS_SELECTOR, "span[dir=auto]:not(.selectable-text)")
+            for contact in contact_list_element:
+                contact_list.append(contact.get_attribute("title"))
+            
+            self._driver.execute_script("""
+                arguments[0].scrollBy(0, arguments[1]);
+            """, scroll, list_size)
+
+            sleep(.01)
+
+        self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=back]").click()
+
+        return sorted(list(set(contact_list)))
 
     @dataclass
     class _Chat:
