@@ -1,10 +1,12 @@
 # whatsappy
+[![Downloads](https://pepy.tech/badge/whatsappy-py)](https://pepy.tech/project/whatsappy-py)
 
 Whatsappy is a Python library for creating whatsapp bots.
 
 Creator: [Italo Seara](https://github.com/italoseara)
 
 ## Installation
+
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install whatsappy.
 
