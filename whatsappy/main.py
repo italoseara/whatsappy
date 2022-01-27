@@ -404,9 +404,9 @@ class Whatsapp:
     @dataclass
     class Contact(_Chat):
 
-        name: str = None
-        number: str = None
-        about: str = None
+        name: str = ""
+        number: str = ""
+        about: str = ""
         profile_picture: str = None
 
         def __init__(self, parent, name) -> None:
@@ -436,8 +436,8 @@ class Whatsapp:
     @dataclass
     class Group(_Chat):
 
-        name: str = None
-        description: str = None
+        name: str = ""
+        description: str = ""
         profile_picture: str = None
         invite_link: str = None
         admin: bool = False

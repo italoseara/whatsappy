@@ -121,8 +121,8 @@ whatsapp.chat(name="Mom") # Opens the conversation
 
   | Property        | Type | Default |
   | --------------- | ---- | ------- |
-  | name            | str  | None    |
-  | description     | str  | None    |
+  | name            | str  | ""      |
+  | description     | str  | ""      |
   | profile_picture | str  | None    |
   | invite_link     | str  | None    |
   | admin           | bool | False   |
@@ -177,9 +177,9 @@ whatsapp.chat(name="Mom") # Opens the conversation
   
   | Property        | Type | Default |
   | --------------- | ---- | ------- |
-  | name            | str  | None    |
-  | number          | str  | None    |
-  | about           | str  | None    |
+  | name            | str  | ""      |
+  | number          | str  | ""      |
+  | about           | str  | ""      |
   | profile_picture | str  | None    |
   | last_message    | Any  | -       |
 
@@ -324,7 +324,7 @@ Inherits all the `Location` properties and functions
   | --------- | -------- | ------- |
   | until     | datetime | None    |
 
-### Image
+### *Image*
 
 Inherits all the `Text` properties and functions
 
@@ -337,7 +337,7 @@ Inherits all the `Text` properties and functions
   | File.resolution | tuple | ()      |
   | File.content    | bytes | b""     |
 
-### Sticker
+### *Sticker*
 
 Inherits all the `Image` properties and functions
 
@@ -347,7 +347,52 @@ Inherits all the `Image` properties and functions
   | --------- | ---- | ------- |
   | -         | -    | -       |
 
+## Create a new Group
 
+### Input
+```python
+group = whatsapp.new_group(
+    name="Family Group", 
+    contacts=["Mom", "Dad", "Grandma", "+17873375275"]
+)
+
+print(group)
+```
+
+### Output
+```
+Whatsapp.Group(
+    name="Family Group", 
+    description="", 
+    profile_picture=None, 
+    invite_link="https://chat.whatsapp.com/J6SwpsK5jzq5h0e5Tx3gBu",
+    admin=True
+)
+```
+
+## Change group information
+
+### Input
+```python
+group = whatsapp.chat("Family Group")
+
+group.name = "My Family" # Changes group name
+group.description = "This is a family group" # Changes group description
+group.profile_picture = "Family.jpeg" # Changes group profile picture
+
+print(group)
+```
+
+### Output
+```
+Whatsapp.Group(
+    name="My Family", 
+    description="This is a family group", 
+    profile_picture="https://pps.whatsapp.net/v/t61.24694-24/187559880_805785283641101_6215437820834613111_n.jpg?ccb=11-4&oh=01_AVxyUwoLnQVdZ1bxDOx2zhYMWKKRitosP3wH-tILL8JNMw&oe=61F7B127", 
+    invite_link="https://chat.whatsapp.com/J6SwpsK5jzq5h0e5Tx3gBu",
+    admin=True
+)
+```
 
 ## Contributing
 
