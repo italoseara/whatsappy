@@ -4,6 +4,7 @@ import shutil
 import shelve
 import colorama
 import platform
+import unicodedata
 from math import ceil
 from inspect import stack
 from qrcode import QRCode
@@ -18,6 +19,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException, JavascriptException
 
 from .message import *
@@ -128,6 +130,7 @@ class Whatsapp:
             raise LoginError("Failed when trying to log into whatsapp (Took too long to respond)")
 
         console.print("Successfully logged in")
+        sleep(2)
 
     def close(self) -> None:
         """Exit whatsapp"""
@@ -157,8 +160,8 @@ class Whatsapp:
         
         not_saved = []
         for contact in contacts:
-            if number_regex.match(contact.replace(" ", "").replace("-", "")):
-                not_saved.append(contact.replace(" ", "").replace("-", ""))
+            if number_regex.match(contact):
+                not_saved.append(contact)
                 continue
             
             text_box.clear()
@@ -211,6 +214,10 @@ class Whatsapp:
         return group
 
     @property
+    def me(self) -> Any:
+        raise NotImplementedError("Not implemented yet")
+
+    @property
     def pinned_chats(self) -> List[str]:
         raise NotImplementedError("Not implemented yet")
 
@@ -237,7 +244,6 @@ class Whatsapp:
             self._driver.execute_script("""
                 arguments[0].scrollBy(0, arguments[1]);
             """, scroll, list_size)
-
             sleep(.01)
 
         self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=back]").click()
@@ -249,7 +255,7 @@ class Whatsapp:
 
         _driver: Any = field(repr=False, default=None)
 
-        def _open_chat(self, name: str = None) -> None:
+        def _open_chat(self, name: str = None, force=False) -> None:
             """Open a chat
 
             Args:
@@ -258,13 +264,17 @@ class Whatsapp:
 
             name = name or self.name
 
-            if len(self._driver.find_elements(By.CSS_SELECTOR, "header")) == 3 and\
-                self._driver.find_elements(By.CSS_SELECTOR, f"span[title={name}]"):
+            if not force and len(self._driver.find_elements(By.CSS_SELECTOR, "header")) == 3 and\
+                self._driver.find_elements(By.CSS_SELECTOR, f"span[title='{name}']"):
                 return
 
-            number_regex = re.compile(r"^\+?[0-9]{10,15}$")
-            if number_regex.match(name.replace(" ", "").replace("-", "")):
-                self._driver.get(f"https://web.whatsapp.com/send?phone={name.replace(' ', '').replace('-', '')}")
+            number_regex = re.compile(
+                r"\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})? ?(\w{1,10}\s?\d{1,6})?")
+            if number_regex.match(name):
+                for char in [" ", "-", "(", ")"]:
+                    name = name.replace(char, "")
+                
+                self._driver.get(f"https://web.whatsapp.com/send?phone={name}")
                 while True:
                     try:
                         self._driver.find_element(By.ID, "side")
@@ -290,7 +300,22 @@ class Whatsapp:
                 file (str): The path of the file you want to send
             """
 
+            # For letters outside english alphabet (most likely in latin based languages)
+            def normalize(string):
+                return ''.join(
+                    char for char in unicodedata.normalize('NFD', string)
+                    if unicodedata.category(char) != 'Mn'
+                )
+
             def send_message(message: str, text_box: Any) -> None:
+
+                # Mentioning
+                message = re.sub(
+                    rf"\<(@.+?)\>", 
+                    lambda matchobj: normalize(matchobj.group(1)) + Keys.ENTER,
+                    message
+                )
+                
                 if "\n" in message:
                     for line in message.split("\n"):
                         text_box.send_keys(line)
@@ -454,10 +479,10 @@ class Whatsapp:
                 self.profile_picture = img_element[0].get_attribute("src")
 
             number_regex = re.compile(r"^\+?[0-9]{10,15}$")
-            if number_regex.match(self.name.replace(" ", "").replace("-", "")):
+            if number_regex.match(self.name):
                 self.name, self.number = (
                     self.number.replace("~", ""), 
-                    self.name.replace(" ", "").replace("-", "")
+                    self.name
                 )
 
     @dataclass
@@ -468,6 +493,7 @@ class Whatsapp:
         profile_picture: str = None
         invite_link: str = None
         admin: bool = False
+        participants: List[str] = field(default_factory=list)
         _left: bool = field(repr=False, default=False)
 
         def __init__(self, parent, name) -> None:
@@ -476,6 +502,11 @@ class Whatsapp:
             self._driver = parent._driver
             self._open_chat(name)
             
+            info = self._driver.find_element(By.CSS_SELECTOR, "section")
+
+            # to prevent some bugs
+            self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=x]").click()
+            self._open_chat(name, force=True)
             info = self._driver.find_element(By.CSS_SELECTOR, "section")
 
             self.name = info.find_element(By.CSS_SELECTOR, "div[role=textbox]").text
@@ -487,6 +518,47 @@ class Whatsapp:
 
             name = info.find_elements(By.CSS_SELECTOR, "div[role=gridcell]")[-2]
             self.admin = "\n" in name.text
+
+            participants_element = self._driver.find_elements(By.CSS_SELECTOR, "section > div")[-2]
+            contact_list = []
+
+            if btn_more := participants_element.find_elements(By.CSS_SELECTOR, "button"):
+                actions = ActionChains(self._driver)
+                actions.move_to_element(btn_more[0])
+                actions.click(btn_more[0])
+                actions.perform()
+
+                scroll = self._driver.find_element(By.XPATH, "//header/../div[2]")
+                contact_list_key = scroll.find_element(By.CSS_SELECTOR, "div > div > div")
+                contact_list_element = contact_list_key.find_elements(By.CSS_SELECTOR, "span[dir=auto]:not(.selectable-text)")
+
+                max_height = int(contact_list_key.get_attribute("scrollHeight"))
+                list_size = len(contact_list_element)*int(contact_list_element[0].get_attribute("offsetHeight"))
+
+                for _ in range(ceil(max_height/list_size)):
+
+                    contact_list_element = contact_list_key.find_elements(By.CSS_SELECTOR, "span[dir=auto]:not(.selectable-text)")
+                    for contact in contact_list_element:
+                        if len(contact.get_attribute("class").split(" ")) > 1:
+                            contact_list.append(contact.get_attribute("title"))
+                    
+                    self._driver.execute_script("""
+                        arguments[0].scrollBy(0, arguments[1]);
+                    """, scroll, list_size)
+
+                    sleep(.01)
+
+                self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=x]").click()
+
+                self.participants = sorted(list(set(contact_list)))
+            else:
+                for contact in participants_element.find_elements(By.CSS_SELECTOR, "span[dir=auto]:not(.selectable-text)"):
+                    if len(contact.get_attribute("class").split(" ")) > 1:
+                        contact_list.append(contact.get_attribute("title"))
+
+                self.participants = sorted(list(set(contact_list)))
+
+            self._driver.execute_script("arguments[0].scrollTop = 0;", info.find_element(By.XPATH, ".."))
 
             if self.admin:
                 self._driver.find_elements(By.CSS_SELECTOR, "div[data-testid=cell-frame-container]")[1].click()
@@ -610,8 +682,8 @@ class Whatsapp:
             
             not_saved = []
             for contact in contacts:
-                if number_regex.match(contact.replace(" ", "").replace("-", "")):
-                    not_saved.append(contact.replace(" ", "").replace("-", ""))
+                if number_regex.match(contact):
+                    not_saved.append(contact)
                     continue
                 
                 text_box.clear()

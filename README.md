@@ -83,14 +83,15 @@ whatsapp.chat(name="Mom") # Opens the conversation
 
 * Properties
 
-  | Property        | Type | Default |
-  | --------------- | ---- | ------- |
-  | name            | str  | ""      |
-  | description     | str  | ""      |
-  | profile_picture | str  | None    |
-  | invite_link     | str  | None    |
-  | admin           | bool | False   |
-  | last_message    | Any  | -       |
+  | Property        | Type      | Default |
+  | --------------- | --------- | ------- |
+  | name            | str       | ""      |
+  | description     | str       | ""      |
+  | profile_picture | str       | None    |
+  | invite_link     | str       | None    |
+  | admin           | bool      | False   |
+  | participants    | List[str] | []      |
+  | last_message    | Any       | -       |
 
   P.S.: `last_message` will be explained later on
 
@@ -104,12 +105,20 @@ whatsapp.chat(name="Mom") # Opens the conversation
     | file      | str  | ""      |
 
     P.S.: `file` shoud be a file path
+
+    ```python
+    group.send(message="Hi <@Mom>!", file="flowers.jpg") # Use <@Contact Name> to mention someone
+    ```
   
   * `add` -> `None`: Adds new participants to the group
   
     | Arguments | Type      | Default |
     | --------- | --------- | ------- |
-    | contacts  | List[str] | -       | 
+    | contacts  | List[str] | -       |
+
+    ```python
+    group.add(["Grandma", "Cousin"])
+    ```
 
   * `remove` -> `None`: Removes participants from the group
   
@@ -117,23 +126,39 @@ whatsapp.chat(name="Mom") # Opens the conversation
     | --------- | --------- | ------- |
     | contacts  | List[str] | -       |
 
+    ```python
+    group.remove(["Boring Cousin"])
+    ```
+
   * `promote` -> `None`: Promotes participants to admin
 
     | Arguments | Type      | Default |
     | --------- | --------- | ------- |
     | contacts  | List[str] | -       |
+
+    ```python
+    group.promote(["Dad", "Mom"])
+    ```
   
   * `demote` -> `None`: Demotes participants to member
 
     | Arguments | Type      | Default |
     | --------- | --------- | ------- |
     | contacts  | List[str] | -       |
+
+    ```python
+    group.demote(["Brother"])
+    ```
   
   * `leave` -> `None`: Leaves the group
 
     | Arguments | Type | Default |
     | --------- | ---- | ------- |
     | -         | -    | -       |
+
+    ```python
+    group.leave()
+    ```
 
 ### *Contact*
 
@@ -159,6 +184,10 @@ whatsapp.chat(name="Mom") # Opens the conversation
     | file      | str  | ""      |
 
     P.S.: `file` shoud be a file path
+
+    ```python
+    group.send(message="Hi <@Mom>!", file="flowers.jpg") # Use <@Contact Name> to mention someone
+    ```
 
 ## 4.2 Message
 
@@ -186,6 +215,10 @@ The `last_message` property of a chat will return the type of the message (Locat
     | Arguments | Type      | Default |
     | --------- | --------- | ------- |
     | contacts  | List[str] | -       |
+
+    ```python
+    message.forward(["Mom", "Grandma"])
+    ```
   
   * `reply` -> `None`: Reply the message quoting the original one
 
@@ -196,6 +229,10 @@ The `last_message` property of a chat will return the type of the message (Locat
 
     P.S.: `file` should be a file path
 
+    ```python
+    message.reply("Wow, that's awesome!")
+    ```
+
   * `reply_privately` -> `None`: Reply the message in private chat (Only works on groups)
 
     | Arguments | Type | Default |
@@ -204,6 +241,10 @@ The `last_message` property of a chat will return the type of the message (Locat
     | file      | str  | ""      |
 
     P.S.: `file` should be a file path
+    
+    ```python
+    message.reply_privately("Long time since i saw you, huh?")
+    ```
 
   * `delete` -> `None`: Deletes the message only for you
 
@@ -211,11 +252,19 @@ The `last_message` property of a chat will return the type of the message (Locat
     | --------- | ---- | ------- |
     | -         | -    | -       |
 
+    ```python
+    message.delete()
+    ```
+
   * `star` -> `None`: Stars the message for you
 
     | Arguments | Type | Default |
     | --------- | ---- | ------- |
     | -         | -    | -       |
+
+    ```python
+    message.star()
+    ```
 
 ### *Document*
 
@@ -369,7 +418,7 @@ print(contacts)
 
 ### Output
 ```
-["Mom", "Dad", "Cousin", "Friend"]
+["Mom", "Dad", "Cousin", "Friend", ...]
 ```
 
 ## Contributing
