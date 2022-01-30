@@ -1,11 +1,8 @@
 import base64
 from bs4 import BeautifulSoup
-from rich.console import Console
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-console = Console()
 
 def to_soup(element: WebElement):
     return BeautifulSoup(element.get_attribute("innerHTML"), "html.parser")

@@ -21,7 +21,6 @@ setup(
         "selenium ~= 3.141.0",
         "Send2Trash ~= 1.5.0",
         "webdriver-manager ~= 3.2.2",
-        "rich ~= 10.9.0",
         "qrcode ~= 7.3",
     ],
     extra_requires={

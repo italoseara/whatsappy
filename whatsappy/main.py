@@ -23,7 +23,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException, JavascriptException
 
 from .message import *
-from .tool import console
 from .error import LoginError
 
 
@@ -47,13 +46,13 @@ class Whatsapp:
             if qr_data and qr_data != update_qr:
                 update_qr = qr_data
 
-                console.clear()
+                os.system("cls||clear")
                 qr = QRCode(version=1, border=2)
                 qr.add_data(qr_data)
                 qr.make()
                 qr.print_ascii(invert=True)
                 
-                console.print("Scan the QRCode with your phone")
+                print("Scan the QRCode with your phone")
 
             sleep(1)
 
@@ -129,7 +128,7 @@ class Whatsapp:
             self.close()
             raise LoginError("Failed when trying to log into whatsapp (Took too long to respond)")
 
-        console.print("Successfully logged in")
+        print("Successfully logged in")
         sleep(2)
 
     def close(self) -> None:
@@ -218,10 +217,6 @@ class Whatsapp:
         raise NotImplementedError("Not implemented yet")
 
     @property
-    def pinned_chats(self) -> List[str]:
-        raise NotImplementedError("Not implemented yet")
-
-    @property
     def contact_list(self) -> List[str]:
         """Return a list of your contacts"""
 
@@ -249,6 +244,10 @@ class Whatsapp:
         self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=back]").click()
 
         return sorted(list(set(contact_list)))
+
+    @property
+    def pinned_chats(self) -> List[str]:
+        raise NotImplementedError("Not implemented yet")
 
     @dataclass
     class _Chat:
@@ -485,6 +484,9 @@ class Whatsapp:
                     self.name
                 )
 
+        def __setattr__(self, __name: str, __value: Any) -> None:
+            raise AttributeError(f"You can't edit a contact")
+
     @dataclass
     class Group(_Chat):
 
@@ -609,7 +611,12 @@ class Whatsapp:
                     edit_description.send_keys(Keys.ENTER)
 
                 case "profile_picture":
-                    raise NotImplementedError("Not implemented yet")
+                    info.find_element(By.CSS_SELECTOR, "input[type=file]").send_keys(__value)
+                    self._driver.find_element(By.CSS_SELECTOR, "div[data-animate-modal-popup=true] div[role=button]").click()
+
+                    img_section = self._driver.find_element(By.CSS_SELECTOR, "section > div")
+                    if img_element := img_section.find_elements(By.CSS_SELECTOR, "img"):
+                        return super().__setattr__(__name, img_element[0].get_attribute("src"))
 
                 case _:
                     raise AttributeError(f"{__name} is not a valid attribute")
