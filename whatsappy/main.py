@@ -1,7 +1,7 @@
 import re
 import os
+import json
 import shutil
-import shelve
 import colorama
 import platform
 import unicodedata
@@ -24,9 +24,6 @@ from selenium.common.exceptions import NoSuchElementException, JavascriptExcepti
 
 from .message import *
 from .error import LoginError
-
-
-os.environ["WDM_LOG_LEVEL"] = "0"
 
 
 class Whatsapp:
@@ -64,20 +61,24 @@ class Whatsapp:
             timeout (int, optional): Limit time to login in seconds. Defaults to 0
         """
 
-        os_path = {
+        os.environ["WDM_LOG_LEVEL"] = "0"
+
+        OS_PATH = {
             "Windows": rf"{os.path.expanduser('~')}/AppData/Local/Google/Chrome/User Data/Default",   # Windows
             "Linux": rf"{os.path.expanduser('~')}/.config/google-chrome/default",                     # Linux
             "Darwin": rf"{os.path.expanduser('~')}/Library/Application Support/Google/Chrome/Default" # Mac OS
         }
 
-        usr_path = os_path[platform.system()] 
+        USR_PATH = OS_PATH[platform.system()] 
 
-        if not os.path.isdir("data"):
-            os.mkdir("data")
+        if not os.path.exists("data.json"):
+            with open("data.json", "w+") as f:
+                json.dump({"user_agent": ""}, f)
 
-        self.mydata = shelve.open("data/data")
-        
-        if "user_agent" not in self.mydata.keys():
+        with open("data.json", "r") as f:
+            data = json.load(f)
+
+        if not data["user_agent"]:
 
             options = webdriver.ChromeOptions()
             options.add_argument("--hide-scrollbars")
@@ -87,23 +88,26 @@ class Whatsapp:
 
             driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-            self.mydata["user_agent"] = driver.execute_script(
-                "return navigator.userAgent"
-            )
+            data = {
+                "user_agent": driver.execute_script(
+                    "return navigator.userAgent"
+                )
+            }
+
+            with open("data.json", "w") as f:
+                json.dump(data, f)
 
             driver.close()
 
         options = webdriver.ChromeOptions()
-        options.add_argument(f"--user-data-dir={usr_path}")
-        options.add_argument(f"--user-agent={self.mydata['user_agent']}")
+        options.add_argument(f"--user-data-dir={USR_PATH}")
+        options.add_argument(f"--user-agent={data['user_agent']}")
         options.add_argument("--start-maximized")
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
         options.add_argument("--log-level=OFF")
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         
-        self.mydata.close()
-
         if not visible:
             options.add_argument("--headless")
 
