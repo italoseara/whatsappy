@@ -515,8 +515,14 @@ class Whatsapp:
                 self.profile_picture = img_element[0].get_attribute("src")
             sleep(.5)
 
-            name = info.find_elements(By.CSS_SELECTOR, "div[role=gridcell]")[-2]
-            self.admin = "\n" in name.text
+            while True:
+                name = info.find_elements(By.CSS_SELECTOR, "div[role=gridcell]")
+
+                # Wait until it loads
+                if len(name):
+                    break
+                
+            self.admin = "\n" in name[-2].text
 
             participants_element = self._driver.find_elements(By.CSS_SELECTOR, "section > div")[-2]
             contact_list = []
