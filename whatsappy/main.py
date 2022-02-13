@@ -53,7 +53,7 @@ class Whatsapp:
 
             sleep(1)
 
-    def login(self, visible: bool = True, timeout: int = 0) -> None:
+    def login(self, visible: bool = False, timeout: int = 0) -> None:
         """Logs in whatsapp and shows the QRCode if necessary
 
         Args:
@@ -314,7 +314,7 @@ class Whatsapp:
 
                 # Mentioning
                 message = re.sub(
-                    rf"\<(@.+?)\>", 
+                    rf"\<(@.+?)\>",
                     lambda matchobj: normalize(matchobj.group(1)) + Keys.ENTER,
                     message
                 )
@@ -380,81 +380,51 @@ class Whatsapp:
             """
 
             self._open_chat()
+
+            message = self._driver.find_elements(By.CLASS_NAME, "message-in")[-1]
+            type = "Text"
+
+            # Audio
+            if message.find_elements(By.CSS_SELECTOR, "span[data-testid=audio-play]"):
+                type = "Audio"
+                # Recorded audio
+                if message.find_elements(By.CSS_SELECTOR, "span[data-testid=audio-file]"):
+                    type = "AudioFile"
+
+            # Video
+            elif message.find_elements(By.CSS_SELECTOR, "span[data-testid=media-play]"):
+                type = "Video"
+
+            # Live Location
+            elif message.find_elements(By.CSS_SELECTOR, "span[data-testid=live-location-android]"):
+                type = "LiveLocation"
+
+            # Location
+            elif (
+                message.find_elements(By.TAG_NAME, "a") and
+                "maps.google.com" in message.find_element(By.TAG_NAME, "a").get_attribute("href")
+            ):
+                type = "Location"
+
+            # Contacts
+            elif len(message.find_elements(By.CSS_SELECTOR, "div[role=button]")) == 4:
+                type = "ContactCard"
+
+            # Image
+            elif imgs := len(message.find_elements(By.CSS_SELECTOR, "img")):
+                type = "Image"
+                # Sticker
+                if imgs == 1:
+                    type = "Sticker"
+
+            # Documents
+            elif message.find_elements(By.CSS_SELECTOR, "span[data-testid=type]"):
+                type = "Document"
+
+            if type == "AudioFile":
+                return Audio(_chat=self, _element=message, isrecorded=True)
             
-            try:
-                type = self._driver.execute_script("""
-                    var lastMsg = [...document.querySelectorAll(".message-in")].slice(-1)[0];
-
-                    if (
-                        lastMsg.querySelector("button > div:nth-child(2) > div > div:nth-child(3)")
-                    ) return "Document";
-
-                    else if (
-                        lastMsg.querySelector("div > div > div:nth-child(3)") &&
-                        lastMsg.querySelector("div > div > div:nth-child(3)").style.backgroundImage
-                    ) return "Video";
-
-                    else if (
-                        lastMsg.querySelector("div > button > span") &&
-                        lastMsg.querySelector("div > button > span").dataset.testid == "audio-play"
-                    )
-                        if (
-                            lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
-                            lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span")
-                            .dataset.testid == "forward-chat"
-                        ) return "AudioFile";
-                        else return "Audio";
-
-                        else if (
-                            lastMsg.querySelector(
-                                `div > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div[role="button"]`
-                            ) &&
-                            !lastMsg.querySelector('span[data-testid="logo-youtube"]')
-                        ) return "ContactCard";
-
-                    else if (
-                        lastMsg.querySelector("div > span > span > svg")
-                    ) return "LiveLocation";
-
-                    else if (
-                        lastMsg.querySelector("a > img")
-                    ) return "Location";
-
-                    else if (
-                        lastMsg.querySelector("img")
-                    )
-                        if (lastMsg.querySelector("img").classList.contains('copyable-text') ||
-                            lastMsg.querySelector('span[data-testid="logo-youtube"]'))
-                            return "Text"
-                        else if (
-                            lastMsg.querySelector("div:nth-child(2) > div:nth-child(2) > span") &&
-                            lastMsg.querySelector("div").querySelector("span").dataset.testid ==
-                            "tail-in"
-                        ) return "Image";
-                        else return "Sticker";
-
-                    else return "Text";
-                """)
-            except JavascriptException:
-                return None
-            
-            last_msg = self._driver.execute_script(
-                'return [...document.querySelectorAll(".message-in")].slice(-1)[0];')
-
-            classes = {
-                "Text": Text,
-                "Audio": Audio,
-                "Video": Video,
-                "Image": Image,
-                "Sticker": Sticker,
-                "Document": Document,
-                "Location" : Location,
-                "ContactCard": ContactCard,
-                "LiveLocation": LiveLocation,
-                "AudioFile": lambda **kwargs: Audio(**kwargs, isrecorded=True),
-            }
-
-            return classes[type](chat=self, _element=last_msg, _whatsapp=self)
+            return eval(type)(_chat=self, _element=message)
 
     @dataclass
     class Contact(_Chat):
@@ -489,7 +459,11 @@ class Whatsapp:
                 )
 
         def __setattr__(self, __name: str, __value: Any) -> None:
-            raise AttributeError(f"You can't edit a contact")
+
+            if stack()[1][3] == "__init__":
+                return super().__setattr__(__name, __value)
+
+            raise AttributeError("You cant edit a contact")
 
     @dataclass
     class Group(_Chat):
@@ -512,8 +486,10 @@ class Whatsapp:
 
             # to prevent some bugs
             self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=x]").click()
+            sleep(.5)
             self._open_chat(name, force=True)
             info = self._driver.find_element(By.CSS_SELECTOR, "section")
+            sleep(.5)
 
             self.name = info.find_element(By.CSS_SELECTOR, "div[role=textbox]").text
             self.description = info.find_elements(By.CSS_SELECTOR, "span[dir=auto].copyable-text")[1].text
@@ -521,6 +497,7 @@ class Whatsapp:
             img_section = self._driver.find_element(By.CSS_SELECTOR, "section > div")
             if img_element := img_section.find_elements(By.CSS_SELECTOR, "img"):
                 self.profile_picture = img_element[0].get_attribute("src")
+            sleep(.5)
 
             name = info.find_elements(By.CSS_SELECTOR, "div[role=gridcell]")[-2]
             self.admin = "\n" in name.text

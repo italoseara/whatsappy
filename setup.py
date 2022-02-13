@@ -3,9 +3,12 @@ from setuptools import setup
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("requirements.txt", "r") as fh:
+    requirements = fh.read().splitlines()
+
 setup(
     name="whatsappy-py",
-    version="3.3.2",
+    version="3.3.3",
     description="Whatsappy is a Python library for creating whatsapp bots.",
     packages=["whatsappy"],
     classifiers=[
@@ -17,12 +20,7 @@ setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=[
-        "selenium ~= 3.141.0",
-        "Send2Trash ~= 1.5.0",
-        "webdriver-manager ~= 3.2.2",
-        "qrcode ~= 7.3",
-    ],
+    install_requires=requirements,
     extra_requires={
         "dev": [
             "pytest>=3.7",

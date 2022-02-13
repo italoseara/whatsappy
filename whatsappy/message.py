@@ -26,11 +26,11 @@ class Text:
         author: str
 
     text: str = ""
-    chat: Any = None
     author: str = None
     quote: Quote = None
     time: datetime = None
     forwarded: bool = False
+    _chat: Any = field(repr=False, default=None)
     _element: WebElement = field(repr=False, default=None)
 
     def __post_init__(self):
@@ -93,7 +93,7 @@ class Text:
         """
 
         options = self._get_options()
-        options[-3 if (self.chat.__class__.__name__ == "Contact") else -4].click()
+        options[-3 if (self._chat.__class__.__name__ == "Contact") else -4].click()
         
         self._driver.find_element(By.CSS_SELECTOR, "span[data-testid=forward]").click()
 
@@ -105,7 +105,7 @@ class Text:
         
         self._driver.find_element(By.CSS_SELECTOR, 'div[role="button"]').click()
 
-        self.chat._open_chat()
+        self._chat._open_chat()
 
     def reply(self, message: str = "", file: str = "") -> None:
         """Replies to the selected message
@@ -117,7 +117,7 @@ class Text:
         _actionChains = ActionChains(self._element.parent)
 
         _actionChains.double_click(self._element).perform()
-        self.chat.send(message, file)
+        self._chat.send(message, file)
 
     def reply_privately(self, message: str = "", file: str = "") -> None:
         """Sends a message message privatly to the selected message
@@ -126,21 +126,21 @@ class Text:
             message (str): The message you want to send
         """
 
-        if self.chat.__class__.__name__ == "Contact":
+        if self._chat.__class__.__name__ == "Contact":
             raise PermissionError("You cannot reply privately in a private chat")
 
         options = self._get_options()
         options[1].click()
         sleep(.1)
         
-        self.chat.send(message, file)
-        self.chat._open_chat()
+        self._chat.send(message, file)
+        self._chat._open_chat()
 
     def delete(self) -> None:
         """Deletes the selected message"""
 
         options = self._get_options()
-        options[-1 if (self.chat.__class__.__name__ == "Contact") else -2].click()
+        options[-1 if (self._chat.__class__.__name__ == "Contact") else -2].click()
         
         self._driver.find_element(By.CSS_SELECTOR, 'div:nth-child(2)[role="button"]').click()
 
@@ -148,7 +148,7 @@ class Text:
         """Stars the selected message"""
 
         options = self._get_options()
-        options[-2 if (self.chat.__class__.__name__ == "Contact") else -3].click()
+        options[-2 if (self._chat.__class__.__name__ == "Contact") else -3].click()
 
 
 @dataclass
@@ -164,7 +164,7 @@ class Document(Text):
     file: File = None
 
     def __post_init__(self):
-        super().__post_init__(self)
+        super().__post_init__()
         mimetypes.init()
 
         soup = to_soup(self._element)
@@ -202,7 +202,7 @@ class Video(Text):
     length: int = 0
 
     def __post_init__(self):
-        super().__post_init__(self)
+        super().__post_init__()
         soup = to_soup(self._element)
 
         length_str = (
@@ -232,16 +232,18 @@ class Audio(Text):
     isrecorded: bool = False
 
     def __post_init__(self):
-        super().__post_init__(self)
+        super().__post_init__()
         soup = to_soup(self._element)
 
         length_str = soup.find("div", attrs={"aria-hidden": "true"}).text.split(":")
         length = (int(length_str[0]) * 60) + int(length_str[1])
 
-        url = soup.find("audio")["src"]
-        content = blob_to_bytes(self._element.parent, url)
+        #! Not working anymore
+        # url = soup.find("audio")["src"]
+        # content = blob_to_bytes(self._element.parent, url)
+        content = None
 
-        size = len(content)
+        size = len(content) if content else 0
 
         self.file = self.File(size=size, length=length, content=content)
 
@@ -257,7 +259,7 @@ class ContactCard(Text):
     contacts: List[Contact] = field(default_factory=list)
 
     def __post_init__(self):
-        super().__post_init__(self)
+        super().__post_init__()
         self._element.find_element(By.CSS_SELECTOR, 'div[role="button"]').click()
 
         soup = to_soup(self._driver.find_element(By.CSS_SELECTOR, "body"))
@@ -359,7 +361,7 @@ class Image(Text):
     file: File = None
 
     def __post_init__(self):
-        super().__post_init__(self)
+        super().__post_init__()
         soup = to_soup(self._element)
 
         for img in soup.findAll("img"):
