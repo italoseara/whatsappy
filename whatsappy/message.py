@@ -7,6 +7,7 @@ from pathlib import Path
 from io import BytesIO
 from time import sleep
 import mimetypes
+import json
 import re
 
 from selenium.webdriver.common.action_chains import ActionChains
@@ -233,17 +234,37 @@ class Audio(Text):
 
     def __post_init__(self):
         super().__post_init__()
+
+        def process_browser_log_entry(entry):
+            response = json.loads(entry['message'])['message']
+            return response
+        
         soup = to_soup(self._element)
 
         length_str = soup.find("div", attrs={"aria-hidden": "true"}).text.split(":")
         length = (int(length_str[0]) * 60) + int(length_str[1])
 
-        #! Not working anymore
-        # url = soup.find("audio")["src"]
-        # content = blob_to_bytes(self._element.parent, url)
-        content = None
+        # Play Audio
+        self._element.find_element(By.CSS_SELECTOR, 'button').click()
+        sleep(.05)
+        # Stop Audio
+        self._element.find_element(By.CSS_SELECTOR, 'button').click()
 
-        size = len(content) if content else 0
+        logs = self._driver.get_log('performance') 
+        events = [process_browser_log_entry(entry) for entry in logs]
+        events = [
+            event for event in events 
+            if 'Network.response' in event['method'] and
+            "response" in event["params"].keys() and
+            "blob" in event["params"]["response"]["url"]
+        ]
+
+        content = blob_to_bytes(
+            self._driver, 
+            events[-1]["params"]["response"]["url"]
+        )
+
+        size = len(content)
 
         self.file = self.File(size=size, length=length, content=content)
 

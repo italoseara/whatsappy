@@ -20,7 +20,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException, JavascriptException
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.common.exceptions import NoSuchElementException
 
 from .message import *
 from .error import LoginError
@@ -99,19 +100,27 @@ class Whatsapp:
 
             driver.close()
 
+        caps = DesiredCapabilities.CHROME
+        caps['goog:loggingPrefs'] = {'performance': 'ALL'}
+        
         options = webdriver.ChromeOptions()
         options.add_argument(f"--user-data-dir={USR_PATH}")
         options.add_argument(f"--user-agent={data['user_agent']}")
         options.add_argument("--start-maximized")
         options.add_argument("--hide-scrollbars")
         options.add_argument("--disable-gpu")
+        options.add_argument("--mute-audio")
         options.add_argument("--log-level=OFF")
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         
         if not visible:
             options.add_argument("--headless")
 
-        self._driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        self._driver = webdriver.Chrome(
+            ChromeDriverManager().install(), 
+            desired_capabilities=caps,
+            options=options
+        )
         self._driver.get("https://web.whatsapp.com")
 
         before = time()
@@ -218,6 +227,7 @@ class Whatsapp:
 
     @property
     def me(self) -> Any:
+        # TODO: Get all user data and make it editable
         raise NotImplementedError("Not implemented yet")
 
     @property
@@ -441,7 +451,13 @@ class Whatsapp:
             self._open_chat(name)
 
             info = self._driver.find_element(By.CSS_SELECTOR, "section")
-            contact_info = info.find_elements(By.CSS_SELECTOR, "span[dir=auto].copyable-text")
+
+            while True:
+                contact_info = info.find_elements(By.CSS_SELECTOR, "span[dir=auto].copyable-text")
+
+                # Wait until it loads
+                if len(contact_info) > 2:
+                    break
             
             self.name = contact_info[0].text
             self.number = contact_info[1].text
