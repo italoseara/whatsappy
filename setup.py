@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as fh:
 
 setup(
     name="whatsappy-py",
-    version="3.3.3",
+    version="3.3.4",
     description="Whatsappy is a Python library for creating whatsapp bots.",
     packages=["whatsappy"],
     classifiers=[
