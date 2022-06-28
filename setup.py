@@ -9,8 +9,7 @@ setup(
     description="Whatsappy is a Python library for creating whatsapp bots.",
     packages=["whatsappy"],
     classifiers=[
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
         "Operating System :: OS Independent",
     ],
@@ -22,6 +21,7 @@ setup(
         "webdriver-manager ~= 3.2.2",
         "opencv-python ~= 4.5.1.48",
     ],
+    python_require=">3.10",
     extra_requires={
         "dev": [
             "pytest>=3.7",
