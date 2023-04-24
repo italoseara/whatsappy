@@ -52,7 +52,7 @@ class Whatsapp:
         # Wait until the page is loaded
         WebDriverWait(self.driver, timeout).until(lambda driver: (
             util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.QR_CODE) or
-            util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.CHAT_LIST_SEARCH)
+            util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
         ))
 
         qr_code = util.find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.QR_CODE)
@@ -71,13 +71,12 @@ class Whatsapp:
             print("Scan the QR code with your phone to log in.")
 
         WebDriverWait(self.driver, timeout).until(lambda driver: self.is_loaded())
-        print("Logged in successfully.")
-        sleep(2) # Safety sleep
+        sleep(0.5) # Sometimes the page is not loaded correctly
 
     def is_loaded(self) -> bool:
         """Check if the page is loaded."""
         
-        return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.CHAT_LIST_SEARCH)
+        return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
     
     def get_chat(self, chat_name: str) -> Chat:
         """Get a chat by its name.
