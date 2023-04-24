@@ -6,16 +6,18 @@ from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 from . import util
 from .util import Selectors
 
-from .chat import Chat
+from .chat import *
 
 class Whatsapp:
     """The main class for interacting with WhatsApp web.
@@ -77,18 +79,57 @@ class Whatsapp:
         """Check if the page is loaded."""
         
         return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
+
+    def is_animating(self) -> bool:
+        """Check if the page is animating."""
+
+        return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.ANIMATING)
     
-    def get_chat(self, chat_name: str) -> Chat:
+    def open(self, name: str) -> Chat | GroupChat | None:
         """Get a chat by its name.
 
         Args:
-            chat_name (str): The name of the chat.
+            name (str): The name of the chat.
 
         Returns:
-            Chat: The chat.
+            Chat | GroupChat | None: The chat or None if it does not exist.
         """
+
         
-        return Chat(self, chat_name)
+
+        if not self.is_loaded():
+            raise Exception("Something went wrong while loading WhatsApp web.")
+
+        # Close the menu and the current chat
+        ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+        WebDriverWait(self.driver, 5).until(lambda driver: not self.is_animating())
+        ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+
+        search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
+        
+        search.clear()
+        search.send_keys(name)
+        search.send_keys(Keys.ENTER)
+
+        # Clear the search bar
+        WebDriverWait(self.driver, 5).until(lambda driver: util.element_exists(driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
+        self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR).click()
+
+        # Open the chat info
+        try:
+            self.driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_HEADER).click()
+        except NoSuchElementException:
+            return None
+        
+        WebDriverWait(self.driver, 5).until(lambda driver: 
+            not self.is_animating() and 
+            len(self.driver.find_elements(By.CSS_SELECTOR, Selectors.CHAT_INFO_TEXT)) > 0
+        )
+
+        if util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.GROUP_SUBJECT):
+            return GroupChat(self)
+        
+        return Chat(self)
 
     def close(self) -> None:
         """Close the web driver."""

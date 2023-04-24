@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from time import sleep
+import requests
+from PIL import Image
+from PIL.JpegImagePlugin import JpegImageFile
+from dataclasses import dataclass, field
 
 from .. import whatsapp, util
 from ..util import Selectors
@@ -10,42 +13,45 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 
+@dataclass(init=False)
 class Chat:
     """A chat in WhatsApp.
 
-    Args:
-        whatsapp (Whatsapp): The whatsapp instance.
-        chat_name (str): The name of the chat.
+    Attributes:
+        name (str): The name of the chat.
+        number (str): The number of the chat.
+        about (str): The about of the chat.
+        profile_picture (JpegImageFile): The profile picture of the chat.
     """
 
-    _whatsapp: whatsapp.Whatsapp
+    _whatsapp: whatsapp.Whatsapp = field(repr=False)
     name: str
     number: str
     about: str
-    profile_picture: str
+    profile_picture: JpegImageFile
 
-    def __init__(self, _whatsapp: whatsapp.Whatsapp, name: str) -> None:
+    def __init__(self, _whatsapp: whatsapp.Whatsapp) -> None:
         """Initializes the chat."""
-        
+
+        driver = _whatsapp.driver
         self._whatsapp = _whatsapp
-        self.name = name
 
-        self.open()
+        info = driver.find_elements(By.CSS_SELECTOR, Selectors.CHAT_INFO_TEXT)
 
-    def open(self) -> None:
-        """Opens the chat."""
+        self.name = info[0].text
+        self.number = info[1].text
 
-        driver = self._whatsapp.driver
+        if len(info) > 2:
+            self.about = info[2].text
+        else:
+            self.about = None
 
-        if not self._whatsapp.is_loaded():
-            raise Exception("Something went wrong while loading WhatsApp web.")
+        if self.number.startswith("~"):
+            self.name, self.number = self.number[1:], self.name
 
-        search = driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
-        
-        search.clear()
-        search.send_keys(self.name)
-        search.send_keys(Keys.ENTER)
+        if util.element_exists(driver, By.CSS_SELECTOR, Selectors.CHAT_DEFAULT_USER):
+            self.profile_picture = None
 
-        WebDriverWait(driver, 5).until(lambda driver: util.element_exists(driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
+        pfp_url = driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_INFO_PICTURE).get_attribute("src")
+        self.profile_picture = Image.open(requests.get(pfp_url, stream=True).raw)
 
-        driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR).click()
