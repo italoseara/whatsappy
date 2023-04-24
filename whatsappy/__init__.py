@@ -1,1 +1,1 @@
-from .main import Whatsapp
+from .whatsapp import Whatsapp
