@@ -10,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -73,7 +73,7 @@ class Whatsapp:
             print("Scan the QR code with your phone to log in.")
 
         WebDriverWait(self.driver, timeout).until(lambda driver: self.is_loaded())
-        sleep(0.5) # Sometimes the page is not loaded correctly
+        sleep(1) # Sometimes the page is not loaded correctly
 
     def is_loaded(self) -> bool:
         """Check if the page is loaded."""
@@ -84,7 +84,7 @@ class Whatsapp:
         """Check if the page is animating."""
 
         return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.ANIMATING)
-    
+
     def open(self, name: str) -> Chat | GroupChat | None:
         """Get a chat by its name.
 
@@ -95,30 +95,35 @@ class Whatsapp:
             Chat | GroupChat | None: The chat or None if it does not exist.
         """
 
-        
-
         if not self.is_loaded():
             raise Exception("Something went wrong while loading WhatsApp web.")
 
-        # Close the menu and the current chat
-        ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
-        WebDriverWait(self.driver, 5).until(lambda driver: not self.is_animating())
-        ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+        if util.phone_number_regex.match(name):
+            # Remove all the non-numeric characters
+            phone = "".join(filter(str.isdigit, name))
+            
+            self.driver.get(f"https://web.whatsapp.com/send?phone={phone}")
+            WebDriverWait(self.driver, 5).until(lambda driver: self.is_loaded())
+        else:
+            # Close the menu and the current chat
+            ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+            WebDriverWait(self.driver, 5).until(lambda driver: not self.is_animating())
+            ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
 
-        search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
-        
-        search.clear()
-        search.send_keys(name)
-        search.send_keys(Keys.ENTER)
+            search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)            
+            search.send_keys(name)
+            WebDriverWait(self.driver, 5).until(lambda driver: util.element_exists(driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
+            sleep(0.5) # Sometimes the search bar is not loaded correctly
+            search.send_keys(Keys.ENTER)
 
-        # Clear the search bar
-        WebDriverWait(self.driver, 5).until(lambda driver: util.element_exists(driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
-        self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR).click()
+            # Clear the search bar
+            self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR).click()
 
         # Open the chat info
         try:
+            WebDriverWait(self.driver, 5).until(lambda driver: util.element_exists(driver, By.CSS_SELECTOR, Selectors.CHAT_HEADER))
             self.driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_HEADER).click()
-        except NoSuchElementException:
+        except TimeoutException:
             return None
         
         WebDriverWait(self.driver, 5).until(lambda driver: 
