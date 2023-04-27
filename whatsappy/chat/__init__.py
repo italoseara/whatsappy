@@ -1,2 +1,2 @@
 from .chat import *
-from .groupchat import *
+from .group import *

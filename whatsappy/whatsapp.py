@@ -85,7 +85,7 @@ class Whatsapp:
 
         return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.ANIMATING)
 
-    def open(self, name: str) -> Chat | GroupChat | None:
+    def open(self, name: str) -> Chat | Group | None:
         """Get a chat by its name.
 
         Args:
@@ -132,7 +132,7 @@ class Whatsapp:
         )
 
         if util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.GROUP_SUBJECT):
-            return GroupChat(self)
+            return Group(self)
         
         return Chat(self)
 
