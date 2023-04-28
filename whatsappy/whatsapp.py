@@ -10,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -111,9 +111,8 @@ class Whatsapp:
             ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
 
             search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)            
-            search.send_keys(name)
+            util.send_keys_slowly(search, name, delay=0.01)
             WebDriverWait(self.driver, 5).until(lambda driver: util.element_exists(driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
-            sleep(0.5) # Sometimes the search bar is not loaded correctly
             search.send_keys(Keys.ENTER)
 
             # Clear the search bar
