@@ -24,6 +24,8 @@ class Group(Conversation):
         profile_picture (JpegImageFile): The profile picture of the group.
         participants (List[str]): The participants of the group.
         starred_messages (List[str]): The starred messages of the group.
+
+    OBS.: Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
     """
 
     subject: str

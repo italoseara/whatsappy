@@ -7,6 +7,8 @@ from .. import whatsapp
 
 @dataclass(init=False)
 class Conversation:
+    """Utility class for chats and groups. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead."""
+    
     _whatsapp: whatsapp.Whatsapp = field(repr=False)
 
     def __init__(self, _whatsapp: whatsapp.Whatsapp) -> None:

@@ -18,6 +18,8 @@ class Unread:
         name (str): The name of the unread chat.
         count (int): The count of the unread chat.
         message (str): The last message of the unread chat.
+
+    OBS.: Should not be initialized directly, use `whatsappy.Whatsapp.unread_messages` instead.
     """
 
     _whatsapp: whatsapp.Whatsapp = field(repr=False)

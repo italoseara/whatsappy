@@ -22,6 +22,8 @@ class Chat(Conversation):
         about (str): The about of the chat.
         profile_picture (JpegImageFile): The profile picture of the chat.
         starred_messages (List[str]): The starred messages of the chat.
+
+    OBS.: Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
     """
 
     name: str
