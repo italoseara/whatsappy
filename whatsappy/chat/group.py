@@ -25,7 +25,7 @@ class Group(Conversation):
         participants (List[str]): The participants of the group.
         starred_messages (List[str]): The starred messages of the group.
 
-    OBS.: Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
+    PS.: Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
     """
 
     subject: str
