@@ -176,16 +176,17 @@ class Whatsapp:
         return Chat(self)
     
     def event(self, func: Callable) -> None:
-        """Register a function as an event handler.
+        """Decorator to register a function as an event handler.
 
         Args:
             func: The function to be registered. It must be a coroutine.
 
         Raises:
-            Exception: If the function name is not a valid event.
+            InvalidEvent: If the function name is not a valid event.
         """
+
         if func.__name__ not in self._callbacks.keys():
-            raise Exception(f"Invalid event: {func.__name__}")
+            raise InvalidEvent(f"Invalid event: {func.__name__}")
 
         self._callbacks[func.__name__] = func
 
