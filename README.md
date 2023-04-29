@@ -113,5 +113,4 @@ whatsapp.close()
 
 ## License
 
-# link to mit license file
 Whatsappy is licensed under the [MIT License](LICENSE)
