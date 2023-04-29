@@ -115,6 +115,7 @@ class Whatsapp:
 
         return self
 
+    @property
     def unread_messages(self) -> List[Unread]:
         """Returns the list of unread messages in the conversations page.
 
@@ -123,48 +124,6 @@ class Whatsapp:
         """
         
         return [Unread(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)]
-
-    def _on_ready(self) -> None:
-        """Calls the on_ready callback when the page is loaded."""
-
-        if not self._callbacks["on_ready"]:
-            return
-
-        self._callbacks["on_ready"]()
-    
-    def _on_message(self) -> None:
-        """Checks for new messages and calls the on_message callback"""
-        
-        last_check = self.unread_messages
-
-        while True:
-            if self._threads["on_message"].stopped():
-                break
-            
-            if not self._callbacks["on_message"]:
-                continue
-
-            unread = self.unread_messages
-
-            for chat in unread:
-                if chat not in last_check and chat.message is not None:
-                    self._callbacks["on_message"](chat)
-
-            last_check = unread
-            sleep(1) # Wait 1 second before checking again
-
-    def _is_loaded(self) -> bool:
-        """Check if the page is loaded."""
-
-        try:
-            return element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
-        except Exception:
-            return False
-
-    def _is_animating(self) -> bool:
-        """Check if the page is animating."""
-
-        return element_exists(self.driver, By.CSS_SELECTOR, Selectors.ANIMATING)
 
     def open(self, chat: str) -> (Chat | Group | None):
         """Opens a chat with the specified name or phone number
@@ -240,3 +199,45 @@ class Whatsapp:
         
         for thread in self._threads.values():
             thread.stop()
+
+    def _on_ready(self) -> None:
+        """Calls the on_ready callback when the page is loaded."""
+
+        if not self._callbacks["on_ready"]:
+            return
+
+        self._callbacks["on_ready"]()
+    
+    def _on_message(self) -> None:
+        """Checks for new messages and calls the on_message callback"""
+        
+        last_check = self.unread_messages
+
+        while True:
+            if self._threads["on_message"].stopped():
+                break
+            
+            if not self._callbacks["on_message"]:
+                continue
+
+            unread = self.unread_messages
+
+            for chat in unread:
+                if chat not in last_check and chat.message is not None:
+                    self._callbacks["on_message"](chat)
+
+            last_check = unread
+            sleep(1) # Wait 1 second before checking again
+
+    def _is_loaded(self) -> bool:
+        """Check if the page is loaded."""
+
+        try:
+            return element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
+        except Exception:
+            return False
+
+    def _is_animating(self) -> bool:
+        """Check if the page is animating."""
+
+        return element_exists(self.driver, By.CSS_SELECTOR, Selectors.ANIMATING)
