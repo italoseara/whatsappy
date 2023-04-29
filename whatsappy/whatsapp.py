@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import os
-from time import sleep
+from time import sleep, time
 from qrcode import QRCode
-from threading import Thread
-from typing import Dict, List, Callable
+from typing import Dict, List, Callable, Self
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -29,33 +28,49 @@ class Whatsapp:
         chrome_options (Options, optional): The options for the Chrome driver. Defaults to None.
     """
 
-    _on_message_callback: Callable[[str], None] = None
-    _threads: Dict[str, MyThread] = {}
+    _callbacks: Dict[str, Callable] = {
+        "on_ready": None,
+        "on_message": None
+    }
+    _threads: Dict[str, MyThread] = {
+        "on_message": None
+    }
     
     driver: webdriver.Chrome
     actions: ActionChains
 
+    timeout: int
+    visible: bool
+    data_path: str
+    chrome_options: Options
+
     def __init__(self, timeout: int = 60, visible: bool = True, data_path: str = None, chrome_options: Options = None) -> None:
+        self.timeout = timeout
+        self.visible = visible
+        self.data_path = data_path
+        self.chrome_options = chrome_options
+
+    def run(self) -> Self:
         """Initializes the browser and logs in to WhatsApp web."""
 
         # Chrome options
-        options = chrome_options or Options()
-        options.add_argument("--headless" if not visible else "--start-maximized")
+        self.chrome_options = self.chrome_options or Options()
+        self.chrome_options.add_argument("--headless" if not self.visible else "--start-maximized")
 
-        if data_path:
-            options.add_argument(f"--user-data-dir={data_path}")
+        if self.data_path:
+            self.chrome_options.add_argument(f"--user-data-dir={self.data_path}")
 
         # Disable the logging
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        self.chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         
         # Open the browser
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.chrome_options)
 
         # Open the WhatsApp web page
         self.driver.get("https://web.whatsapp.com/")
 
         # Wait until the page is loaded
-        WebDriverWait(self.driver, timeout).until(lambda driver: (
+        WebDriverWait(self.driver, self.timeout).until(lambda driver: (
             element_exists(self.driver, By.CSS_SELECTOR, Selectors.QR_CODE) or
             element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
         ))
@@ -63,7 +78,7 @@ class Whatsapp:
         qr_code = find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.QR_CODE)
 
         if qr_code:
-            if not visible:
+            if not self.visible:
                 data_ref = qr_code.get_attribute("data-ref")
 
                 os.system("cls||clear")
@@ -75,40 +90,39 @@ class Whatsapp:
 
             print("Scan the QR code with your phone to log in.")
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: self._is_loaded())
+        WebDriverWait(self.driver, self.timeout).until(lambda driver: self._is_loaded())
         sleep(1) # Sometimes the page is not loaded correctly
 
-        print(self.unread_messages)
-
         # Create the threads
-        self._threads["on_message"] = MyThread(target=self._look_for_messages, daemon=True)
+        self._threads["on_ready"] = MyThread(target=self._on_ready, daemon=True)
+        self._threads["on_message"] = MyThread(target=self._on_message, daemon=True)
 
         # Start the threads
         for thread in self._threads.values():
             thread.start()
 
+        return self
+
     @property
-    def unread_messages(self) -> List[UnreadChat]:
+    def unread_messages(self) -> List[Unread]:
         """Get the unread messages.
 
         Returns:
             Dict[str, int]: The unread messages.
         """
 
-        unread = []
-        elements = self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)
+        return [Unread(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)]
 
-        for element in elements:
-            title = element.find_element(By.CSS_SELECTOR, Selectors.UNREAD_TITLE).get_attribute("title")
-            number = element.find_element(By.CSS_SELECTOR, Selectors.UNREAD_BADGE).text or 1
-            last_message = element.find_element(By.CSS_SELECTOR, Selectors.UNREAD_LAST_MESSAGE).get_attribute("title")
+    def _on_ready(self) -> None:
+        """Check if the page is ready."""
 
-            unread.append(UnreadChat(title, number, last_message))
+        if not self._callbacks["on_ready"]:
+            return
 
-        return unread
-
-    def _look_for_messages(self) -> None:
-        """Look for new messages."""
+        self._callbacks["on_ready"]()
+    
+    def _on_message(self) -> None:
+        """Check for new messages."""
 
         last_check = self.unread_messages
 
@@ -116,15 +130,17 @@ class Whatsapp:
             if self._threads["on_message"].stopped():
                 break
             
-            if self._on_message_callback:
-                unread = self.unread_messages
+            if not self._callbacks["on_message"]:
+                continue
 
-                for chat in unread:
-                    if chat not in last_check:
-                        self._on_message_callback(chat)
+            unread = self.unread_messages
 
-                unread = last_check
-            sleep(1)
+            for chat in unread:
+                if chat not in last_check and chat.message is not None:
+                    self._callbacks["on_message"](chat)
+
+            last_check = unread
+            sleep(1) # Wait 1 second before checking again
 
     def _is_loaded(self) -> bool:
         """Check if the page is loaded."""
@@ -189,24 +205,30 @@ class Whatsapp:
         
         return Chat(self)
     
-    def on_message(self, func: Callable[[UnreadChat], None]) -> callable:
+    def event(self, func: Callable) -> None:
         """Decorator to set the on message callback.
 
         Args:
             func (Callable[[str], None]): The function to call when a new message is received.
 
         Usage:
-            @whatsapp.on_message
-            def foo(chat_name: str):
-                print(chat_name)
+            @whatsapp.event
+            def on_message(chat: Unread):
+                print(chat)
         """
 
-        self._on_message_callback = func 
+        if func.__name__ not in self._callbacks.keys():
+            raise Exception(f"Invalid event: {func.__name__}")
+
+        self._callbacks[func.__name__] = func
 
     def close(self) -> None:
         """Close the web driver."""
         
         self.driver.close()
 
+        for key in self._callbacks.keys():
+            self._callbacks[key] = None
+        
         for thread in self._threads.values():
             thread.stop()
