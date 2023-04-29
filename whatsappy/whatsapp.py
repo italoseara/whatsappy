@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import os
-from qrcode import QRCode
 from time import sleep
+from qrcode import QRCode
+from threading import Thread
+from typing import Dict, List
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -28,6 +30,12 @@ class Whatsapp:
         data_path (str, optional): The path to the Chrome data directory (it is used to save the session). Defaults to None.
         chrome_options (Options, optional): The options for the Chrome driver. Defaults to None.
     """
+
+    _callbacks: Dict[str, list[callable]] = {
+        "on_message": [],
+    }
+    
+    _threads: List[Thread] = []
     
     driver: webdriver.Chrome
     actions: ActionChains
@@ -72,15 +80,55 @@ class Whatsapp:
 
             print("Scan the QR code with your phone to log in.")
 
-        WebDriverWait(self.driver, timeout).until(lambda driver: self.is_loaded())
+        WebDriverWait(self.driver, timeout).until(lambda driver: self._is_loaded())
         sleep(1) # Sometimes the page is not loaded correctly
 
-    def is_loaded(self) -> bool:
-        """Check if the page is loaded."""
-        
-        return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
+        print(self.unread_messages)
 
-    def is_animating(self) -> bool:
+        # Create the threads
+        if self._callbacks["on_message"]:
+            self._threads.append(Thread(target=self._look_for_messages, daemon=True))
+
+        for thread in self._threads:
+            thread.start()
+
+    @property
+    def unread_messages(self) -> Dict[str, int]:
+        """Get the unread messages.
+
+        Returns:
+            Dict[str, int]: The unread messages.
+        """
+
+        unread = {}
+        elements = self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)
+
+        for element in elements:
+            title = element.find_element(By.CSS_SELECTOR, Selectors.UNREAD_TITLE).get_attribute("title")
+            number = element.find_element(By.CSS_SELECTOR, Selectors.UNREAD_BADGE).text or 1
+
+            unread[title] = int(number)
+
+        return unread
+
+    def _look_for_messages(self) -> None:
+        """Look for new messages."""
+
+        while True:
+            if not self._is_loaded():
+                break
+            
+            # TODO: Look for new messages
+
+    def _is_loaded(self) -> bool:
+        """Check if the page is loaded."""
+
+        try:
+            return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR)
+        except Exception:
+            return False
+
+    def _is_animating(self) -> bool:
         """Check if the page is animating."""
 
         return util.element_exists(self.driver, By.CSS_SELECTOR, Selectors.ANIMATING)
@@ -95,7 +143,7 @@ class Whatsapp:
             Chat | GroupChat | None: The chat or None if it does not exist.
         """
 
-        if not self.is_loaded():
+        if not self._is_loaded():
             raise Exception("Something went wrong while loading WhatsApp web.")
 
         if util.phone_number_regex.match(name):
@@ -103,11 +151,11 @@ class Whatsapp:
             phone = "".join(filter(str.isdigit, name))
             
             self.driver.get(f"https://web.whatsapp.com/send?phone={phone}")
-            WebDriverWait(self.driver, 5).until(lambda driver: self.is_loaded())
+            WebDriverWait(self.driver, 5).until(lambda driver: self._is_loaded())
         else:
             # Close the menu and the current chat
             ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
-            WebDriverWait(self.driver, 5).until(lambda driver: not self.is_animating())
+            WebDriverWait(self.driver, 5).until(lambda driver: not self._is_animating())
             ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
 
             search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)            
@@ -126,7 +174,7 @@ class Whatsapp:
             return None
         
         WebDriverWait(self.driver, 5).until(lambda driver: 
-            not self.is_animating() and 
+            not self._is_animating() and 
             len(self.driver.find_elements(By.CSS_SELECTOR, Selectors.CHAT_INFO_TEXT)) > 0
         )
 
@@ -134,8 +182,17 @@ class Whatsapp:
             return Group(self)
         
         return Chat(self)
+    
+
+    def event(self, func: callable) -> callable:
+        """A decorator to register an event."""
+        
+        self._callbacks[func.__name__] = self._callbacks.get(func.__name__, []) + [func]
 
     def close(self) -> None:
         """Close the web driver."""
         
         self.driver.close()
+
+        for thread in self._threads:
+            thread.join()

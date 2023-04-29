@@ -16,4 +16,7 @@ class Selectors:
     GROUP_SUBJECT = INFO_DRAWER + ' div[data-testid="group-info-drawer-subject-input"]'
     GROUP_DEFAULT_PIC = INFO_DRAWER + ' span[data-testid="default-group"]'
     GROUP_INFO_PIC = CHAT_INFO_PIC
-    
+
+    UNREAD_BADGE = 'span[data-testid="icon-unread-count"]'
+    UNREAD_TITLE = 'div[data-testid="cell-frame-title"] > span'
+    XPATH_UNREAD_CONVERSATIONS = '//span[@data-testid="icon-unread-count"]/ancestor::div[@data-testid="cell-frame-container"]'
