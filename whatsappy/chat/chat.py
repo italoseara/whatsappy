@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 from typing import List, Literal
 
 from . import Conversation
-from .. import whatsapp, util
-from ..util import Selectors
+from .. import whatsapp
+from ..util import *
 
 from selenium.webdriver.common.by import By
 
@@ -43,7 +43,7 @@ class Chat(Conversation):
         if self.number.startswith("~"):
             self.name, self.number = self.number[1:], self.name
 
-        if util.element_exists(driver, By.CSS_SELECTOR, Selectors.CHAT_DEFAULT_PIC):
+        if element_exists(driver, By.CSS_SELECTOR, Selectors.CHAT_DEFAULT_PIC):
             self.profile_picture = None
         else:
             pfp_url = driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_INFO_PIC).get_attribute("src")

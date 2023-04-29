@@ -9,8 +9,8 @@ from dataclasses import dataclass, field
 from typing import List
 
 from . import Conversation
-from .. import whatsapp, util
-from ..util import Selectors
+from .. import whatsapp
+from ..util import *
 
 from selenium.webdriver.common.by import By
 
@@ -38,7 +38,7 @@ class Group(Conversation):
 
         self.subject = driver.find_element(By.CSS_SELECTOR, Selectors.GROUP_SUBJECT).get_attribute("title")
 
-        if util.element_exists(driver, By.CSS_SELECTOR, Selectors.GROUP_DEFAULT_PIC):
+        if element_exists(driver, By.CSS_SELECTOR, Selectors.GROUP_DEFAULT_PIC):
             self.profile_picture = None
         else:
             pfp_url = driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_INFO_PIC).get_attribute("src")

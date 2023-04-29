@@ -19,4 +19,5 @@ class Selectors:
 
     UNREAD_BADGE = 'span[data-testid="icon-unread-count"]'
     UNREAD_TITLE = 'div[data-testid="cell-frame-title"] > span'
+    UNREAD_LAST_MESSAGE = 'span[data-testid="last-msg-status"]'
     XPATH_UNREAD_CONVERSATIONS = '//span[@data-testid="icon-unread-count"]/ancestor::div[@data-testid="cell-frame-container"]'
