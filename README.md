@@ -20,7 +20,7 @@ Whatsappy is a Python library for interacting with WhatsApp Web using Selenium. 
 You can install Whatsappy using pip:
 
 ```bash
-pip install my-library-name
+pip install whatsappy-py
 ```
 
 ## Usage
@@ -61,14 +61,29 @@ whatsapp.close()
 
 #### Properties
 
-- `driver: (webdriver.Chrome)`: The Chrome driver.
-- `unread_messages: (List[Unread])`: List of unread messages.
+- `driver: webdriver.Chrome`: The Chrome driver.
+- `unread_messages: List[Unread]`: List of unread messages.
+- `me: Me`: The current user.
 
 #### Methods
 
 - `run()`: Opens WhatsApp Web in Chrome.
 - `close()`: Closes the Chrome window.
 - `open(chat: str) -> (Chat | Group | None)`: Selects a chat by name and returns a `Chat` or `Group` instance. Returns `None` if the chat does not exist.
+
+### Me
+
+#### Properties
+
+- `name: str`: The name of the user.
+- `about: str`: The about of the user.
+- `profile_picture: JpegImageFile`: The profile picture of the user.
+
+#### Methods
+
+- `set_name(name: str)`: Sets the name of the user.
+- `set_about(about: str)`: Sets the about of the user.
+- `set_profile_picture(path: str)`: Sets the profile picture of the user.
 
 ### Chat
 

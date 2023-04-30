@@ -3,8 +3,7 @@ from __future__ import annotations
 import requests
 from PIL import Image
 from PIL.JpegImagePlugin import JpegImageFile
-from dataclasses import dataclass, field
-from typing import List, Literal
+from dataclasses import dataclass
 
 from . import Conversation
 from .. import whatsapp

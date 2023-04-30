@@ -125,6 +125,16 @@ class Whatsapp:
         
         return [Unread(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)]
 
+    @property
+    def me(self) -> Me:
+        """Returns the current user.
+
+        Returns:
+            Me: The current user.
+        """
+        
+        return Me(self)
+
     def open(self, chat: str) -> (Chat | Group | None):
         """Opens a chat with the specified name or phone number
 

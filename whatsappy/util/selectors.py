@@ -21,3 +21,7 @@ class Selectors:
     UNREAD_TITLE = 'div[data-testid="cell-frame-title"] > span'
     UNREAD_LAST_MESSAGE = 'span[data-testid="last-msg-status"]'
     XPATH_UNREAD_CONVERSATIONS = '//span[@data-testid="icon-unread-count"]/ancestor::div[@data-testid="cell-frame-container"]'
+
+    MY_PROFILE_TEXT = 'div[data-testid="drawer-left"] span[data-testid="col-main-profile-input-read-only"]'
+    MY_PROFILE_PIC = 'div[data-testid="profile-pic-picker"] img'
+    MY_PROFILE_DEFAULT_PIC = 'div[data-testid="profile-pic-picker"] span[data-testid="default-user"]'

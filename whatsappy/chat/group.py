@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import requests
 from PIL import Image
 from PIL.JpegImagePlugin import JpegImageFile
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List
 
 from . import Conversation

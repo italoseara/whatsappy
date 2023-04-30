@@ -5,6 +5,7 @@ from time import sleep
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.common.action_chains import ActionChains
 
 def find_element_if_exists(driver: WebDriver, *args, **kargs) -> WebElement:
     try:
@@ -19,3 +20,17 @@ def send_keys_slowly(element: WebElement, text: str, delay: float = 0.05) -> Non
     for char in text:
         element.send_keys(char)
         sleep(delay)
+
+def send_shortcut(driver: WebDriver, *shortcut: str) -> None:
+    actions = ActionChains(driver)
+
+    for key in shortcut[:-1]:
+        actions.key_down(key)
+    actions.send_keys(shortcut[-1])
+    actions.perform()
+
+    actions.reset_actions()
+    
+    for key in shortcut[:-1]:
+        actions.key_up(key)
+    actions.perform()
