@@ -5,11 +5,11 @@ from PIL import Image
 from PIL.JpegImagePlugin import JpegImageFile
 from dataclasses import dataclass
 
+from selenium.webdriver.common.by import By
+
 from . import Conversation
 from .. import whatsapp
 from ..util import *
-
-from selenium.webdriver.common.by import By
 
 @dataclass(init=False)
 class Chat(Conversation):

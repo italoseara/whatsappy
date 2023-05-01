@@ -6,6 +6,8 @@ class Selectors:
     SEARCH_BAR = 'div[data-testid="chat-list-search"]'
     SEARCH_BAR_CLEAR = 'button[aria-label="Cancel search"]'
 
+    CHAT_INPUT = 'div[data-testid="conversation-compose-box-input"]'
+
     INFO_DRAWER = 'div[data-testid="chat-info-drawer"]'
 
     CHAT_HEADER = 'header[data-testid="conversation-header"]'
