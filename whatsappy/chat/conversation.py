@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Literal
+from typing import List, Literal, Any
+from multimethod import multimethod
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -24,40 +25,17 @@ class Conversation:
 
         raise NotImplementedError("This method is not implemented yet.")
     
-    def send(self, message: str = "", attatchments: List[str] = []) -> None:
+    def send(self, 
+             message: str = None, 
+             attatchments: List[Any] = None, 
+             type: Literal["auto", "audio", "contact", "document", "image", "sticker", "video"] = "auto"
+        ) -> None:
         """Sends a message to the chat.
 
         Args:
-            message (str): The message to send.
-            attatchments (List[str], optional): A list of paths to attatchments to send. Defaults to [].
-        """
-
-        if not message and not attatchments:
-            raise ValueError("You must provide a message or attatchments to send.")
-        
-        input_chat = self._whatsapp.driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_INPUT)
-        input_chat.click() # Focus the input
-
-        for line in message.split("\n"):
-            input_chat.send_keys(line)
-            send_shortcut(self._whatsapp.driver, Keys.SHIFT, Keys.ENTER)            
-
-        input_chat.send_keys(Keys.ENTER)
-
-    def send_contacts(self, contacts: List[str]) -> None:
-        """Sends contacts to the chat.
-
-        Args:
-            contacts (List[str]): A list of numbers or names to send.
-        """
-
-        raise NotImplementedError("This method is not implemented yet.")
-    
-    def send_sticker(self, sticker: str) -> None:
-        """Sends a sticker to the chat.
-
-        Args:
-            sticker (str): The path of the image to send.
+            message (str, optional): The message to send. Defaults to None.
+            attatchments (List[Any], optional): The attatchments to send. Defaults to None.
+            type (Literal["auto", "audio", "contact", "document", "image", "sticker", "video"], optional): The type of the attatchments. Defaults to "auto". "auto" will automatically detect the type, but it cannot detect contacts and stickers.
         """
 
         raise NotImplementedError("This method is not implemented yet.")
