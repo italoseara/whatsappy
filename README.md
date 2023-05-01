@@ -79,12 +79,6 @@ whatsapp.close()
 - `about: str`: The about of the user.
 - `profile_picture: JpegImageFile`: The profile picture of the user.
 
-#### Methods
-
-- `set_name(name: str)`: Sets the name of the user.
-- `set_about(about: str)`: Sets the about of the user.
-- `set_profile_picture(path: str)`: Sets the profile picture of the user.
-
 ### Chat
 
 #### Properties

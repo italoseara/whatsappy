@@ -72,6 +72,11 @@ class Conversation:
 
         raise NotImplementedError("This method is not implemented yet.")
 
+    def unblock(self) -> None:
+        """Unblocks the chat."""
+
+        raise NotImplementedError("This method is not implemented yet.")
+
     def delete(self) -> None:
         """Deletes the chat."""
 

@@ -39,12 +39,3 @@ class Me:
             self.profile_picture = Image.open(requests.get(pfp_url, stream=True).raw)
 
         ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-
-    def set_name(self, name: str) -> None:
-        raise NotImplementedError("This method is not implemented yet.")
-
-    def set_about(self, about: str) -> None:
-        raise NotImplementedError("This method is not implemented yet.")
-
-    def set_profile_picture(self, path: str) -> None:
-        raise NotImplementedError("This method is not implemented yet.")

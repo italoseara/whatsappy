@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from time import sleep, time
+from time import sleep
 from qrcode import QRCode
 from typing import Dict, List, Callable, Self
 
