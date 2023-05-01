@@ -116,6 +116,17 @@ class Whatsapp:
         return self
 
     @property
+    def current_chat(self) -> str | None:
+        """Returns the name of the current chat.
+
+        Returns:
+            str: The name of the current chat.
+            None: If there is no chat open.
+        """
+        
+        return (current_chat := find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CURRENT_CHAT)) and current_chat.text
+
+    @property
     def unread_messages(self) -> List[Unread]:
         """Returns the list of unread messages in the conversations page.
 

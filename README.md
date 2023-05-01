@@ -64,6 +64,7 @@ whatsapp.close()
 - `driver: webdriver.Chrome`: The Chrome driver.
 - `unread_messages: List[Unread]`: List of unread messages.
 - `me: Me`: The current user.
+- `current_chat: str | None`: The name of the current chat. Returns `None` if no chat is selected.
 
 #### Methods
 

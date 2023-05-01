@@ -25,3 +25,5 @@ class Selectors:
     MY_PROFILE_TEXT = 'div[data-testid="drawer-left"] span[data-testid="col-main-profile-input-read-only"]'
     MY_PROFILE_PIC = 'div[data-testid="profile-pic-picker"] img'
     MY_PROFILE_DEFAULT_PIC = 'div[data-testid="profile-pic-picker"] span[data-testid="default-user"]'
+
+    CURRENT_CHAT = 'span[data-testid="conversation-info-header-chat-title"]'
