@@ -14,7 +14,7 @@ from ..util import *
 class Unread:
     """An unread chat. Should not be initialized directly, use `whatsappy.Whatsapp.unread_messages` instead.
 
-    Properties:
+    #### Properties
         * name (str): The name of the unread chat.
         * count (int): The count of the unread chat.
         * message (str): The last message of the unread chat.

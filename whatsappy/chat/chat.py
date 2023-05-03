@@ -15,7 +15,7 @@ from ..util import *
 class Chat(Conversation):
     """A chat in WhatsApp. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
 
-    Properties:
+    #### Properties
         * name (str): The name of the chat.
         * number (str): The number of the chat.
         * about (str): The about of the chat.

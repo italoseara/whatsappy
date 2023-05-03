@@ -21,17 +21,17 @@ from .chat import *
 class Whatsapp:
     """The main class for interacting with WhatsApp web.
 
-    Args:
+    #### Arguments
         * timeout (int, optional): The time to wait for the page to load. Defaults to 60.
         * visible (bool, optional): Whether the browser should be visible or not. Defaults to True.
         * data_path (str, optional): The path to the Chrome data directory (it is used to save the session). Defaults to None.
         * chrome_options (Options, optional): The options for the Chrome driver. Defaults to None.
 
-    Properties:
+    #### Properties:
         * driver (webdriver.Chrome): The Chrome driver.
         * unread_messages (List[Unread]): List of unread messages.
 
-    Methods:
+    #### Methods:
         * run: Starts the WhatsApp web session.
         * close: Closes the WhatsApp web session.
         * open: Opens a chat with the specified name or phone number.
@@ -61,7 +61,7 @@ class Whatsapp:
     def run(self) -> Self:
         """Starts the WhatsApp web session.
 
-        Returns:
+        #### Returns
             * Self: The current instance of the class.
         """
         
@@ -119,7 +119,7 @@ class Whatsapp:
     def current_chat(self) -> str | None:
         """Returns the name of the current chat.
 
-        Returns:
+        #### Returns
             * str: The name of the current chat.
             * None: If there is no chat open.
         """
@@ -130,7 +130,7 @@ class Whatsapp:
     def unread_messages(self) -> List[Unread]:
         """Returns the list of unread messages in the conversations page.
 
-        Returns:
+        #### Returns
             * List[Unread]: List of unread messages.
         """
         
@@ -140,7 +140,7 @@ class Whatsapp:
     def me(self) -> Me:
         """Returns the current user.
 
-        Returns:
+        #### Returns
             * Me: The current user.
         """
         
@@ -149,10 +149,10 @@ class Whatsapp:
     def open(self, chat: str) -> (Chat | Group | None):
         """Opens a chat with the specified name or phone number
 
-        Args:
+        #### Arguments
             * chat (str): The name or phone number of the chat to open
 
-        Returns:
+        #### Returns
             * (Chat | Group | None): The chat with the specified name or phone number. None if the chat wasn't found
         """
     
@@ -199,7 +199,7 @@ class Whatsapp:
     def event(self, func: Callable) -> None:
         """Decorator to register a function as an event handler.
 
-        Args:
+        #### Arguments
             * func: The function to be registered. It must be a coroutine.
 
         Raises:
