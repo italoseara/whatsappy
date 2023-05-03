@@ -13,16 +13,18 @@ from ..util import *
 
 @dataclass(init=False)
 class Chat(Conversation):
-    """A chat in WhatsApp.
+    """A chat in WhatsApp. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
 
     Properties:
         name (str): The name of the chat.
+        
         number (str): The number of the chat.
-        about (str): The about of the chat.
-        profile_picture (JpegImageFile): The profile picture of the chat.
-        starred_messages (List[str]): The starred messages of the chat.
 
-    PS.: Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
+        about (str): The about of the chat.
+
+        profile_picture (JpegImageFile): The profile picture of the chat.
+
+        starred_messages (List[str]): The starred messages of the chat.
     """
 
     name: str

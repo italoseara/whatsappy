@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -23,17 +23,23 @@ class Whatsapp:
 
     Args:
         timeout (int, optional): The time to wait for the page to load. Defaults to 60.
+        
         visible (bool, optional): Whether the browser should be visible or not. Defaults to True.
+        
         data_path (str, optional): The path to the Chrome data directory (it is used to save the session). Defaults to None.
+        
         chrome_options (Options, optional): The options for the Chrome driver. Defaults to None.
 
     Properties:
         driver (webdriver.Chrome): The Chrome driver.
+        
         unread_messages (List[Unread]): List of unread messages.
 
     Methods:
         run: Starts the WhatsApp web session.
+        
         close: Closes the WhatsApp web session.
+        
         open: Opens a chat with the specified name or phone number.
     """
 
@@ -121,6 +127,7 @@ class Whatsapp:
 
         Returns:
             str: The name of the current chat.
+            
             None: If there is no chat open.
         """
         
@@ -242,7 +249,10 @@ class Whatsapp:
             if not self._callbacks["on_message"]:
                 continue
 
-            unread = self.unread_messages
+            try:
+                unread = self.unread_messages
+            except StaleElementReferenceException:
+                continue
 
             for chat in unread:
                 if chat not in last_check and chat.message is not None:

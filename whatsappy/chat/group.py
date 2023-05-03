@@ -16,16 +16,18 @@ from selenium.webdriver.common.by import By
 
 @dataclass(init=False)
 class Group(Conversation):
-    """A group in WhatsApp.
+    """A group in WhatsApp. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
 
     Properties:
         subject (str): The subject of the group.
+        
         description (str): The description of the group.
+        
         profile_picture (JpegImageFile): The profile picture of the group.
+        
         participants (List[str]): The participants of the group.
+        
         starred_messages (List[str]): The starred messages of the group.
-
-    PS.: Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
     """
 
     subject: str

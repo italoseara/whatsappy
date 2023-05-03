@@ -29,3 +29,12 @@ class Selectors:
     MY_PROFILE_DEFAULT_PIC = 'div[data-testid="profile-pic-picker"] span[data-testid="default-user"]'
 
     CURRENT_CHAT = 'span[data-testid="conversation-info-header-chat-title"]'
+
+    MESSAGE_BOX = 'div[data-testid="conversation-compose-box-input"]'
+    MEDIA_CAPTION = 'div[data-testid="media-caption-input-container"]'
+
+    ATTATCHMENT_MENU = 'div[data-testid="conversation-clip"] > div'
+    INPUT_DOCUMENTS = 'span[data-testid="attach-document"] + input'
+    INPUT_MIDIA = 'span[data-testid="attach-image"] + input'
+
+    SEND_BUTTON = 'div[aria-label="Send"]'
