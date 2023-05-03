@@ -34,11 +34,9 @@ class Conversation:
         """Sends a message to the chat.
 
         Args:
-            message (str, optional): The message to send. Defaults to None.
-            
-            attatchments (List[Any], optional): The attatchments to send. Defaults to None.
-            
-            type (Literal["auto", "document", "midia", "contact"], optional): The type of the attatchments. Defaults to "auto".
+            * message (str, optional): The message to send. Defaults to None.
+            * attatchments (List[Any], optional): The attatchments to send. Defaults to None.
+            * type (Literal["auto", "document", "midia", "contact"], optional): The type of the attatchments. Defaults to "auto".
             If the type is specified, all the attatchments must be of the same type.
         """
 
@@ -100,7 +98,7 @@ class Conversation:
         """Mutes the chat notifications.
 
         Args:
-            time (Literal["8 hours", "1 week", "Always"]): The time to mute the chat for.
+            * time (Literal["8 hours", "1 week", "Always"]): The time to mute the chat for.
         """
 
         raise NotImplementedError("This method is not implemented yet.")

@@ -22,25 +22,19 @@ class Whatsapp:
     """The main class for interacting with WhatsApp web.
 
     Args:
-        timeout (int, optional): The time to wait for the page to load. Defaults to 60.
-        
-        visible (bool, optional): Whether the browser should be visible or not. Defaults to True.
-        
-        data_path (str, optional): The path to the Chrome data directory (it is used to save the session). Defaults to None.
-        
-        chrome_options (Options, optional): The options for the Chrome driver. Defaults to None.
+        * timeout (int, optional): The time to wait for the page to load. Defaults to 60.
+        * visible (bool, optional): Whether the browser should be visible or not. Defaults to True.
+        * data_path (str, optional): The path to the Chrome data directory (it is used to save the session). Defaults to None.
+        * chrome_options (Options, optional): The options for the Chrome driver. Defaults to None.
 
     Properties:
-        driver (webdriver.Chrome): The Chrome driver.
-        
-        unread_messages (List[Unread]): List of unread messages.
+        * driver (webdriver.Chrome): The Chrome driver.
+        * unread_messages (List[Unread]): List of unread messages.
 
     Methods:
-        run: Starts the WhatsApp web session.
-        
-        close: Closes the WhatsApp web session.
-        
-        open: Opens a chat with the specified name or phone number.
+        * run: Starts the WhatsApp web session.
+        * close: Closes the WhatsApp web session.
+        * open: Opens a chat with the specified name or phone number.
     """
 
     driver: webdriver.Chrome
@@ -68,7 +62,7 @@ class Whatsapp:
         """Starts the WhatsApp web session.
 
         Returns:
-            Self: The current instance of the class.
+            * Self: The current instance of the class.
         """
         
         # Chrome options
@@ -126,9 +120,8 @@ class Whatsapp:
         """Returns the name of the current chat.
 
         Returns:
-            str: The name of the current chat.
-            
-            None: If there is no chat open.
+            * str: The name of the current chat.
+            * None: If there is no chat open.
         """
         
         return (current_chat := find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CURRENT_CHAT)) and current_chat.text
@@ -138,7 +131,7 @@ class Whatsapp:
         """Returns the list of unread messages in the conversations page.
 
         Returns:
-            List[Unread]: List of unread messages.
+            * List[Unread]: List of unread messages.
         """
         
         return [Unread(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)]
@@ -148,7 +141,7 @@ class Whatsapp:
         """Returns the current user.
 
         Returns:
-            Me: The current user.
+            * Me: The current user.
         """
         
         return Me(self)
@@ -157,10 +150,10 @@ class Whatsapp:
         """Opens a chat with the specified name or phone number
 
         Args:
-            chat (str): The name or phone number of the chat to open
+            * chat (str): The name or phone number of the chat to open
 
         Returns:
-            (Chat | Group | None): The chat with the specified name or phone number. None if the chat wasn't found
+            * (Chat | Group | None): The chat with the specified name or phone number. None if the chat wasn't found
         """
     
         if not self._is_loaded():
@@ -207,10 +200,10 @@ class Whatsapp:
         """Decorator to register a function as an event handler.
 
         Args:
-            func: The function to be registered. It must be a coroutine.
+            * func: The function to be registered. It must be a coroutine.
 
         Raises:
-            InvalidEvent: If the function name is not a valid event.
+            * InvalidEvent: If the function name is not a valid event.
         """
 
         if func.__name__ not in self._callbacks.keys():
