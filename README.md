@@ -101,7 +101,7 @@ whatsapp.close()
 - `subject: str`: The subject of the group.
 - `description: str`: The description of the group.
 - `profile_picture: Optional[JpegImageFile]`: The profile picture of the group.
-- `participants: List[str]`: The participants of the group.
+- `participants: int`: The number of participants of the group.
 - `starred_messages: List[str]`: The starred messages of the group.
 
 #### Methods

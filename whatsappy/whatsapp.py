@@ -13,7 +13,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+
 
 from .util import *
 from .chat import *
@@ -67,7 +69,11 @@ class Whatsapp:
         
         # Chrome options
         self._chrome_options = self._chrome_options or Options()
-        self._chrome_options.add_argument("--headless" if not self._visible else "--start-maximized")
+        self._chrome_options.add_argument("--start-maximized")
+
+        if not self._visible:
+            self._chrome_options.add_argument("--headless")
+            self._chrome_options.add_argument("--window-size=1920,1080")
 
         if self._data_path:
             self._chrome_options.add_argument(f"--user-data-dir={self._data_path}")
@@ -173,7 +179,9 @@ class Whatsapp:
 
             search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)            
             send_keys_slowly(search, chat, delay=0.01)
-            WebDriverWait(self.driver, 5).until(lambda driver: element_exists(driver, By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
+            WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
+            )
             search.send_keys(Keys.ENTER)
 
             # Clear the search bar
@@ -181,8 +189,10 @@ class Whatsapp:
 
         # Open the chat info
         try:
-            WebDriverWait(self.driver, 5).until(lambda driver: element_exists(driver, By.CSS_SELECTOR, Selectors.CHAT_HEADER))
-            self.driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_HEADER).click()
+            WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.CONVERSATION_HEADER))
+            )
+            self.driver.find_element(By.CSS_SELECTOR, Selectors.CONVERSATION_HEADER).click()
         except TimeoutException:
             return None
         
@@ -213,14 +223,14 @@ class Whatsapp:
 
     def close(self) -> None:
         """Closes the browser window and stops all running threads."""
-        
-        self.driver.close()
 
         for key in self._callbacks.keys():
             self._callbacks[key] = None
         
         for thread in self._threads.values():
             thread.stop()
+
+        self.driver.close()
 
     def _on_ready(self) -> None:
         """Calls the on_ready callback when the page is loaded."""

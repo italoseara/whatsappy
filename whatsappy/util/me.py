@@ -4,12 +4,12 @@ import requests
 from dataclasses import dataclass
 from PIL.JpegImagePlugin import JpegImageFile
 from PIL import Image
-from time import sleep
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from . import send_shortcut, Selectors, element_exists
 from .. import whatsapp
@@ -26,11 +26,7 @@ class Me:
         driver = _whatsapp.driver
         
         send_shortcut(driver, Keys.CONTROL, Keys.ALT, "p")
-        WebDriverWait(driver, 10).until(lambda driver: 
-            element_exists(driver, By.CSS_SELECTOR, Selectors.MY_PROFILE_TEXT) and
-            driver.find_element(By.CSS_SELECTOR, Selectors.MY_PROFILE_TEXT).is_displayed()
-        )
-        sleep(0.1) # Wait for the about to load
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, Selectors.MY_PROFILE_TEXT)))
 
         info = driver.find_elements(By.CSS_SELECTOR, Selectors.MY_PROFILE_TEXT)
 

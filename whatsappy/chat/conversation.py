@@ -7,6 +7,7 @@ from typing import List, Literal
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from .. import whatsapp
 from ..util import *
@@ -73,10 +74,10 @@ class Conversation:
         if documents:
             driver.find_element(By.CSS_SELECTOR, Selectors.ATTATCHMENT_MENU).click()
             driver.find_element(By.CSS_SELECTOR, Selectors.INPUT_DOCUMENTS).send_keys("\n".join(documents))
-            WebDriverWait(driver, 10).until(lambda driver: element_exists(driver, By.CSS_SELECTOR, Selectors.MEDIA_CAPTION))
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
 
             if message:
-                WebDriverWait(driver, 10).until(lambda driver: element_exists(driver, By.CSS_SELECTOR, Selectors.MEDIA_CAPTION))
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
                 msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)
                 send_keys_multiline(msg_box, message)
             
@@ -85,10 +86,10 @@ class Conversation:
         if midias:
             driver.find_element(By.CSS_SELECTOR, Selectors.ATTATCHMENT_MENU).click()
             driver.find_element(By.CSS_SELECTOR, Selectors.INPUT_MIDIA).send_keys("\n".join(midias))
-            WebDriverWait(driver, 10).until(lambda driver: element_exists(driver, By.CSS_SELECTOR, Selectors.MEDIA_CAPTION))
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
 
             if not documents and message:
-                WebDriverWait(driver, 10).until(lambda driver: element_exists(driver, By.CSS_SELECTOR, Selectors.MEDIA_CAPTION))
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
                 msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)
                 send_keys_multiline(msg_box, message)
             

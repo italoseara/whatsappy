@@ -18,14 +18,6 @@ def find_element_if_exists(driver: WebDriver, *args, **kargs) -> WebElement:
 def element_exists(driver: WebDriver, *args, **kargs) -> bool:
     return find_element_if_exists(driver, *args, **kargs) is not None
 
-def click_until_interactable(element: WebElement, timeout: int = 10) -> None:
-    for _ in range(timeout * 10):
-        try:
-            element.click()
-            break
-        except ElementNotInteractableException:
-            sleep(0.1)
-
 def send_keys_multiline(element: WebElement, text: str) -> None:
     for line in text.splitlines():
         element.send_keys(line)
