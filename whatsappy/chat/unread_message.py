@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Literal
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
@@ -9,6 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from .. import whatsapp
 from ..util import *
+from . import Chat, Group
 
 @dataclass(init=False)
 class UnreadMessage:
@@ -40,12 +41,21 @@ class UnreadMessage:
         except NoSuchElementException:
             self.message = None
 
-    def reply(self, message: str, attatchments: List[str] = []) -> None:
+    def reply(self, 
+              message: str, 
+              attatchments: List[str] = [], 
+              type: Literal["auto", "document", "midia", "contact"] = "auto"
+        ) -> Chat | Group:
         """Reply to the unread chat.
 
         #### Arguments
             * message (str): The message to reply with.
             * attatchments (List[str], optional): The attatchments to reply with. Defaults to None.
+            * type (Literal["auto", "document", "midia", "contact"], optional): The type of the attatchments. Defaults to "auto".
+
+        #### Returns
+            * Chat | Group: The chat or group that the message was sent to.
         """
 
-        raise NotImplementedError("This feature is not implemented yet.")
+        chat = self._whatsapp.open(self.name)
+        chat.send(message, attatchments, type)

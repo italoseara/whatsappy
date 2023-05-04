@@ -118,7 +118,7 @@ whatsapp.close()
 
 #### Methods
 
-- `reply(message: str, attachments: Optional[List[str]] = None)`: Replies to the unread chat with a message.
+- `reply(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Replies to the unread chat with a message. and returns a `Chat` or `Group` instance.
 
 ## License
 

@@ -33,7 +33,7 @@ class Conversation:
         ) -> None:
         """Sends a message to the chat.
 
-        Args:
+        #### Arguments
             * message (str, optional): The message to send. Defaults to None.
             * attatchments (List[Any], optional): The attatchments to send. Defaults to None.
             * type (Literal["auto", "document", "midia", "contact"], optional): The type of the attatchments. Defaults to "auto".
@@ -97,7 +97,7 @@ class Conversation:
     def mute(self, time: Literal["8 hours", "1 week", "Always"]) -> None:
         """Mutes the chat notifications.
 
-        Args:
+        #### Arguments
             * time (Literal["8 hours", "1 week", "Always"]): The time to mute the chat for.
         """
 
