@@ -62,7 +62,7 @@ whatsapp.close()
 #### Properties
 
 - `driver: webdriver.Chrome`: The Chrome driver.
-- `unread_messages: List[Unread]`: List of unread messages.
+- `unread_messages: List[UnreadMessage]`: List of unread messages.
 - `me: Me`: The current user.
 - `current_chat: str | None`: The name of the current chat. Returns `None` if no chat is selected.
 
@@ -90,10 +90,9 @@ whatsapp.close()
 - `profile_picture: JpegImageFile`: The profile picture of the chat.
 - `starred_messages: List[str]`: The starred messages of the chat.
 
-
 #### Methods
 
-- `send(message: str, attachments: Optional[List[str]] = None)`: Sends a message to the chat.
+- `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the chat.
 
 ### Group
 
@@ -107,9 +106,9 @@ whatsapp.close()
 
 #### Methods
 
-- `send(message: str, attachments: Optional[List[str]] = None)`: Sends a message to the group.
+- `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the group.
 
-### Unread
+### UnreadMessage
 
 #### Properties
 

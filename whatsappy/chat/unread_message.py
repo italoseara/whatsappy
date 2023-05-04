@@ -11,7 +11,7 @@ from .. import whatsapp
 from ..util import *
 
 @dataclass(init=False)
-class Unread:
+class UnreadMessage:
     """An unread chat. Should not be initialized directly, use `whatsappy.Whatsapp.unread_messages` instead.
 
     #### Properties
@@ -43,10 +43,9 @@ class Unread:
     def reply(self, message: str, attatchments: List[str] = []) -> None:
         """Reply to the unread chat.
 
-        Args:
-            message (str): The message to reply with.
-            
-            attatchments (List[str], optional): The attatchments to reply with. Defaults to None.
+        #### Arguments
+            * message (str): The message to reply with.
+            * attatchments (List[str], optional): The attatchments to reply with. Defaults to None.
         """
 
         raise NotImplementedError("This feature is not implemented yet.")

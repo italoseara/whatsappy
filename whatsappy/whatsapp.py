@@ -127,14 +127,14 @@ class Whatsapp:
         return (current_chat := find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CURRENT_CHAT)) and current_chat.text
 
     @property
-    def unread_messages(self) -> List[Unread]:
+    def unread_messages(self) -> List[UnreadMessage]:
         """Returns the list of unread messages in the conversations page.
 
         #### Returns
-            * List[Unread]: List of unread messages.
+            * List[UnreadMessage]: List of unread messages.
         """
         
-        return [Unread(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)]
+        return [UnreadMessage(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)]
 
     @property
     def me(self) -> Me:
