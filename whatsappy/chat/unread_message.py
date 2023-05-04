@@ -59,3 +59,5 @@ class UnreadMessage:
 
         chat = self._whatsapp.open(self.name)
         chat.send(message, attatchments, type)
+
+        return chat
