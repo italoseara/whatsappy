@@ -16,9 +16,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
-
 from .util import *
 from .chat import *
+from .messages import *
 
 class Whatsapp:
     """The main class for interacting with WhatsApp web.

@@ -15,7 +15,7 @@ from .. import whatsapp
 class Message:
     """Utility class for messages. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
 
-    #### Attributes
+    #### Properties
         * author (str): The author of the message.
         * content (str): The content of the message.
         * timestamp (datetime): The timestamp of the message.
@@ -23,10 +23,6 @@ class Message:
         * attatchments (List[Any]): The attatchments of the message.
         * is_forwarded (bool): Whether the message is forwarded.
         * is_reply (bool): Whether the message is a reply.
-
-    #### Properties
-        * is_starred (bool): Whether the message is starred.
-        * is_deleted (bool): Whether the message is deleted.
     """
 
     _element: WebElement = field(repr=False)
@@ -61,14 +57,3 @@ class Message:
         self.is_forwarded = element_exists(_element, By.CSS_SELECTOR, Selectors.MESSAGE_FORWARDED)
         self.is_reply = element_exists(_element, By.CSS_SELECTOR, Selectors.MESSAGE_QUOTE)
 
-    @property
-    def is_starred(self) -> bool:
-        """Returns whether the message is starred."""
-
-        raise NotImplementedError("This method is not implemented yet.")
-    
-    @property
-    def is_deleted(self) -> bool:
-        """Returns whether the message is deleted."""
-
-        raise NotImplementedError("This method is not implemented yet.")

@@ -89,6 +89,7 @@ whatsapp.close()
 - `about: str`: The about of the chat.
 - `profile_picture: JpegImageFile`: The profile picture of the chat.
 - `starred_messages: List[str]`: The starred messages of the chat.
+- `last_message: Message | None`: The last message of the chat.
 
 #### Methods
 
@@ -103,10 +104,23 @@ whatsapp.close()
 - `profile_picture: Optional[JpegImageFile]`: The profile picture of the group.
 - `participants: int`: The number of participants of the group.
 - `starred_messages: List[str]`: The starred messages of the group.
+- `last_message: Message | None`: The last message of the group.
 
 #### Methods
 
 - `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the group.
+
+### Message
+
+#### Properties
+
+- `chat: Chat | Group`: The chat the message belongs to.
+- `author: str`: The author of the message.
+- `content: str`: The content of the message.
+- `timestamp: datetime.datetime`: The timestamp of the message.
+- `attachments: List[str]`: The attachments of the message.
+- `is_forwarded: bool`: Whether the message is forwarded or not.
+- `is_reply: bool`: Whether the message is a reply or not.
 
 ### UnreadMessage
 

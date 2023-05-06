@@ -6,3 +6,4 @@ from .location import *
 from .sticker import *
 from .message import *
 from .video import *
+from .unread_message import *
