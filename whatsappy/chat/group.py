@@ -8,14 +8,14 @@ from PIL.JpegImagePlugin import JpegImageFile
 from dataclasses import dataclass
 from typing import List
 
-from . import Conversation
+from .. import chat
 from .. import whatsapp
 from ..util import *
 
 from selenium.webdriver.common.by import By
 
 @dataclass(init=False)
-class Group(Conversation):
+class Group(chat.Conversation):
     """A group in WhatsApp. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
 
     #### Properties

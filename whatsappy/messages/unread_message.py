@@ -8,8 +8,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException
 
 from .. import whatsapp
+from .. import chat
 from ..util import *
-from ..chat import Chat, Group
 
 @dataclass(init=False)
 class UnreadMessage:
@@ -45,7 +45,7 @@ class UnreadMessage:
               message: str, 
               attatchments: List[str] = None, 
               type: Literal["auto", "document", "midia", "contact"] = "auto"
-        ) -> Chat | Group:
+        ) -> chat.Chat | chat.Group:
         """Reply to the unread chat.
 
         #### Arguments

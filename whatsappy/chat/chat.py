@@ -7,12 +7,12 @@ from dataclasses import dataclass
 
 from selenium.webdriver.common.by import By
 
-from . import Conversation
+from .. import chat
 from .. import whatsapp
 from ..util import *
 
 @dataclass(init=False)
-class Chat(Conversation):
+class Chat(chat.Conversation):
     """A chat in WhatsApp. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead.
 
     #### Properties

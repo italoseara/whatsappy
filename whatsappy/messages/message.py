@@ -9,6 +9,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 
 from ..util import *
+from .. import chat
 from .. import whatsapp
 
 @dataclass(init=False)
@@ -28,7 +29,7 @@ class Message:
     _element: WebElement = field(repr=False)
     _whatsapp: whatsapp.Whatsapp = field(repr=False)
     
-    chat: Any = None
+    chat: chat.Chat | chat.Group = None
     author: str = None
     content: str = None
     timestamp: datetime = None
@@ -36,7 +37,7 @@ class Message:
     is_forwarded: bool = False
     is_reply: bool = False
     
-    def __init__(self, _whatsapp: whatsapp.Whatsapp, _element: WebElement, chat: Any) -> None:
+    def __init__(self, _whatsapp: whatsapp.Whatsapp, _element: WebElement, chat: chat.Chat | chat.Group) -> None:
         self._whatsapp = _whatsapp
         self._element = _element
         self.chat = chat
