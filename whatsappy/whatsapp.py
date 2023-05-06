@@ -52,7 +52,7 @@ class Whatsapp:
     }
     _threads: Dict[str, MyThread] = {
         "on_message": None
-    }    
+    }
 
     def __init__(self, timeout: int = 60, visible: bool = True, data_path: str = None, chrome_options: Options = None) -> None:
         self._timeout = timeout
@@ -66,7 +66,7 @@ class Whatsapp:
         #### Returns
             * Self: The current instance of the class.
         """
-        
+
         # Chrome options
         self._chrome_options = self._chrome_options or Options()
         self._chrome_options.add_argument("--start-maximized")
@@ -80,7 +80,7 @@ class Whatsapp:
 
         # Disable the logging
         self._chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        
+
         # Open the browser
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self._chrome_options)
 
@@ -100,7 +100,7 @@ class Whatsapp:
                 data_ref = qr_code.get_attribute("data-ref")
 
                 os.system("cls||clear")
-                
+
                 qr = QRCode(version=1, border=2)
                 qr.add_data(data_ref)
                 qr.make(fit=True)
@@ -129,7 +129,7 @@ class Whatsapp:
             * str: The name of the current chat.
             * None: If there is no chat open.
         """
-        
+
         return (current_chat := find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CURRENT_CHAT)) and current_chat.text
 
     @property
@@ -139,7 +139,7 @@ class Whatsapp:
         #### Returns
             * List[UnreadMessage]: List of unread messages.
         """
-        
+
         return [UnreadMessage(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.UNREAD_CONVERSATIONS_XPATH)]
 
     @property
@@ -149,7 +149,7 @@ class Whatsapp:
         #### Returns
             * Me: The current user.
         """
-        
+
         return Me(self)
 
     def open(self, chat: str) -> (Chat | Group | None):
@@ -161,14 +161,14 @@ class Whatsapp:
         #### Returns
             * (Chat | Group | None): The chat with the specified name or phone number. None if the chat wasn't found
         """
-    
+
         if not self._is_loaded():
             raise Exception("Something went wrong while loading WhatsApp web.")
 
         if phone_number_regex.match(chat):
             # Remove all the non-numeric characters
             phone = "".join(filter(str.isdigit, chat))
-            
+
             self.driver.get(f"https://web.whatsapp.com/send?phone={phone}")
             WebDriverWait(self.driver, 5).until(lambda driver: self._is_loaded())
         else:
@@ -177,7 +177,7 @@ class Whatsapp:
             WebDriverWait(self.driver, 5).until(lambda driver: not self._is_animating())
             ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
 
-            search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)            
+            search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
             send_keys_slowly(search, chat, delay=0.01)
             WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
@@ -195,7 +195,7 @@ class Whatsapp:
             self.driver.find_element(By.CSS_SELECTOR, Selectors.CONVERSATION_HEADER).click()
         except TimeoutException:
             return None
-        
+
         WebDriverWait(self.driver, 5).until(lambda driver: 
             not self._is_animating() and 
             len(self.driver.find_elements(By.CSS_SELECTOR, Selectors.CHAT_INFO_TEXT)) > 0
@@ -203,9 +203,9 @@ class Whatsapp:
 
         if element_exists(self.driver, By.CSS_SELECTOR, Selectors.GROUP_SUBJECT):
             return Group(self)
-        
+
         return Chat(self)
-    
+
     def event(self, func: Callable) -> None:
         """Decorator to register a function as an event handler.
 
@@ -226,7 +226,7 @@ class Whatsapp:
 
         for key in self._callbacks.keys():
             self._callbacks[key] = None
-        
+
         for thread in self._threads.values():
             thread.stop()
 
@@ -239,16 +239,16 @@ class Whatsapp:
             return
 
         self._callbacks["on_ready"]()
-    
+
     def _on_message(self) -> None:
         """Checks for new messages and calls the on_message callback"""
-        
+
         last_check = self.unread_messages
 
         while True:
             if self._threads["on_message"].stopped():
                 break
-            
+
             if not self._callbacks["on_message"]:
                 continue
 

@@ -10,6 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from .. import whatsapp
+from ..messages import Message
 from ..util import *
 
 @dataclass(init=False)
@@ -26,6 +27,17 @@ class Conversation:
         """Returns a list of starred messages in the chat."""
 
         raise NotImplementedError("This method is not implemented yet.")
+
+    @property
+    def last_message(self) -> Message | None:
+        """Returns the last message in the chat."""
+
+        element = self._whatsapp.driver.find_elements(By.CSS_SELECTOR, Selectors.CONVERSATION_MESSAGES)[-1]
+
+        if not element:
+            return None
+
+        return Message(self._whatsapp, element, self)
     
     def send(self, 
              message: str = None, 

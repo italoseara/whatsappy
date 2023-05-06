@@ -13,19 +13,26 @@ class Selectors:
     CURRENT_CHAT = 'span[data-testid="conversation-info-header-chat-title"]'
 
     CONVERSATION_HEADER = 'header[data-testid="conversation-header"]'
-    CONVERSATION_MESSAGES = 'div.message-in div[data-testid="msg-container"]'
+    CONVERSATION_MESSAGES = 'div.message-in > div[data-testid="msg-container"]'
+
+    MESSAGE_INFO = 'div.copyable-text'
+    MESSAGE_AUTHOR = 'div > span[aria-label]'
+    MESSAGE_CONTENT = 'span.selectable-text'
+    MESSAGE_META = 'div[data-testid="msg-meta"] > span'
+    MESSAGE_FORWARDED = 'span[data-testid="forwarded"]'
+    MESSAGE_QUOTE = 'div[data-testid="quoted-message"]'
 
     CHAT_INPUT = 'div[data-testid="conversation-compose-box-input"]'
-    CHAT_INFO_TEXT = INFO_DRAWER + ' span[dir="auto"].copyable-text.selectable-text'
-    CHAT_INFO_PIC = INFO_DRAWER + ' section > div img'
-    CHAT_DEFAULT_PIC = INFO_DRAWER + ' span[data-testid="default-user"]'
+    CHAT_INFO_TEXT = f'{INFO_DRAWER} span[dir="auto"].copyable-text.selectable-text'
+    CHAT_INFO_PIC = f'{INFO_DRAWER} section > div img'
+    CHAT_DEFAULT_PIC = f'{INFO_DRAWER} span[data-testid="default-user"]'
 
-    GROUP_SUBJECT = INFO_DRAWER + ' div[data-testid="group-info-drawer-subject-input"]'
-    GROUP_PARTICIPANTS = INFO_DRAWER + ' div[data-testid="group-info-top-card-subtitle"] > span > span > button'
+    GROUP_SUBJECT = f'{INFO_DRAWER} div[data-testid="group-info-drawer-subject-input"]'
+    GROUP_PARTICIPANTS = f'{INFO_DRAWER} div[data-testid="group-info-top-card-subtitle"] > span > span > button'
     GROUP_INFO_PIC = CHAT_INFO_PIC
-    GROUP_DEFAULT_PIC = INFO_DRAWER + ' span[data-testid="default-group"]'
-    GROUP_DESCRIPTION = INFO_DRAWER + ' span[data-testid="group-info-drawer-description-title-input-read-only"]'
-    GROUP_READ_MORE = GROUP_DESCRIPTION + ' + button'
+    GROUP_DEFAULT_PIC = f'{INFO_DRAWER} span[data-testid="default-group"]'
+    GROUP_DESCRIPTION = f'{INFO_DRAWER} span[data-testid="group-info-drawer-description-title-input-read-only"]'
+    GROUP_READ_MORE = f'{GROUP_DESCRIPTION} + button'
 
     UNREAD_BADGE = 'span[data-testid="icon-unread-count"]'
     UNREAD_TITLE = 'div[data-testid="cell-frame-title"] > span'

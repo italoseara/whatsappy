@@ -1,21 +1,22 @@
 from __future__ import annotations
 
 from time import sleep
+from bs4 import BeautifulSoup
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.common.by import By
 
-def find_element_if_exists(driver: WebDriver, *args, **kargs) -> WebElement:
+def find_element_if_exists(driver: WebDriver | WebElement, *args, **kargs) -> WebElement:
     try:
         return driver.find_element(*args, **kargs)
     except NoSuchElementException:
         return None
 
-def element_exists(driver: WebDriver, *args, **kargs) -> bool:
+def element_exists(driver: WebDriver | WebElement, *args, **kargs) -> bool:
     return find_element_if_exists(driver, *args, **kargs) is not None
 
 def send_keys_multiline(element: WebElement, text: str) -> None:
@@ -41,3 +42,17 @@ def send_shortcut(driver: WebDriver, *shortcut: str) -> None:
     for key in shortcut[:-1]:
         actions.key_up(key)
     actions.perform()
+
+def message_to_text(message: WebElement) -> str:
+    # get the html of the message
+    html = message.get_attribute("innerHTML")
+
+    # parse the html
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Replace the images with their alt text
+    for img in soup.find_all("img"):
+        img.replace_with(img["alt"])
+
+    # Return the text
+    return soup.text

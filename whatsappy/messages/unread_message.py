@@ -9,7 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from .. import whatsapp
 from ..util import *
-from . import Chat, Group
+from ..chat import Chat, Group
 
 @dataclass(init=False)
 class UnreadMessage:
@@ -43,7 +43,7 @@ class UnreadMessage:
 
     def reply(self, 
               message: str, 
-              attatchments: List[str] = [], 
+              attatchments: List[str] = None, 
               type: Literal["auto", "document", "midia", "contact"] = "auto"
         ) -> Chat | Group:
         """Reply to the unread chat.
