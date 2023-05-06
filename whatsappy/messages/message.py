@@ -3,10 +3,12 @@ from __future__ import annotations
 import datefinder
 from datetime import datetime
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import Any, List, Literal
 
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 from ..util import *
 from .. import chat
@@ -43,18 +45,37 @@ class Message:
         self.chat = chat
 
         # TODO: Add support for attatchments.
+        container = _element.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_CONTAINER)
 
-        self.author = _element.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_AUTHOR).get_attribute("aria-label")[:-1]
+        self.author = container.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_AUTHOR).get_attribute("aria-label")[:-1]
 
-        if content := find_element_if_exists(_element, By.CSS_SELECTOR, Selectors.MESSAGE_CONTENT):
+        if content := find_element_if_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_CONTENT):
             self.content = message_to_text(content)
 
-        if info := find_element_if_exists(_element, By.CSS_SELECTOR, Selectors.MESSAGE_INFO):
+        if info := find_element_if_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_INFO):
             self.timestamp = list(datefinder.find_dates(info.text))[0]
         else:
-            self.timestamp = list(datefinder.find_dates(_element.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_META).text))[0]
+            self.timestamp = list(datefinder.find_dates(container.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_META).text))[0]
             self.timestamp = self.timestamp.replace(year=1900, month=1, day=1)
 
-        self.is_forwarded = element_exists(_element, By.CSS_SELECTOR, Selectors.MESSAGE_FORWARDED)
-        self.is_reply = element_exists(_element, By.CSS_SELECTOR, Selectors.MESSAGE_QUOTE)
+        self.is_forwarded = element_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_FORWARDED)
+        self.is_reply = element_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_QUOTE)
 
+    def reply(self,
+              message: str = None,
+              attatchments: List[str] = None,
+              type: Literal["auto", "document", "midia", "contact"] = "auto"
+        ) -> None:
+        """Replies to the message.
+
+        #### Arguments
+            * message (str, optional): The message to send. Defaults to None.
+            * attatchments (List[Any], optional): The attatchments to send. Defaults to None.
+            * type (Literal["auto", "document", "midia", "contact"], optional): The type of the attatchments. Defaults to "auto".
+            If the type is specified, all the attatchments must be of the same type.
+        """
+
+        action = ActionChains(self._whatsapp.driver)
+        action.double_click(self._element).perform()
+
+        self.chat.send(message, attatchments, type)

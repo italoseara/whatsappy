@@ -23,21 +23,17 @@ class Conversation:
         self._whatsapp = _whatsapp
 
     @property
-    def starred_messages(self) -> List[str]:
-        """Returns a list of starred messages in the chat."""
-
-        raise NotImplementedError("This method is not implemented yet.")
-
-    @property
     def last_message(self) -> Message | None:
         """Returns the last message in the chat."""
 
-        element = self._whatsapp.driver.find_elements(By.CSS_SELECTOR, Selectors.CONVERSATION_MESSAGES)[-1]
+        messages = self._whatsapp.driver.find_elements(By.CSS_SELECTOR, Selectors.CONVERSATION_MESSAGES)
 
-        if not element:
+        if not messages:
             return None
 
-        return Message(self._whatsapp, element, self)
+        last_element = messages[-1]
+        
+        return Message(self._whatsapp, last_element, self)
     
     def send(self, 
              message: str = None, 

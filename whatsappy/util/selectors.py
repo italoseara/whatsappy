@@ -13,8 +13,9 @@ class Selectors:
     CURRENT_CHAT = 'span[data-testid="conversation-info-header-chat-title"]'
 
     CONVERSATION_HEADER = 'header[data-testid="conversation-header"]'
-    CONVERSATION_MESSAGES = 'div.message-in > div[data-testid="msg-container"]'
-
+    CONVERSATION_MESSAGES = 'div.message-in'
+    
+    MESSAGE_CONTAINER = 'div[data-testid="msg-container"]'
     MESSAGE_INFO = 'div.copyable-text'
     MESSAGE_AUTHOR = 'div > span[aria-label]'
     MESSAGE_CONTENT = 'span.selectable-text'
