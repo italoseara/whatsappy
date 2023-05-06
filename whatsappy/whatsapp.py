@@ -140,7 +140,7 @@ class Whatsapp:
             * List[UnreadMessage]: List of unread messages.
         """
         
-        return [UnreadMessage(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.XPATH_UNREAD_CONVERSATIONS)]
+        return [UnreadMessage(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.UNREAD_CONVERSATIONS_XPATH)]
 
     @property
     def me(self) -> Me:

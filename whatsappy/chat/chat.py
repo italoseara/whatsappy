@@ -47,3 +47,9 @@ class Chat(Conversation):
         else:
             pfp_url = driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_INFO_PIC).get_attribute("src")
             self.profile_picture = Image.open(requests.get(pfp_url, stream=True).raw)
+
+    @property
+    def last_message(self):
+        """The last message in the chat."""
+        pass
+        
