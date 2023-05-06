@@ -20,7 +20,7 @@ class Message:
         * author (str): The author of the message.
         * content (str): The content of the message.
         * timestamp (datetime): The timestamp of the message.
-        * chat (Any): The chat the message was sent in.
+        * chat (Chat | Group): The chat the message was sent in.
         * attatchments (List[Any]): The attatchments of the message.
         * is_forwarded (bool): Whether the message is forwarded.
         * is_reply (bool): Whether the message is a reply.
