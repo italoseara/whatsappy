@@ -178,7 +178,7 @@ class Whatsapp:
             ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
 
             search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
-            send_keys_slowly(search, chat, delay=0.01)
+            send_keys_slowly(search, chat)
             WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
             )

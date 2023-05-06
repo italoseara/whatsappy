@@ -87,12 +87,15 @@ whatsapp.close()
 - `profile_picture: JpegImageFile`: The profile picture of the chat.
 - `last_message: Message | None`: The last message of the chat.
 - `is_muted: bool`: Whether the chat is muted or not.
+- `is_blocked: bool`: Whether the chat is blocked or not.
 
 #### Methods
 
 - `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the chat.
 - `mute()`: Mutes the chat.
 - `unmute()`: Unmutes the chat.
+- `block()`: Blocks the chat.
+- `unblock()`: Unblocks the chat.
 
 ### Group
 

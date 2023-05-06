@@ -17,7 +17,9 @@ class Selectors:
     CONVERSATION_MENU = 'div[data-testid="conversation-menu-button"] > div[role="button"]'
     CONVERSATION_MUTED = f'{INFO_DRAWER} div[data-testid="block-mute"] > div > div > div:nth-child(2) > div'
 
-    MENU_MUTE = 'li[data-testid="mi-mute"]'
+    MENU_DROPDOWN = 'div[data-testid="contact-menu-dropdown"]'
+
+    MENU_MUTE = f'{MENU_DROPDOWN} li[data-testid="mi-mute"]'
     MUTE_POPUP = 'div[data-testid="mute-popup"]'
     MUTE_TIME_OPTIONS = f'{MUTE_POPUP} form > ol > li'
     MUTE_POPUP_CONFIRM = f'{MUTE_POPUP} button[data-testid="popup-controls-ok"]'
@@ -34,6 +36,12 @@ class Selectors:
     CHAT_INFO_TEXT = f'{INFO_DRAWER} span[dir="auto"].copyable-text.selectable-text'
     CHAT_INFO_PIC = f'{INFO_DRAWER} section > div img'
     CHAT_DEFAULT_PIC = f'{INFO_DRAWER} span[data-testid="default-user"]'
+    
+    CHAT_BLOCK = f'{INFO_DRAWER} div[data-testid="li-block"]'
+    CHAT_UNBLOCK = f'{INFO_DRAWER} div[data-testid="li-unblock"]'
+
+    BLOCK_POPUP = 'div[data-testid="confirm-popup"]'
+    BLOCK_POPUP_CONFIRM = f'{BLOCK_POPUP} button[data-testid="popup-controls-ok"]'
 
     GROUP_SUBJECT = f'{INFO_DRAWER} div[data-testid="group-info-drawer-subject-input"]'
     GROUP_PARTICIPANTS = f'{INFO_DRAWER} div[data-testid="group-info-top-card-subtitle"] > span > span > button'

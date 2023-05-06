@@ -6,6 +6,7 @@ from PIL.JpegImagePlugin import JpegImageFile
 from dataclasses import dataclass
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 
 from .. import chat
 from .. import whatsapp
@@ -50,3 +51,57 @@ class Chat(chat.Conversation):
         else:
             pfp_url = driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_INFO_PIC).get_attribute("src")
             self.profile_picture = Image.open(requests.get(pfp_url, stream=True).raw)
+
+    @property
+    def is_blocked(self) -> bool:
+        """Returns whether the chat is blocked or not."""
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        return element_exists(self._whatsapp.driver, By.CSS_SELECTOR, Selectors.CHAT_UNBLOCK)
+            
+    def block(self) -> None:
+        """Blocks the chat."""
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        if self.is_blocked:
+            return
+
+        driver = self._whatsapp.driver
+        driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_BLOCK).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.BLOCK_POPUP_CONFIRM).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+
+    def unblock(self) -> None:
+        """Unblocks the chat."""
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        if not self.is_blocked:
+            return
+
+        driver = self._whatsapp.driver
+        driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_UNBLOCK).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.BLOCK_POPUP_CONFIRM).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+
+    def delete(self) -> None:
+        """Deletes the chat."""
+
+        raise NotImplementedError("This method is not implemented yet.")

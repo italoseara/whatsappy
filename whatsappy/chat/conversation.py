@@ -15,7 +15,7 @@ from ..util import *
 
 @dataclass(init=False)
 class Conversation:
-    """Utility class for chats and groups. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead."""
+    """Utility class for conversations and groups. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead."""
     
     _whatsapp: whatsapp.Whatsapp = field(repr=False)
     name: str
@@ -25,7 +25,7 @@ class Conversation:
 
     @property
     def last_message(self) -> Message | None:
-        """Returns the last message in the chat."""
+        """Returns the last message in the conversation."""
 
         if self._whatsapp.current_chat != self.name:
             raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
@@ -41,7 +41,7 @@ class Conversation:
 
     @property
     def is_muted(self) -> bool:
-        """Returns whether the chat is muted or not."""
+        """Returns whether the conversation is muted or not."""
 
         if self._whatsapp.current_chat != self.name:
             raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
@@ -53,7 +53,7 @@ class Conversation:
              attatchments: List[str] = None, 
              type: Literal["auto", "document", "midia", "contact"] = "auto"
         ) -> None:
-        """Sends a message to the chat.
+        """Sends a message to the conversation.
 
         #### Arguments
             * message (str, optional): The message to send. Defaults to None.
@@ -98,10 +98,14 @@ class Conversation:
         if documents:
             driver.find_element(By.CSS_SELECTOR, Selectors.ATTATCHMENT_MENU).click()
             driver.find_element(By.CSS_SELECTOR, Selectors.INPUT_DOCUMENTS).send_keys("\n".join(documents))
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+            
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
 
             if message:
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                
                 msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)
                 send_keys_multiline(msg_box, message)
             
@@ -110,20 +114,24 @@ class Conversation:
         if midias:
             driver.find_element(By.CSS_SELECTOR, Selectors.ATTATCHMENT_MENU).click()
             driver.find_element(By.CSS_SELECTOR, Selectors.INPUT_MIDIA).send_keys("\n".join(midias))
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+            
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
 
             if not documents and message:
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                
                 msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)
                 send_keys_multiline(msg_box, message)
             
             driver.find_element(By.CSS_SELECTOR, Selectors.SEND_BUTTON).click()
 
     def mute(self, time: Literal["8 hours", "1 week", "Always"]) -> None:
-        """Mutes the chat notifications.
+        """Mutes the conversation notifications.
 
         #### Arguments
-            * time (Literal["8 hours", "1 week", "Always"]): The time to mute the chat for.
+            * time (Literal["8 hours", "1 week", "Always"]): The time to mute the conversation for.
         """
 
         if self._whatsapp.current_chat != self.name:
@@ -163,7 +171,7 @@ class Conversation:
             EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.MUTE_POPUP)))
 
     def unmute(self) -> None:
-        """Unmutes the chat notifications."""
+        """Unmutes the conversation's notifications."""
 
         if self._whatsapp.current_chat != self.name:
             raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
@@ -180,37 +188,17 @@ class Conversation:
 
         driver.find_element(By.CSS_SELECTOR, Selectors.MENU_MUTE).click()
 
-    def archive(self) -> None:
-        """Archives the chat."""
-
-        raise NotImplementedError("This method is not implemented yet.")
-
-    def block(self) -> None:
-        """Blocks the chat."""
-
-        raise NotImplementedError("This method is not implemented yet.")
-
-    def unblock(self) -> None:
-        """Unblocks the chat."""
-
-        raise NotImplementedError("This method is not implemented yet.")
-
-    def delete(self) -> None:
-        """Deletes the chat."""
-
-        raise NotImplementedError("This method is not implemented yet.")
-
     def pin(self) -> None:
-        """Pins the chat."""
+        """Pins the conversation."""
 
         raise NotImplementedError("This method is not implemented yet.")
 
     def unpin(self) -> None:
-        """Unpins the chat."""
+        """Unpins the conversation."""
 
         raise NotImplementedError("This method is not implemented yet.")
 
     def _open_menu(self) -> None:
-        """Toggles the chat menu."""
+        """Opens the conversation menu."""
 
         self._whatsapp.driver.find_element(By.CSS_SELECTOR, Selectors.CONVERSATION_MENU).click()

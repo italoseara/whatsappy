@@ -24,7 +24,7 @@ def send_keys_multiline(element: WebElement, text: str) -> None:
         element.send_keys(line)
         element.send_keys(Keys.SHIFT, Keys.ENTER)
 
-def send_keys_slowly(element: WebElement, text: str, delay: float = 0.05) -> None:
+def send_keys_slowly(element: WebElement, text: str, delay: float = 0.01) -> None:
     for char in text:
         element.send_keys(char)
         sleep(delay)
