@@ -79,3 +79,26 @@ class Message:
         action.double_click(self._element).perform()
 
         self.chat.send(message, attatchments, type)
+
+    def delete(self) -> None:
+        """Deletes the message."""
+
+        raise NotImplementedError("This method is not implemented yet.")
+
+    def forward(self, chats: List[str]) -> None:
+        """Forwards the message to the specified chats.
+
+        #### Arguments
+            * chats (List[str]): The chats to forward the message to.
+        """
+
+        raise NotImplementedError("This method is not implemented yet.")
+
+    def react(self, emoji: str) -> None:
+        """Reacts to the message with the specified emoji.
+
+        #### Arguments
+            * emoji (str): The emoji to react with.
+        """
+
+        raise NotImplementedError("This method is not implemented yet.")

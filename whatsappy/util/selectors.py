@@ -14,6 +14,13 @@ class Selectors:
 
     CONVERSATION_HEADER = 'header[data-testid="conversation-header"]'
     CONVERSATION_MESSAGES = 'div.message-in'
+    CONVERSATION_MENU = 'div[data-testid="conversation-menu-button"] > div[role="button"]'
+    CONVERSATION_MUTED = f'{INFO_DRAWER} div[data-testid="block-mute"] > div > div > div:nth-child(2) > div'
+
+    MENU_MUTE = 'li[data-testid="mi-mute"]'
+    MUTE_POPUP = 'div[data-testid="mute-popup"]'
+    MUTE_TIME_OPTIONS = f'{MUTE_POPUP} form > ol > li'
+    MUTE_POPUP_CONFIRM = f'{MUTE_POPUP} button[data-testid="popup-controls-ok"]'
     
     MESSAGE_CONTAINER = 'div[data-testid="msg-container"]'
     MESSAGE_INFO = 'div.copyable-text'

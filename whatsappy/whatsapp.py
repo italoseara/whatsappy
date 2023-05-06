@@ -217,7 +217,7 @@ class Whatsapp:
         """
 
         if func.__name__ not in self._callbacks.keys():
-            raise InvalidEvent(f"Invalid event: {func.__name__}")
+            raise InvalidEventException(f"Invalid event: {func.__name__}")
 
         self._callbacks[func.__name__] = func
 

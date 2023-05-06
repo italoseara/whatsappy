@@ -18,6 +18,7 @@ class Conversation:
     """Utility class for chats and groups. Should not be initialized directly, use `whatsappy.Whatsapp.open` instead."""
     
     _whatsapp: whatsapp.Whatsapp = field(repr=False)
+    name: str
 
     def __init__(self, _whatsapp: whatsapp.Whatsapp) -> None:
         self._whatsapp = _whatsapp
@@ -25,6 +26,9 @@ class Conversation:
     @property
     def last_message(self) -> Message | None:
         """Returns the last message in the chat."""
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
 
         messages = self._whatsapp.driver.find_elements(By.CSS_SELECTOR, Selectors.CONVERSATION_MESSAGES)
 
@@ -34,6 +38,15 @@ class Conversation:
         last_element = messages[-1]
         
         return Message(self._whatsapp, last_element, self)
+
+    @property
+    def is_muted(self) -> bool:
+        """Returns whether the chat is muted or not."""
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        return element_exists(self._whatsapp.driver, By.CSS_SELECTOR, Selectors.CONVERSATION_MUTED)
     
     def send(self, 
              message: str = None, 
@@ -48,6 +61,9 @@ class Conversation:
             * type (Literal["auto", "document", "midia", "contact"], optional): The type of the attatchments. Defaults to "auto".
             If the type is specified, all the attatchments must be of the same type.
         """
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
 
         driver = self._whatsapp.driver
 
@@ -110,12 +126,59 @@ class Conversation:
             * time (Literal["8 hours", "1 week", "Always"]): The time to mute the chat for.
         """
 
-        raise NotImplementedError("This method is not implemented yet.")
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        if time.lower() not in ["8 hours", "1 week", "always"]:
+            raise ValueError("The time must be one of the following: 8 hours, 1 week, Always.")
+
+        if self.is_muted:
+            self.unmute()
+
+        driver = self._whatsapp.driver
+
+        self._open_menu()
+
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.MENU_MUTE)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.MENU_MUTE).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MUTE_POPUP)))
+
+        mute_time_options = driver.find_elements(By.CSS_SELECTOR, Selectors.MUTE_TIME_OPTIONS)
+
+        match time.lower():
+            case "8 hours":
+                mute_time_options[0].click()
+            case "1 week":
+                mute_time_options[1].click()
+            case "always":
+                mute_time_options[2].click()
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.MUTE_POPUP_CONFIRM).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.MUTE_POPUP)))
 
     def unmute(self) -> None:
         """Unmutes the chat notifications."""
 
-        raise NotImplementedError("This method is not implemented yet.")
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        if not self.is_muted:
+            return
+
+        driver = self._whatsapp.driver
+
+        self._open_menu()
+
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.MENU_MUTE)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.MENU_MUTE).click()
 
     def archive(self) -> None:
         """Archives the chat."""
@@ -141,3 +204,13 @@ class Conversation:
         """Pins the chat."""
 
         raise NotImplementedError("This method is not implemented yet.")
+
+    def unpin(self) -> None:
+        """Unpins the chat."""
+
+        raise NotImplementedError("This method is not implemented yet.")
+
+    def _open_menu(self) -> None:
+        """Toggles the chat menu."""
+
+        self._whatsapp.driver.find_element(By.CSS_SELECTOR, Selectors.CONVERSATION_MENU).click()

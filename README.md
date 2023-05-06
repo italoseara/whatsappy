@@ -1,4 +1,4 @@
-# Whatsappy
+# Whatsappy 4.0.0
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://pepy.tech/badge/whatsappy-py)](https://pepy.tech/project/whatsappy-py)
@@ -86,10 +86,13 @@ whatsapp.close()
 - `about: str`: The about of the chat.
 - `profile_picture: JpegImageFile`: The profile picture of the chat.
 - `last_message: Message | None`: The last message of the chat.
+- `is_muted: bool`: Whether the chat is muted or not.
 
 #### Methods
 
 - `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the chat.
+- `mute()`: Mutes the chat.
+- `unmute()`: Unmutes the chat.
 
 ### Group
 
@@ -100,10 +103,13 @@ whatsapp.close()
 - `profile_picture: Optional[JpegImageFile]`: The profile picture of the group.
 - `participants: int`: The number of participants of the group.
 - `last_message: Message | None`: The last message of the group.
+- `is_muted: bool`: Whether the group is muted or not.
 
 #### Methods
 
 - `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the group.
+- `mute()`: Mutes the group.
+- `unmute()`: Unmutes the group.
 
 ### Message
 
