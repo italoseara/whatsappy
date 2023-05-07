@@ -49,7 +49,7 @@ class Message:
         self.author = container.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_AUTHOR).get_attribute("aria-label")[:-1]
 
         if content := find_element_if_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_CONTENT):
-            self.content = message_to_text(content)
+            self.content = emoji_to_text(content)
 
         if info := find_element_if_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_INFO):
             self.timestamp = list(datefinder.find_dates(info.text))[0]

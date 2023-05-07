@@ -130,7 +130,12 @@ class Whatsapp:
             * None: If there is no chat open.
         """
 
-        return (current_chat := find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CURRENT_CHAT)) and current_chat.text
+        current_chat = find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CURRENT_CHAT)
+
+        if not current_chat:
+            return None
+
+        return emoji_to_text(current_chat)
 
     @property
     def unread_messages(self) -> List[UnreadMessage]:
@@ -196,12 +201,10 @@ class Whatsapp:
         except TimeoutException:
             return None
 
-        WebDriverWait(self.driver, 5).until(lambda driver: 
-            not self._is_animating() and 
-            len(self.driver.find_elements(By.CSS_SELECTOR, Selectors.CHAT_INFO_TEXT)) > 0
-        )
+        WebDriverWait(self.driver, 5).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.INFO_DRAWER_BODY)))
 
-        if element_exists(self.driver, By.CSS_SELECTOR, Selectors.GROUP_SUBJECT):
+        if element_exists(self.driver, By.CSS_SELECTOR, Selectors.GROUP_INFO_HEADER):
             return Group(self)
 
         return Chat(self)

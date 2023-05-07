@@ -3,7 +3,7 @@ from __future__ import annotations
 import requests
 from PIL import Image
 from PIL.JpegImagePlugin import JpegImageFile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
@@ -24,6 +24,8 @@ class Chat(chat.Conversation):
         * starred_messages (List[str]): The starred messages of the chat.
     """
 
+    _whatsapp: whatsapp.Whatsapp = field(repr=False)
+
     name: str
     number: str
     about: str
@@ -36,7 +38,7 @@ class Chat(chat.Conversation):
 
         info = driver.find_elements(By.CSS_SELECTOR, Selectors.CHAT_INFO_TEXT)
 
-        self.name = info[0].text
+        self.name = emoji_to_text(info[0])
         self.number = info[1].text
         self.about = info[2].get_attribute("title") if len(info) > 2 else None
 
@@ -74,12 +76,12 @@ class Chat(chat.Conversation):
         driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_BLOCK).click()
 
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
 
-        driver.find_element(By.CSS_SELECTOR, Selectors.BLOCK_POPUP_CONFIRM).click()
+        driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
 
         WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
 
     def unblock(self) -> None:
         """Unblocks the chat."""
@@ -94,12 +96,12 @@ class Chat(chat.Conversation):
         driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_UNBLOCK).click()
 
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
 
-        driver.find_element(By.CSS_SELECTOR, Selectors.BLOCK_POPUP_CONFIRM).click()
+        driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
 
         WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.BLOCK_POPUP)))
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
 
     def delete(self) -> None:
         """Deletes the chat."""

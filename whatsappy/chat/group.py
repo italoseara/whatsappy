@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 import requests
 from PIL import Image
 from PIL.JpegImagePlugin import JpegImageFile
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
 
 from .. import chat
 from .. import whatsapp
@@ -25,7 +22,9 @@ class Group(chat.Conversation):
         * participants (int): The number of participants of the group.
         * starred_messages (List[str]): The starred messages of the group.
     """
-
+    
+    _whatsapp: whatsapp.Whatsapp = field(repr=False)
+    
     name: str
     description: str
     participants: int
@@ -37,7 +36,7 @@ class Group(chat.Conversation):
         driver = self._whatsapp.driver
         
         # Group name
-        self.name = driver.find_element(By.CSS_SELECTOR, Selectors.GROUP_SUBJECT).get_attribute("title")
+        self.name = emoji_to_text(driver.find_element(By.CSS_SELECTOR, Selectors.GROUP_SUBJECT))
 
         # Group description
         if read_more_btn := find_element_if_exists(driver, By.CSS_SELECTOR, Selectors.GROUP_READ_MORE):
@@ -57,3 +56,27 @@ class Group(chat.Conversation):
             self.profile_picture = Image.open(requests.get(pfp_url, stream=True).raw)
         else:
             self.profile_picture = None
+
+    def leave(self, delete: bool = False) -> None:
+        """Leaves the group.
+
+        #### Arguments
+            * delete (bool): Whether to delete the group or not.
+        """
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The group \"{self.name}\" is not selected.")
+
+        driver = self._whatsapp.driver
+        driver.find_element(By.CSS_SELECTOR, Selectors.GROUP_LEAVE).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP_CONFIRM)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
+
+        if delete:
+            self.leave(delete=False)

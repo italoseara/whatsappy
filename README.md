@@ -113,6 +113,7 @@ whatsapp.close()
 - `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the group.
 - `mute()`: Mutes the group.
 - `unmute()`: Unmutes the group.
+- `leave()`: Leaves the group.
 
 ### Message
 

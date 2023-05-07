@@ -10,6 +10,7 @@ class Selectors:
     SEARCH_BAR_CLEAR = 'button[aria-label="Cancel search"]'
 
     INFO_DRAWER = 'div[data-testid="chat-info-drawer"]'
+    INFO_DRAWER_BODY = f'{INFO_DRAWER} section'
     CURRENT_CHAT = 'span[data-testid="conversation-info-header-chat-title"]'
 
     CONVERSATION_HEADER = 'header[data-testid="conversation-header"]'
@@ -40,15 +41,18 @@ class Selectors:
     CHAT_BLOCK = f'{INFO_DRAWER} div[data-testid="li-block"]'
     CHAT_UNBLOCK = f'{INFO_DRAWER} div[data-testid="li-unblock"]'
 
-    BLOCK_POPUP = 'div[data-testid="confirm-popup"]'
-    BLOCK_POPUP_CONFIRM = f'{BLOCK_POPUP} button[data-testid="popup-controls-ok"]'
+    POPUP = 'div[data-testid="confirm-popup"]'
+    POPUP_CONFIRM = f'{POPUP} button[data-testid="popup-controls-ok"]'
 
-    GROUP_SUBJECT = f'{INFO_DRAWER} div[data-testid="group-info-drawer-subject-input"]'
+    GROUP_INFO_HEADER = 'div[data-testid="group-info-header"]'
+    GROUP_SUBJECT = f'{INFO_DRAWER} span[data-testid="group-info-drawer-subject-input-read-only"]'
     GROUP_PARTICIPANTS = f'{INFO_DRAWER} div[data-testid="group-info-top-card-subtitle"] > span > span > button'
     GROUP_INFO_PIC = CHAT_INFO_PIC
     GROUP_DEFAULT_PIC = f'{INFO_DRAWER} span[data-testid="default-group"]'
     GROUP_DESCRIPTION = f'{INFO_DRAWER} span[data-testid="group-info-drawer-description-title-input-read-only"]'
     GROUP_READ_MORE = f'{GROUP_DESCRIPTION} + button'
+
+    GROUP_LEAVE = f'{INFO_DRAWER} div[data-testid="li-delete-group"]'
 
     UNREAD_BADGE = 'span[data-testid="icon-unread-count"]'
     UNREAD_TITLE = 'div[data-testid="cell-frame-title"] > span'

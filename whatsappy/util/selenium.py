@@ -43,7 +43,7 @@ def send_shortcut(driver: WebDriver, *shortcut: str) -> None:
         actions.key_up(key)
     actions.perform()
 
-def message_to_text(message: WebElement) -> str:
+def emoji_to_text(message: WebElement) -> str:
     # get the html of the message
     html = message.get_attribute("innerHTML")
 
