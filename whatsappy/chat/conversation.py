@@ -127,6 +127,36 @@ class Conversation:
             
             driver.find_element(By.CSS_SELECTOR, Selectors.SEND_BUTTON).click()
 
+    def clear(self, keep_starred: bool = False) -> None:
+        """Clears the conversation messages.
+
+        #### Arguments
+            * keep_starred (bool, optional): Whether to keep the starred messages or not. Defaults to False.
+        """
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        driver = self._whatsapp.driver
+
+        self._open_menu()
+
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.MENU_CLEAR)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.MENU_CLEAR).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.POPUP_CONFIRM)))
+
+        if keep_starred:            
+            driver.find_element(By.CSS_SELECTOR, Selectors.KEEP_STARRED).click()
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
+
     def mute(self, time: Literal["8 hours", "1 week", "Always"]) -> None:
         """Mutes the conversation notifications.
 

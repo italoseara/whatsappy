@@ -96,6 +96,7 @@ whatsapp.close()
 - `unmute()`: Unmutes the chat.
 - `block()`: Blocks the chat.
 - `unblock()`: Unblocks the chat.
+- `clear(keep_starred: bool = False)`: Clears the chat messages.
 
 ### Group
 
@@ -114,6 +115,7 @@ whatsapp.close()
 - `mute()`: Mutes the group.
 - `unmute()`: Unmutes the group.
 - `leave()`: Leaves the group.
+- `clear(keep_starred: bool = False)`: Clears the group messages.
 
 ### Message
 
