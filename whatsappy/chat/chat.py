@@ -106,4 +106,16 @@ class Chat(chat.Conversation):
     def delete(self) -> None:
         """Deletes the chat."""
 
-        raise NotImplementedError("This method is not implemented yet.")
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        driver = self._whatsapp.driver
+        driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_DELETE).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP_CONFIRM)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
+
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))

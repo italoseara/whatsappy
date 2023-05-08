@@ -97,6 +97,7 @@ whatsapp.close()
 - `block()`: Blocks the chat.
 - `unblock()`: Unblocks the chat.
 - `clear(keep_starred: bool = False)`: Clears the chat messages.
+- `delete()`: Deletes the chat.
 
 ### Group
 
@@ -144,6 +145,10 @@ whatsapp.close()
 #### Methods
 
 - `reply(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Replies to the unread chat with a message. and returns a `Chat` or `Group` instance.
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 

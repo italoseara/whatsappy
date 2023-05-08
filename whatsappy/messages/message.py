@@ -52,7 +52,8 @@ class Message:
             self.content = emoji_to_text(content)
 
         if info := find_element_if_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_INFO):
-            self.timestamp = list(datefinder.find_dates(info.text))[0]
+            dates = list(datefinder.find_dates(info.text))
+            self.timestamp = dates[0] if dates else datetime(1900, 1, 1, 0, 0)
         else:
             self.timestamp = list(datefinder.find_dates(container.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_META).text))[0]
             self.timestamp = self.timestamp.replace(year=1900, month=1, day=1)
