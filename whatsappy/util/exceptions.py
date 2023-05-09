@@ -9,3 +9,7 @@ class NotSelectedException(Exception):
 class MaxPinnedChatsException(Exception):
     """Exception raised when a user tries to pin a chat, but the maximum number of pinned chats has been reached."""
     ...
+
+class ContactNotFoundException(Exception):
+    """Exception raised when a user tries to open a chat with a contact that doesn't exist."""
+    ...

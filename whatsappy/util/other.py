@@ -14,7 +14,7 @@ class MyThread(Thread):
         return self._stop_event.is_set()
 
 def get_attachment_type(attachment: str) -> str:
-    if phone_number_regex.match(attachment):
+    if "." not in attachment:
         return "contact"
     
     mime = mimetypes.guess_type(attachment)[0]
@@ -26,6 +26,6 @@ def get_attachment_type(attachment: str) -> str:
         case "image" | "video" | "audio":
             return "midia"
         case _:
-            return "document"    
+            return "document"
 
 phone_number_regex = re.compile(r'\+?\d{1,3}[-.\s]?\d{1,14}[-.\s]?\d{1,14}[-.\s]?\d{1,14}')

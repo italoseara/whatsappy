@@ -1,4 +1,6 @@
 class Selectors:
+    CLOSE = 'span[data-testid="x"]'
+    
     QR_CODE = 'div[data-testid="qrcode"]'
 
     ANIMATING = 'div.app-animating'
@@ -6,10 +8,12 @@ class Selectors:
     SEARCH_RESULT = '#pane-side div[data-testid="chat-list"] > div > div:not(:has(div[data-testid="section-header"]))'
 
     MESSAGE_BOX = 'div[data-testid="conversation-compose-box-input"]'
-    SEND_BUTTON = 'div[aria-label="Send"]'
+    SEND_BUTTON = 'span[data-testid="send"]'
 
     SEARCH_BAR = 'div[data-testid="chat-list-search"]'
     SEARCH_BAR_CLEAR = 'button[aria-label="Cancel search"]'
+
+    NO_CONTACTS_FOUND = 'div[data-testid="search-no-chats-or-contacts"]'
 
     INFO_DRAWER = 'div[data-testid="chat-info-drawer"]'
     INFO_DRAWER_BODY = f'{INFO_DRAWER} section'
@@ -75,5 +79,6 @@ class Selectors:
     MEDIA_CAPTION = 'div[data-testid="media-caption-input-container"]'
 
     ATTATCHMENT_MENU = 'div[data-testid="conversation-clip"] > div'
+    INPUT_CONTACTS = 'span[data-testid="attach-contact"]'
     INPUT_DOCUMENTS = 'span[data-testid="attach-document"] + input'
     INPUT_MIDIA = 'span[data-testid="attach-image"] + input'

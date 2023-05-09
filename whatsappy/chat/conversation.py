@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from time import sleep
 from dataclasses import dataclass, field
 from typing import List, Literal, Tuple
 
@@ -73,6 +74,13 @@ class Conversation:
             * attatchments (List[Any], optional): The attatchments to send. Defaults to None.
             * type (Literal["auto", "document", "midia", "contact"], optional): The type of the attatchments. Defaults to "auto".
             If the type is specified, all the attatchments must be of the same type.
+
+        #### Raises
+            * NotSelectedException: If the conversation is not selected.
+            * ValueError: If no attatchments or message are specified.
+            * TypeError: If any of the attatchments is not a string.
+            * FileNotFoundError: If any of the attatchments is a file that does not exist.
+            * ContactNotFoundException: If any of the contacts does not exist.
         """
 
         if self._whatsapp.current_chat != self.name:
@@ -96,7 +104,7 @@ class Conversation:
         for attatchment in attatchments:
             if not isinstance(attatchment, str):
                 raise TypeError(f"The attatchment {attatchment} is not a string.")
-            elif not os.path.isfile(attatchment):
+            elif "." in attatchment and not os.path.isfile(attatchment):
                 raise FileNotFoundError(f"The file {attatchment} does not exist.")
 
         attatchment_types = {attatchment: type if type != "auto" else get_attachment_type(attatchment) for attatchment in attatchments}
@@ -106,7 +114,33 @@ class Conversation:
         contacts = [attatchment for attatchment, type in attatchment_types.items() if type == "contact"]
 
         if contacts:
-            raise NotImplementedError("Sending contacts is not implemented yet.")
+            driver.find_element(By.CSS_SELECTOR, Selectors.ATTATCHMENT_MENU).click()           
+            driver.find_element(By.CSS_SELECTOR, Selectors.INPUT_CONTACTS).click()
+
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
+
+            for contact in contacts:
+                search_bar = driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
+                search_bar.send_keys(contact)
+                sleep(0.5)
+
+                if element_exists(driver, By.CSS_SELECTOR, Selectors.NO_CONTACTS_FOUND):
+                    driver.find_element(By.CSS_SELECTOR, Selectors.CLOSE).click()
+                    WebDriverWait(driver, 10).until(
+                        EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
+                    raise ContactNotFoundException(f"The contact {contact} does not exist.")
+                
+                search_bar.send_keys(Keys.ENTER)
+
+            driver.find_element(By.CSS_SELECTOR, Selectors.SEND_BUTTON).click() # Send the contacts
+            driver.find_element(By.CSS_SELECTOR, Selectors.SEND_BUTTON).click() # Confirm the contacts
+
+            WebDriverWait(driver, 10).until(
+                EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
+
+            if not documents and not midias and message:
+                self.send(message=message)
 
         if documents:
             driver.find_element(By.CSS_SELECTOR, Selectors.ATTATCHMENT_MENU).click()
@@ -231,14 +265,11 @@ class Conversation:
 
         driver.find_element(By.CSS_SELECTOR, Selectors.MENU_MUTE).click()
 
-    def pin(self, ignore_limit: bool = False) -> None:
+    def pin(self) -> None:
         """Pins the conversation.
 
-        #### Arguments
-            * ignore_limit (bool, optional): Whether to ignore the maximum pinned chats limit or not. Defaults to False.
-
         #### Raises
-            * MaxPinnedChatsException: If the maximum pinned chats limit is reached and `ignore_limit` is False.
+            * MaxPinnedChatsException: If the maximum pinned chats limit is reached.
         """
 
         if self._whatsapp.current_chat != self.name:
@@ -264,14 +295,11 @@ class Conversation:
             WebDriverWait(driver, 1).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
 
-            if ignore_limit:
-                driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
-            else:
-                raise MaxPinnedChatsException("You can only pin up to 3 chats.")
+            driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
+            self._whatsapp._clear_search_bar()
+            raise MaxPinnedChatsException("You can only pin up to 3 chats.")
         except TimeoutException:
-            pass
-
-        self._whatsapp._clear_search_bar()
+            self._whatsapp._clear_search_bar()
 
     def unpin(self) -> None:
         """Unpins the conversation."""

@@ -99,7 +99,7 @@ whatsapp.close()
 - `unblock()`: Unblocks the chat.
 - `clear(keep_starred: bool = False)`: Clears the chat messages.
 - `delete()`: Deletes the chat.
-- `pin(ignore_limit: bool = False)`: Pins the chat.
+- `pin()`: Pins the chat.
 - `unpin()`: Unpins the chat.
 
 ### Group
@@ -121,7 +121,7 @@ whatsapp.close()
 - `unmute()`: Unmutes the group.
 - `leave()`: Leaves the group.
 - `clear(keep_starred: bool = False)`: Clears the group messages.
-- `pin(ignore_limit: bool = False)`: Pins the group.
+- `pin()`: Pins the group.
 - `unpin()`: Unpins the group.
 
 ### Message
