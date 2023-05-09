@@ -5,3 +5,7 @@ class InvalidEventException(Exception):
 class NotSelectedException(Exception):
     """Exception raised when a user tries to use a feature that requires a selected chat, but no chat is selected."""
     ...
+
+class MaxPinnedChatsException(Exception):
+    """Exception raised when a user tries to pin a chat, but the maximum number of pinned chats has been reached."""
+    ...

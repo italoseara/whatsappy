@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from typing import List, Literal
+from typing import List, Literal, Tuple
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 from .. import whatsapp
 from ..messages import Message
@@ -47,6 +48,18 @@ class Conversation:
             raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
 
         return element_exists(self._whatsapp.driver, By.CSS_SELECTOR, Selectors.CONVERSATION_MUTED)
+
+    @property
+    def is_pinned(self) -> bool:
+        """Returns whether the conversation is pinned or not."""
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        _, is_pinned = self._is_pinned()
+        self._whatsapp._clear_search_bar()
+
+        return is_pinned
     
     def send(self, 
              message: str = None, 
@@ -218,17 +231,93 @@ class Conversation:
 
         driver.find_element(By.CSS_SELECTOR, Selectors.MENU_MUTE).click()
 
-    def pin(self) -> None:
-        """Pins the conversation."""
+    def pin(self, ignore_limit: bool = False) -> None:
+        """Pins the conversation.
 
-        raise NotImplementedError("This method is not implemented yet.")
+        #### Arguments
+            * ignore_limit (bool, optional): Whether to ignore the maximum pinned chats limit or not. Defaults to False.
+
+        #### Raises
+            * MaxPinnedChatsException: If the maximum pinned chats limit is reached and `ignore_limit` is False.
+        """
+
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        element, is_pinned = self._is_pinned()
+
+        if is_pinned:
+            self._whatsapp._clear_search_bar()
+            return
+
+        driver = self._whatsapp.driver
+
+        # Click with the right mouse button to open the menu
+        ActionChains(driver).context_click(element).perform()
+
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.MENU_PIN)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.MENU_PIN).click()
+
+        try:
+            WebDriverWait(driver, 1).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
+
+            if ignore_limit:
+                driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
+            else:
+                raise MaxPinnedChatsException("You can only pin up to 3 chats.")
+        except TimeoutException:
+            pass
+
+        self._whatsapp._clear_search_bar()
 
     def unpin(self) -> None:
         """Unpins the conversation."""
 
-        raise NotImplementedError("This method is not implemented yet.")
+        if self._whatsapp.current_chat != self.name:
+            raise NotSelectedException(f"The chat \"{self.name}\" is not selected.")
+
+        element, is_pinned = self._is_pinned()
+
+        if not is_pinned:
+            self._whatsapp._clear_search_bar()
+            return
+
+        driver = self._whatsapp.driver
+
+        # Click with the right mouse button to open the menu
+        ActionChains(driver).context_click(element).perform()
+
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.MENU_PIN)))
+
+        driver.find_element(By.CSS_SELECTOR, Selectors.MENU_PIN).click()
+
+        self._whatsapp._clear_search_bar()
 
     def _open_menu(self) -> None:
         """Opens the conversation menu."""
 
         self._whatsapp.driver.find_element(By.CSS_SELECTOR, Selectors.CONVERSATION_MENU).click()
+
+    def _is_pinned(self) -> Tuple[WebElement, bool]:
+        """Checks if the conversation is pinned but does not clear the search."""
+
+        driver = self._whatsapp.driver
+        self._whatsapp._search_chat(self.name)
+
+        # Get all the search results
+        result = driver.find_elements(By.CSS_SELECTOR, Selectors.SEARCH_RESULT)
+                                      
+        # Get all the transform values from style attribute
+        elements = {element: element.value_of_css_property("transform") for element in result}
+
+        # get the translate Y value from the transform value
+        translate_y = {element: float(transfrom.split(", ")[5].strip(")")) for element, transfrom in elements.items()}
+
+        # get the element with the lowest translate Y value
+        element: WebElement = min(translate_y, key=translate_y.get)
+
+        return element, element_exists(element, By.CSS_SELECTOR, Selectors.PIN_ICON)

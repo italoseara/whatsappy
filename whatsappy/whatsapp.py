@@ -182,15 +182,11 @@ class Whatsapp:
             WebDriverWait(self.driver, 5).until(lambda driver: not self._is_animating())
             ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
 
-            search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
-            send_keys_slowly(search, chat)
-            WebDriverWait(self.driver, 5).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
-            )
+            # Search for the chat
+            search = self._search_chat(chat)
             search.send_keys(Keys.ENTER)
 
-            # Clear the search bar
-            self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR).click()
+            self._clear_search_bar()
 
         # Open the chat info
         try:
@@ -234,6 +230,18 @@ class Whatsapp:
             thread.stop()
 
         self.driver.close()
+
+    def _search_chat(self, chat: str) -> WebElement:
+        search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
+        send_keys_slowly(search, chat)
+        WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR))
+        )
+
+        return search
+
+    def _clear_search_bar(self) -> None:
+        self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR_CLEAR).click()
 
     def _on_ready(self) -> None:
         """Calls the on_ready callback when the page is loaded."""

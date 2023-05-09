@@ -88,6 +88,7 @@ whatsapp.close()
 - `last_message: Message | None`: The last message of the chat.
 - `is_muted: bool`: Whether the chat is muted or not.
 - `is_blocked: bool`: Whether the chat is blocked or not.
+- `is_pinned: bool`: Whether the chat is pinned or not.
 
 #### Methods
 
@@ -98,6 +99,8 @@ whatsapp.close()
 - `unblock()`: Unblocks the chat.
 - `clear(keep_starred: bool = False)`: Clears the chat messages.
 - `delete()`: Deletes the chat.
+- `pin(ignore_limit: bool = False)`: Pins the chat.
+- `unpin()`: Unpins the chat.
 
 ### Group
 
@@ -109,6 +112,7 @@ whatsapp.close()
 - `participants: int`: The number of participants of the group.
 - `last_message: Message | None`: The last message of the group.
 - `is_muted: bool`: Whether the group is muted or not.
+- `is_pinned: bool`: Whether the group is pinned or not.
 
 #### Methods
 
@@ -117,6 +121,8 @@ whatsapp.close()
 - `unmute()`: Unmutes the group.
 - `leave()`: Leaves the group.
 - `clear(keep_starred: bool = False)`: Clears the group messages.
+- `pin(ignore_limit: bool = False)`: Pins the group.
+- `unpin()`: Unpins the group.
 
 ### Message
 

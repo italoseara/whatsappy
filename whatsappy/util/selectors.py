@@ -3,6 +3,8 @@ class Selectors:
 
     ANIMATING = 'div.app-animating'
 
+    SEARCH_RESULT = '#pane-side div[data-testid="chat-list"] > div > div:not(:has(div[data-testid="section-header"]))'
+
     MESSAGE_BOX = 'div[data-testid="conversation-compose-box-input"]'
     SEND_BUTTON = 'div[aria-label="Send"]'
 
@@ -30,6 +32,9 @@ class Selectors:
 
     MENU_CLEAR = f'{MENU_DROPDOWN} li[data-testid="mi-clear"]'
     KEEP_STARRED = f'{POPUP} div[data-testid="visual-checkbox"]'
+
+    MENU_PIN = f'{MENU_DROPDOWN} li[data-testid="mi-pin"]'
+    PIN_ICON = f'{SEARCH_RESULT} span[data-testid="pinned2"]'
     
     MESSAGE_CONTAINER = 'div[data-testid="msg-container"]'
     MESSAGE_INFO = 'div.copyable-text'
