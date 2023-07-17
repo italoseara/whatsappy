@@ -229,6 +229,7 @@ class Whatsapp:
         for thread in self._threads.values():
             thread.stop()
 
+        sleep(1) # Just in case something is still running
         self.driver.close()
 
     def _search_chat(self, chat: str) -> WebElement:

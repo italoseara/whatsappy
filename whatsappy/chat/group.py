@@ -10,6 +10,8 @@ from .. import whatsapp
 from ..util import *
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 @dataclass(init=False)
 class Group(chat.Conversation):
@@ -47,6 +49,10 @@ class Group(chat.Conversation):
         else:
             self.description = None
 
+        # Wait for the group participants to load
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.GROUP_PARTICIPANTS)))
+        
         # Group participants
         self.participants = int(driver.find_element(By.CSS_SELECTOR, Selectors.GROUP_PARTICIPANTS).text.split()[0])
 

@@ -61,6 +61,9 @@ class Message:
         self.is_forwarded = element_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_FORWARDED)
         self.is_reply = element_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_QUOTE)
 
+    def __str__(self) -> str:
+        return f"{self.author}: {self.content}"
+
     def reply(self,
               message: str = None,
               attatchments: List[str] = None,

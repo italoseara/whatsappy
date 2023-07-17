@@ -8,7 +8,6 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 
 def find_element_if_exists(driver: WebDriver | WebElement, *args, **kargs) -> WebElement:
     try:

@@ -96,6 +96,7 @@ class Conversation:
 
         if not attatchments:
             msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_BOX)
+            msg_box.click() # Click to focus the message box
             send_keys_multiline(msg_box, message)
             msg_box.send_keys(Keys.ENTER)
             return
