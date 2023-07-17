@@ -92,6 +92,7 @@ whatsapp.close()
 
 #### Methods
 
+- `open()`: Opens the chat.
 - `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the chat.
 - `mute()`: Mutes the chat.
 - `unmute()`: Unmutes the chat.
@@ -116,6 +117,7 @@ whatsapp.close()
 
 #### Methods
 
+- `open()`: Opens the group.
 - `send(message: str, attachments: Optional[List[str]] = None, type: Optional[str] = "auto")`: Sends a message to the group.
 - `mute()`: Mutes the group.
 - `unmute()`: Unmutes the group.

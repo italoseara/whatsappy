@@ -61,6 +61,9 @@ class Conversation:
         self._whatsapp._clear_search_bar()
 
         return is_pinned
+
+    def open(self) -> Conversation:
+        return self._whatsapp.open(self.name)
     
     def send(self, 
              message: str = None, 
