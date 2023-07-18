@@ -3,13 +3,14 @@ from __future__ import annotations
 import os
 from time import sleep
 from dataclasses import dataclass, field
-from typing import List, Literal, Tuple
+from typing import List, Literal, Tuple, Dict, Callable
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.remote.webelement import WebElement
 
 from .. import whatsapp
 from ..messages import Message
@@ -22,8 +23,13 @@ class Conversation:
     _whatsapp: whatsapp.Whatsapp = field(repr=False)
     name: str
 
+    _callbacks: Dict[str, Callable] = field(default_factory=dict, repr=False)
+    
     def __init__(self, _whatsapp: whatsapp.Whatsapp) -> None:
         self._whatsapp = _whatsapp
+        self._callbacks = {
+            "on_message": None
+        }
 
     @property
     def last_message(self) -> Message | None:
@@ -38,7 +44,7 @@ class Conversation:
             return None
 
         last_element = messages[-1]
-        
+
         return Message(self._whatsapp, last_element, self)
 
     @property
@@ -61,6 +67,21 @@ class Conversation:
         self._whatsapp._clear_search_bar()
 
         return is_pinned
+
+    def event(self, func: Callable) -> None:
+        """Decorator to register a function as an event handler.
+
+        #### Arguments
+            * func: The function to be registered. It must be a coroutine.
+
+        Raises:
+            * InvalidEvent: If the function name is not a valid event.
+        """
+
+        if func.__name__ not in self._callbacks.keys():
+            raise InvalidEventException(f"Invalid event: {func.__name__}")
+
+        self._callbacks[func.__name__] = func
 
     def open(self) -> Conversation:
         return self._whatsapp.open(self.name)
@@ -353,3 +374,29 @@ class Conversation:
         element: WebElement = min(translate_y, key=translate_y.get)
 
         return element, element_exists(element, By.CSS_SELECTOR, Selectors.PIN_ICON)
+
+    def _start_threads(self) -> None:
+        self._whatsapp._add_thread(f"{self.name}__on_message", self._on_message)
+        self._whatsapp._start_thread(f"{self.name}__on_message")
+
+    def _on_message(self) -> None:
+        """Checks for new messages and calls the on_message callback"""
+
+        msg = self.last_message
+
+        while True:
+            if self._whatsapp._threads[f"{self.name}__on_message"].stopped():
+                break
+
+            if not self._callbacks["on_message"]:
+                continue
+
+            if self._whatsapp.current_chat != self.name:
+                self._whatsapp._stop_thread(f"{self.name}__on_message")
+                break
+
+            if self.last_message != msg:
+                msg = self.last_message
+                self._callbacks["on_message"](msg)
+
+            sleep(0.5) # Wait 0.5 second before checking again

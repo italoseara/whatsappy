@@ -54,6 +54,8 @@ class Chat(chat.Conversation):
             pfp_url = driver.find_element(By.CSS_SELECTOR, Selectors.CHAT_INFO_PIC).get_attribute("src")
             self.profile_picture = Image.open(requests.get(pfp_url, stream=True).raw)
 
+        self._start_threads()
+
     @property
     def is_blocked(self) -> bool:
         """Returns whether the chat is blocked or not."""

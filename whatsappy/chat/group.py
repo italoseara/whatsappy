@@ -63,6 +63,8 @@ class Group(chat.Conversation):
         else:
             self.profile_picture = None
 
+        self._start_threads()
+
     def leave(self, delete: bool = False) -> None:
         """Leaves the group.
 

@@ -112,8 +112,8 @@ class Whatsapp:
         sleep(1) # Sometimes the page is not loaded correctly
 
         # Create the threads
-        self._threads["on_ready"] = MyThread(target=self._on_ready, daemon=True)
-        self._threads["on_message"] = MyThread(target=self._on_message, daemon=True)
+        self._add_thread("on_ready", self._on_ready)
+        self._add_thread("on_message", self._on_message)
 
         # Start the threads
         for thread in self._threads.values():
@@ -231,6 +231,16 @@ class Whatsapp:
 
         sleep(1) # Just in case something is still running
         self.driver.close()
+
+    def _add_thread(self, name: str, target: Callable, daemon: bool = True) -> None:
+        self._threads[name] = MyThread(target=target, daemon=daemon)
+
+    def _start_thread(self, name: str) -> None:
+        self._threads[name].start()
+
+    def _stop_thread(self, name: str) -> None:
+        self._threads[name].stop()
+        self._threads.pop(name)
 
     def _search_chat(self, chat: str) -> WebElement:
         search = self.driver.find_element(By.CSS_SELECTOR, Selectors.SEARCH_BAR)
