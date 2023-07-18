@@ -13,3 +13,15 @@ class MaxPinnedChatsException(Exception):
 class ContactNotFoundException(Exception):
     """Exception raised when a user tries to open a chat with a contact that doesn't exist."""
     ...
+
+class UserNotFoundException(Exception):
+    """Exception raised when a user tries to perform an action on a user that doesn't exist."""
+    ...
+
+class UserAlreadyAdminException(Exception):
+    """Exception raised when a user tries to promote a user to admin, but the user is already an admin."""
+    ...
+
+class UserNotAdminException(Exception):
+    """Exception raised when a user tries to demote a user from admin, but the user is not an admin."""
+    ...

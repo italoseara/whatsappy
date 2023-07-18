@@ -67,6 +67,15 @@ class Selectors:
 
     GROUP_LEAVE = f'{INFO_DRAWER} div[data-testid="li-delete-group"]'
 
+    GROUP_SEARCH = 'div[data-testid="section-participants"] span[data-testid="search"]'
+    GROUP_SEARCH_INPUT = 'div[data-testid="contacts-modal"] div[data-testid="chat-list-search"]'
+    GROUP_SEARCH_RESULT = 'div[data-testid="contacts-modal"] div[data-testid="cell-frame-container"]'
+
+    GROUP_ADMIN_BADGE = 'div[data-testid="group-admin-marker"]'
+
+    GROUP_PROMOTE_ADMIN = 'li[data-testid="mi-grp-promote-admin"]'
+    GROUP_DEMOTE_ADMIN = 'li[data-testid="mi-grp-demote"]'
+
     UNREAD_BADGE = 'span[data-testid="icon-unread-count"]'
     UNREAD_TITLE = 'div[data-testid="cell-frame-title"] > span'
     UNREAD_LAST_MESSAGE = 'span[data-testid="last-msg-status"]'
