@@ -1,4 +1,4 @@
-# Whatsappy 4.1.1
+# Whatsappy 4.1.3
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://pepy.tech/badge/whatsappy-py)](https://pepy.tech/project/whatsappy-py)

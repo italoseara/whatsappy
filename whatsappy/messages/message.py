@@ -61,14 +61,11 @@ class Message:
         self.is_forwarded = element_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_FORWARDED)
         self.is_reply = element_exists(container, By.CSS_SELECTOR, Selectors.MESSAGE_QUOTE)
 
-    def __str__(self) -> str:
-        return f"{self.author}: {self.content}"
-
     def __eq__(self, other: Message) -> bool:
         if not isinstance(other, Message):
             return False
 
-        return self._element == other._element
+        return self.content == other.content and self.timestamp == other.timestamp and self.author == other.author
 
     def reply(self,
               message: str = None,

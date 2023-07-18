@@ -382,7 +382,7 @@ class Conversation:
     def _on_message(self) -> None:
         """Checks for new messages and calls the on_message callback"""
 
-        msg = self.last_message
+        last_check = self.last_message
 
         while True:
             if self._whatsapp._threads[f"{self.name}__on_message"].stopped():
@@ -395,8 +395,10 @@ class Conversation:
                 self._whatsapp._stop_thread(f"{self.name}__on_message")
                 break
 
-            if self.last_message != msg:
-                msg = self.last_message
-                self._callbacks["on_message"](msg)
+            last_message = self.last_message
+
+            if last_message != last_check:
+                last_check = last_message
+                self._callbacks["on_message"](last_check)
 
             sleep(0.5) # Wait 0.5 second before checking again
