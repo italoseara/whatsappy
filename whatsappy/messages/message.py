@@ -64,6 +64,12 @@ class Message:
     def __str__(self) -> str:
         return f"{self.author}: {self.content}"
 
+    def __eq__(self, other: Message) -> bool:
+        if not isinstance(other, Message):
+            return False
+
+        return self._element == other._element
+
     def reply(self,
               message: str = None,
               attatchments: List[str] = None,
