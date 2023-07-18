@@ -158,6 +158,13 @@ whatsapp.close()
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
+## Donation
+
+If you like this project, please consider donating to help me continue working on it.
+
+- [PayPal (International)](https://www.paypal.com/donate/?hosted_button_id=P82US5REC5MMJ)
+- [PIX (Brazil)](https://nubank.com.br/pagar/13iqcv/w1aDdPIlnZ)
+
 ## License
 
 Whatsappy is licensed under the [MIT License](LICENSE)
