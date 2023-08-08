@@ -125,6 +125,8 @@ whatsapp.close()
 - `clear(keep_starred: bool = False)`: Clears the group messages.
 - `pin()`: Pins the group.
 - `unpin()`: Unpins the group.
+- `promote(user: str)`: Promotes a user to admin.
+- `demote(user: str)`: Demotes a user from admin.
 
 ### Message
 
