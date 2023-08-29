@@ -11,6 +11,7 @@ Whatsappy is a Python library for interacting with WhatsApp Web using Selenium. 
 
 - Python 3.11+
 - Chrome 94+
+- WhatsApp Web in English
 
 ## Installation
 

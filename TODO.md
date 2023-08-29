@@ -1,22 +1,21 @@
 ## TODO
 
-- [ ] Add support for logout.
-- [ ] Add support for attatchments when reading messages.
-- [ ] Add support for stickers.
-- [ ] Add support for reactions.
-- [ ] Add support for polls.
-- [ ] Add support for embeds.
-- [ ] Add support for deleting messages.
-- [ ] Add support for staring messages.
-- [ ] Add support for forwarding messages.
-- [ ] Add support for reporting messages.
-- [ ] Add support for editing your personal profile.
-- [ ] Add support for creating groups.
-- [ ] Add support for communities.
-- [ ] Add support for adding/removing members to groups.
-- [ ] Add support for making members admins in groups.
-- [ ] Add support for changing group settings.
-- [ ] Add support for changing group info.
-- [ ] Add support for getting group members.
-- [ ] Add support for events in specific conversations.
-- [ ] Not listen for muted conversations on events.
+- Add support for logout.
+- Add support for attatchments when reading messages.
+- Add support for stickers.
+- Add support for reactions.
+- Add support for polls.
+- Add support for embeds.
+- Add support for deleting messages.
+- Add support for staring messages.
+- Add support for forwarding messages.
+- Add support for reporting messages.
+- Add support for editing your personal profile.
+- Add support for creating groups.
+- Add support for communities.
+- Add support for adding/removing members to groups.
+- Add support for changing group settings.
+- Add support for changing group info.
+- Add support for searching group members.
+- Add support for events in specific conversations.
+- Not listen for muted conversations on events.

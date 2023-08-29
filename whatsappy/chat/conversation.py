@@ -172,13 +172,13 @@ class Conversation:
             driver.find_element(By.CSS_SELECTOR, Selectors.INPUT_DOCUMENTS).send_keys("\n".join(documents))
             
             WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MESSAGE_BOXa)))
 
             if message:
                 WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                    EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MESSAGE_BOX)))
                 
-                msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)
+                msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_BOX)
                 send_keys_multiline(msg_box, message)
             
             driver.find_element(By.CSS_SELECTOR, Selectors.SEND_BUTTON).click()
@@ -188,13 +188,13 @@ class Conversation:
             driver.find_element(By.CSS_SELECTOR, Selectors.INPUT_MIDIA).send_keys("\n".join(midias))
             
             WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MESSAGE_BOX)))
 
             if not documents and message:
                 WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)))
+                    EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MESSAGE_BOX)))
                 
-                msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MEDIA_CAPTION)
+                msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_BOX)
                 send_keys_multiline(msg_box, message)
             
             driver.find_element(By.CSS_SELECTOR, Selectors.SEND_BUTTON).click()
@@ -221,7 +221,7 @@ class Conversation:
         WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, Selectors.POPUP_CONFIRM)))
 
-        if keep_starred:            
+        if keep_starred:
             driver.find_element(By.CSS_SELECTOR, Selectors.KEEP_STARRED).click()
 
         driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
@@ -255,7 +255,7 @@ class Conversation:
         driver.find_element(By.CSS_SELECTOR, Selectors.MENU_MUTE).click()
 
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.MUTE_POPUP)))
+            EC.presence_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
 
         mute_time_options = driver.find_elements(By.CSS_SELECTOR, Selectors.MUTE_TIME_OPTIONS)
 
@@ -267,10 +267,10 @@ class Conversation:
             case "always":
                 mute_time_options[2].click()
 
-        driver.find_element(By.CSS_SELECTOR, Selectors.MUTE_POPUP_CONFIRM).click()
+        driver.find_element(By.CSS_SELECTOR, Selectors.POPUP_CONFIRM).click()
 
         WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.MUTE_POPUP)))
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.POPUP)))
 
     def unmute(self) -> None:
         """Unmutes the conversation's notifications."""

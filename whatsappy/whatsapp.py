@@ -14,7 +14,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 
 from .util import *
 from .chat import *
@@ -82,7 +82,7 @@ class Whatsapp:
         self._chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
         # Open the browser
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self._chrome_options)
+        self.driver = webdriver.Chrome(service=Service(), options=self._chrome_options)
 
         # Open the WhatsApp web page
         self.driver.get("https://web.whatsapp.com/")
@@ -130,7 +130,7 @@ class Whatsapp:
             * None: If there is no chat open.
         """
 
-        current_chat = find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CURRENT_CHAT)
+        current_chat = find_element_if_exists(self.driver, By.CSS_SELECTOR, Selectors.CONVERSATION_CURRENT)
 
         if not current_chat:
             return None
@@ -145,7 +145,7 @@ class Whatsapp:
             * List[UnreadMessage]: List of unread messages.
         """
 
-        return [UnreadMessage(self, element) for element in self.driver.find_elements(By.XPATH, Selectors.UNREAD_CONVERSATIONS_XPATH)]
+        return [UnreadMessage(self, element) for element in self.driver.find_elements(By.CSS_SELECTOR, Selectors.UNREAD_CONVERSATIONS)]
 
     @property
     def me(self) -> Me:
@@ -230,7 +230,7 @@ class Whatsapp:
             thread.stop()
 
         sleep(1) # Just in case something is still running
-        self.driver.close()
+        self.driver.quit()
 
     def _add_thread(self, name: str, target: Callable, daemon: bool = True) -> None:
         self._threads[name] = MyThread(target=target, daemon=daemon)
