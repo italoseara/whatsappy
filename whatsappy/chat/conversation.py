@@ -122,6 +122,14 @@ class Conversation:
             msg_box = driver.find_element(By.CSS_SELECTOR, Selectors.MESSAGE_BOX)
             msg_box.click() # Click to focus the message box
             send_keys_multiline(msg_box, message)
+
+            if url_regex.search(message):
+                sleep(1)
+
+            if find_element_if_exists(driver, By.CSS_SELECTOR, Selectors.MESSAGE_LINK_PLACEHOLDER):
+                WebDriverWait(driver, 10).until(
+                    EC.invisibility_of_element_located((By.CSS_SELECTOR, Selectors.MESSAGE_LINK_PLACEHOLDER)))
+
             msg_box.send_keys(Keys.ENTER)
             return
         

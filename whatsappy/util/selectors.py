@@ -44,6 +44,7 @@ class Selectors:
     MESSAGE_META = f'div:nth-child(3) > div> div > div:last-child'
     MESSAGE_FORWARDED = 'span[data-icon="forwarded"]'
     MESSAGE_QUOTE = 'div[aria-label="Quoted Message"]'
+    MESSAGE_LINK_PLACEHOLDER = 'span[data-icon="link-placeholder-dark"], span[data-icon="link-placeholder-light"]'
 
     CHAT_INPUT = '#main div.lexical-rich-text-input > div[role="textbox"]'
     CHAT_INFO_TEXT = f'{INFO_DRAWER} span[dir="auto"].copyable-text.selectable-text'
