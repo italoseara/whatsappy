@@ -3,6 +3,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://pepy.tech/badge/whatsappy-py)](https://pepy.tech/project/whatsappy-py)
 
+## Project Update: Temporary Inactivity
+
+Unfortunately, this repository is currently non-functional. I plan to allocate time in the future to revitalize it and ensure its usability. In the meantime, I hope this proves helpful to those embarking on their own adaptations. Thank you for your understanding.
+
 ## Overview
 
 Whatsappy is a Python library for interacting with WhatsApp Web using Selenium. With this library, you can automate WhatsApp tasks such as sending messages, creating groups, and more.
